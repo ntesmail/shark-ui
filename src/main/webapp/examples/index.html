@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<%
+    function includeMD(file) {
+        var text = include(file);
+        return converter.makeHtml(text);
+    }
+    function includeMDJs(file) {
+        var text = include(file);
+        return converter.makeHtml('```javascript\n' + text + '\n```');
+    }
+    
+%>
+<% include layout/head.html%>
+<body class="fix-head">
+    <%- headContent %>
+	<div class="g-bd side-in-right">
+		<div class="g-side">
+            <div class="bs-docs-sidebar">
+                <ul class="nav nav-stacked" id="sideNav">
+                    <li><a href="#head">回到顶部</a></li>
+                    <li><a href="#modals">弹出层组件</a>
+                        <ul class="nav">
+                            <li><a href="#alert">alert 组件</a></li>
+                            <li><a href="#confirm">confirm 组件</a></li>
+                            <li><a href="#modal">modal 组件</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#tips">提示型组件</a>
+                        <ul class="nav">
+                            <li><a href="#tooltip">tooltip 组件</a></li>
+                            <li><a href="#toastr">toastr 组件</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#autocomplete">autocomplete 组件</a></li>
+                    <li><a href="#dropdown">dropdown 组件</a></li>
+                    <li><a href="#selecter">selecter 组件</a></li>
+
+                    <li><a href="#fileupload">fileupload 组件</a></li>
+                    <li><a href="#pager">pager 组件</a></li>
+                    <li><a href="#popover">popover 组件</a></li>
+                    <li><a href="#tabs">tabs 组件</a></li>
+                    <li><a href="#tree">tree 组件</a></li>
+                    
+                </ul>
+            </div>
+		</div>
+		<div class="g-content"> 
+            
+            <% include components/useage.html %>
+            <h1 id="modals" class="page-header">弹出层组件</h1>
+            <% include components/alert.html %>
+            <% include components/confirm.html %>
+            <% include components/modal.html %>
+
+            <h1 id="tips" class="page-header">弹出层组件</h1>
+            <% include components/tooltip.html %>
+            <% include components/toastr.html %>
+
+			<% include components/autocomplete.html %>
+			<% include components/dropdown.html %>
+            <% include components/selecter.html %>
+
+			<% include components/fileupload.html %>
+            <% include components/pager.html %>
+            <% include components/popover.html %>
+            <% include components/tabs.html %>
+            <% include components/tree.html %>
+		</div>
+	</div>
+    <%- footContent%>
+<% include layout/foot.html%>
+</body>
+</html>
+

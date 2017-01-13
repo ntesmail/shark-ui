@@ -1,0 +1,48 @@
+
+<style type="text/css">
+#myfileupload {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    background-color: #4a9ce2;
+    color: #ffffff;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+}
+</style>
+
+<div id="myfileupload">选择文件</div>
+<p>上传进度: <span style="color:red;" id="progress"></span></p>
+<button id="uploadBtn" class="btn btn-primary">开始上传</button>
+<script type="text/javascript">
+$(function(){
+    var myprogress = $('#progress');
+    var myfileupload = $('#myfileupload').sharkFileupload({
+        autoupload: false,
+        url: '',
+        accept: '',
+        dragable: true,
+        onSelected: function(file) {
+            this.text(file.name);
+        },
+        onUploading: function(file, percent) {
+            myprogress.text(percent);
+        },
+        onUploaded: function(file, res) {
+            alert('上传成功');
+        },
+        onFailed: function(file, error) {
+            alert('上传失败');
+        }
+    });
+    $('#uploadBtn').on('click', function() {
+        myfileupload.upload('/shark-ui/xhr/file/upload.do', {
+            id: 12345
+        });
+    });
+});
+</script>

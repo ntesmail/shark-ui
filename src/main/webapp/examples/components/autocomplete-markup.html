@@ -1,0 +1,36 @@
+
+<p>请输入「守望先锋」进行测试</p>
+<input id="myautocompleteIpt" type="text" class="form-control myautocomplete" />
+<script type="text/javascript">
+$(function(){
+    var myautocomplete = $('#myautocompleteIpt').sharkAutoComplete({
+        autocomplete: false,
+        debounceTime: 300,
+        displayKey: 'name',
+        filterData: function(value) {
+            var defer = $.Deferred();
+            $.ajax({
+                type: "POST",
+                url: '/shark-ui/xhr/demo/list.do?rnd=' + Date.now(),
+                dataType: "json",
+                success: function(res) {
+                    if (res.code === 200) {
+                        var arr = [];
+                        for (var i = 0; i < res.data.length; i++) {
+                            if (res.data[i].name.indexOf(value) > -1) {
+                                arr.push(res.data[i]);
+                            }
+                        }
+                        defer.resolve(arr);
+                    }
+                },
+                error: function() {}
+            });
+            return defer.promise();
+        },
+        onSelected: function(res) {
+            console.log(res);
+        }
+    });
+});
+</script>

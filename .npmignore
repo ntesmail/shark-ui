@@ -1,0 +1,6 @@
+/.tmp/*
+/.vscode/*
+/build/*
+/cache/*
+/node_modules/*
+/src/**/build.ui.js

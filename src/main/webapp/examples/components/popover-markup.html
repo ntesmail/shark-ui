@@ -1,0 +1,22 @@
+
+<button id="popoverBtn" class="btn btn-primary">点击查看效果</button>
+<script type="text/javascript">
+$(function(){
+    var mypopover = $('#popoverBtn').sharkPopover({
+        event: 'click',
+        close: 'bodyclick',
+        direction: 'right',
+        title: '枫桥夜泊',
+        content: '<div>月落乌啼霜满天，</div>\
+                <div>江枫渔火对愁眠。</div>\
+                <div>姑苏城外寒山寺，</div>\
+                <div>夜半钟声到客船。</div>',
+        onShow: function(){
+            console.log('显示了mypopover');
+        },
+        onHide: function(){
+            console.log('隐藏了mypopover');
+        }
+    });
+});
+</script>

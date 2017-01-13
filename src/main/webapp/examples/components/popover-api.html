@@ -1,0 +1,50 @@
+
+> 配置项：
+
+>> event
+- 是否必须：否
+- 类型：string
+- 默认值：'click'
+- 说明：弹出方式，click hover
+		
+>> close
+- 是否必须：否
+- 类型：string
+- 默认值：'targetclick'
+- 说明：关闭方式，targetclick 点击触发的按钮关闭；bodyclick 点击body任意部位关闭
+		
+>> direction
+- 是否必须：否
+- 类型：string
+- 默认值：'right'
+- 说明：优先弹出方向，top right bottom left（如果left/top空间不够，会变为right/bottom）
+		
+>> title
+- 是否必须：是
+- 类型：string
+- 默认值：''
+- 说明：标题
+		
+>> content
+- 是否必须：是
+- 类型：string
+- 默认值：''
+- 说明：内容信息
+		
+>> reRenderOnShow
+- 是否必须：否
+- 类型：boolean
+- 默认值：false
+- 说明：每次显示popover时是否重新渲染里面的内容
+		
+>> onShow
+- 是否必须：否
+- 类型：function
+- 默认值：function(){}
+- 说明：popover显示时的回调函数
+		
+>> onHide
+- 是否必须：否
+- 类型：function
+- 默认值：function(){}
+- 说明：popover隐藏时的回调函数

@@ -1,0 +1,34 @@
+
+> 配置项：
+
+>> activeStyle
+- 是否必须：否
+- 类型：string
+- 默认值：null
+- 说明：选中之后的样式，point | nike
+
+>> data
+- 是否必须：否
+- 类型：array
+- 默认值：[]
+- 说明：下拉框数据，eg：[{ value: 1001, name: '一年级' }, { value: 1002, name: '二年级' }]  
+ 当使用 selecter = $.fn.sharkSelecter(options) 方式生成selecter对象时，必须填写。
+	
+
+>> actualKey
+- 是否必须：否
+- 类型：string
+- 默认值：'value'
+- 说明：对应data中的真值字段
+
+>> displayKey
+- 是否必须：否
+- 类型：string
+- 默认值：'name'
+- 说明：对应data中的展示值字段
+
+>> onSelected
+- 是否必须：否
+- 类型：function
+- 默认值：function(value,item) {}
+- 说明：点击下拉框选项之后的回调函数

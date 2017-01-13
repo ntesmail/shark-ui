@@ -1,0 +1,30 @@
+<button id="modalBtn" class="btn btn-primary">modal</button>
+<script type="text/template" id="modal-content">
+    <div class="modal-header">
+        <button class="close">x</button>
+        <h4 class="modal-title">我是标题</h4>
+    </div>
+    <div class="modal-body">
+        我是内容
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success">确定</button>
+    </div>
+</script>
+<script type="text/javascript">
+$(function(){
+    var mymodal = $.fn.sharkModal({
+        animate: 'fade',
+        size:'',
+        backdrop:'static',
+        content: $('#modal-content').text()
+    });
+    mymodal.find('.btn-success').on('click', function() {
+        console.log('todo...');
+        mymodal.hideMe();
+    });
+    $('#modalBtn').on('click', function() {
+        mymodal.showMe();
+    });
+});
+</script>

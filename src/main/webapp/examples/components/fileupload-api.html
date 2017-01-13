@@ -1,0 +1,57 @@
+
+> 配置项：
+
+>> accept
+- 是否必须：否
+- 类型：string
+- 默认值：''
+- 说明：上传的文件类型（例：上传图片：image/jpg,image/jpeg）
+
+>> autoupload
+- 是否必须：否
+- 类型：boolean
+- 默认值：false
+- 说明：选择文件后是否自动上传
+
+>> dragable
+- 是否必须：否
+- 类型：boolean
+- 默认值：false
+- 说明：是否支持拖拽上传
+
+>> url
+- 是否必须：否
+- 类型：string
+- 默认值：'/xhr/file/upload.do'
+- 说明：文件上传地址
+
+
+>> onSelected
+- 是否必须：否
+- 类型：function
+- 默认值：function(file) {}
+- 说明：选择文件后的回调函数
+
+>> onUploading
+- 是否必须：否
+- 类型：function
+- 默认值：function(file, percent) {}
+- 说明：文件上传中的回调函数
+
+>> onUploaded
+- 是否必须：否
+- 类型：function
+- 默认值：function(file, res) {}
+- 说明：文件上传后的回调函数
+
+>> onFailed
+- 是否必须：否
+- 类型：function
+- 默认值：function(file, error) {}
+- 说明：文件上传失败后的回调函数
+
+>> dom
+- 是否必须：否
+- 类型：string
+- 默认值：&lt;button&gt;上传文件&lt;/button&gt; 
+- 说明：生成的dom对象，当使用 fileupload = $.fn.sharkFileupload(options) 方式生成文件上传对象时，必须填写。

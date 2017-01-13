@@ -1,0 +1,44 @@
+
+> 配置项：
+
+>> totalPages
+- 是否必须：是
+- 类型：number
+- 默认值：1
+- 说明：总页数
+
+>> page
+- 是否必须：是
+- 类型：number
+- 默认值：1
+- 说明：当前页
+
+>> hl
+- 是否必须：否
+- 类型：object
+- 默认值：{ firstpage: '首页', prevpage: '上一页', nextpage: '下一页', lastpage: '尾页', gopage: '跳转' }		
+- 说明：语言配置
+
+>> segmentSize
+- 是否必须：否
+- 类型：number
+- 默认值：5
+- 说明：每段大小
+
+>> startFrom
+- 是否必须：否
+- 类型：number
+- 默认值：1
+- 说明：第1页实际对应的页码（eg.有些项目后端传的页码是从0开始的，那么startFrom设置为0）
+
+>> gopage
+- 是否必须：否
+- 类型：boolean
+- 默认值：false
+- 说明：是否需要调转页码的按钮
+
+>> onWillChange
+- 是否必须：否
+- 类型：function
+- 默认值：function(pahe) {}
+- 说明：将要改变页码时调用的函数

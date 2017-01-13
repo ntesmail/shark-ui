@@ -1,0 +1,1 @@
+require('./src/main/webapp/js/shark.ui');
