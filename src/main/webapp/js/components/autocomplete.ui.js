@@ -14,17 +14,17 @@ var ListGroup = require('./listgroup.ui');
         return autoComplete;
     }
     // 初始化下拉列表的dom
-    function initSelectionsDom(autoComplete, config) {
+    function initSelectionsDom(actionObj, config) {
         var selections = ListGroup.render();
         selections.addClass('shark-autocomplete-list-group');
-        autoComplete.attr('listgroupid', selections.attr('id'));
         $(document.body).append(selections);
-        autoComplete.selections = selections;
-        return autoComplete;
+        actionObj.selections = selections;
+        return actionObj;
     }
     // 初始化事件
-    function initEvents(autoComplete, config) {
-        var selections = autoComplete.selections;
+    function initEvents(actionObj, config) {
+        var autoComplete = actionObj.element;
+        var selections = actionObj.selections;
         //防止按上下键时，输入框中的光标左右移动
         autoComplete.on('keydown.autocomplete', autoComplete, BaseComponent.filterComponentAction(autoComplete, function(evt) {
             if ($.inArray(evt.keyCode, functionalKeyArray) > -1) {
@@ -35,7 +35,7 @@ var ListGroup = require('./listgroup.ui');
             UI.preventAndStopEvent(evt);
             var keyCode = evt.keyCode;
             if ($.inArray(keyCode, functionalKeyArray) > -1) {
-                functionKeyUse(autoComplete, keyCode, config);
+                functionKeyUse(autoComplete, selections, keyCode, config);
             }
         }));
         // 输入框事件，适配IE8
@@ -49,10 +49,10 @@ var ListGroup = require('./listgroup.ui');
             }
             if (result && typeof result.then === 'function') {
                 result.then(function(list) {
-                    doUpdate(autoComplete, config, list);
+                    doUpdate(autoComplete, selections, config, list);
                 }, function() {});
             } else {
-                doUpdate(autoComplete, config, result);
+                doUpdate(autoComplete, selections, config, result);
             }
         }, config.debounceTime, true)));
         var lastMousePos = {
@@ -97,8 +97,7 @@ var ListGroup = require('./listgroup.ui');
         });
     }
     //更新autocomplete的下拉列表
-    function doUpdate(autoComplete, config, list) {
-        var selections = autoComplete.selections;
+    function doUpdate(autoComplete, selections, config, list) {
         selections = ListGroup.update(selections, list, '', config.displayKey);
         if (selections.is(':hidden')) {
             // 定位并显示
@@ -117,23 +116,22 @@ var ListGroup = require('./listgroup.ui');
         }
     }
     // 滚动到相应位置
-    function scrollHeight($outer, $input, $select, direction) {
-        var inputPosition = $input.offset().top + $input.height();
-        var selectPosition = $select.offset().top - inputPosition + $select.height();
-        var scrollTimes = Math.ceil($outer[0].scrollHeight / $outer.height());
+    function scrollHeight(autoComplete, selections, item, direction) {
+        var inputPosition = autoComplete.offset().top + autoComplete.height();
+        var selectPosition = item.offset().top - inputPosition + item.height();
+        var scrollTimes = Math.ceil(selections[0].scrollHeight / selections.height());
         if (direction === 'down') {
-            if (selectPosition > $outer.height()) {
-                $outer.scrollTop($outer[0].scrollTop + $select.height() * scrollTimes);
+            if (selectPosition > selections.height()) {
+                selections.scrollTop(selections[0].scrollTop + item.height() * scrollTimes);
             }
         } else {
-            if (selectPosition < $select.height()) { //向上不足一行高度就翻页
-                $outer.scrollTop($outer[0].scrollTop - $select.height() * scrollTimes);
+            if (selectPosition < item.height()) { //向上不足一行高度就翻页
+                selections.scrollTop(selections[0].scrollTop - item.height() * scrollTimes);
             }
         }
     }
     // 按下功能键时的处理函数
-    function functionKeyUse(autoComplete, keyCode, config) {
-        var selections = autoComplete.selections;
+    function functionKeyUse(autoComplete, selections, keyCode, config) {
         if (selections.is(':hidden')) {
             return;
         }
@@ -154,14 +152,14 @@ var ListGroup = require('./listgroup.ui');
                     if (config.autocomplete) {
                         setValue(autoComplete, $next, config);
                     }
-                    scrollHeight(selections, autoComplete, $next, 'down');
+                    scrollHeight(autoComplete, selections, $next, 'down');
                 }
                 break;
             case 38: //向上键
                 var $current = selections.children('.active');
                 var $previous;
                 if ($current.length <= 0) {
-                    //没有选中行时，选中最后一行行
+                    //没有选中行时，选中最后一行
                     $previous = selections.children('.list-group-item:last');
                     selections.scrollTop(selections[0].scrollHeight);
                 } else {
@@ -173,7 +171,7 @@ var ListGroup = require('./listgroup.ui');
                     if (config.autocomplete) {
                         setValue(autoComplete, $previous, config);
                     }
-                    scrollHeight(selections, autoComplete, $previous, 'up');
+                    scrollHeight(autoComplete, selections, $previous, 'up');
                 }
                 break;
             case 13: //回车键
@@ -244,31 +242,31 @@ var ListGroup = require('./listgroup.ui');
             };
             UI.extend(config, options);
             // 初始化整个组件
-            var autoComplete;
-            var createType;
+            var actionObj = {};
             if (this === $.fn) {
-                createType = 'new';
-                autoComplete = initInputDom(config);
+                actionObj.createType = 'new';
+                actionObj.element = initInputDom(config);
             } else {
-                createType = 'normal';
-                autoComplete = this;
+                actionObj.createType = 'normal';
+                actionObj.element = this;
             }
-            autoComplete.addClass('shark-autocomplete');
-            initSelectionsDom(autoComplete, config);
-            BaseComponent.addComponentBaseFn(autoComplete, config);
-            initEvents(autoComplete, config);
+            actionObj.element.addClass('shark-autocomplete');
+            initSelectionsDom(actionObj, config);
+            BaseComponent.addComponentBaseFn(actionObj, config);
+            initEvents(actionObj, config);
             // 销毁函数
-            autoComplete.destroy = function() {
-                UI.removeCloseListener(autoComplete.selections.attr('id'));
-                autoComplete.selections.destroy();
-                autoComplete.selections = null;
-                if (createType === 'new') {
-                    autoComplete.remove();
+            actionObj.destroy = function() {
+                UI.removeCloseListener(actionObj.selections.attr('id'));
+                actionObj.selections.destroy();
+                actionObj.selections = null;
+                if (actionObj.createType === 'new') {
+                    actionObj.element.remove();
                 } else {
-                    autoComplete.off('input.autocomplete propertychange.autocomplete keyup.autocomplete keydown.autocomplete');
+                    actionObj.element.off('input.autocomplete propertychange.autocomplete keyup.autocomplete keydown.autocomplete');
                 }
+                actionObj = null;
             };
-            return autoComplete;
+            return actionObj;
         }
     });
 })(jQuery || $);
