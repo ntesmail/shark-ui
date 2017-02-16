@@ -11,6 +11,7 @@ var config = require('./shark-deploy-conf.js');
 var clean = require('gulp-clean');
 var tmp = path.join(config.rootPath, config.tmpDir, 'step1');
 var custombuild = require('./custombuild');
+var distDir = 'build_dist';
 
 function execCmd(cmds, processOpts) {
     if (os.platform() === 'win32') {
@@ -59,13 +60,13 @@ gulp.task('webpack-server-after', function(cb) {
 });
 
 gulp.task('clean-dist', function() {
-    return gulp.src(['dist'], { read: false }).pipe(clean());
+    return gulp.src([distDir], { read: false }).pipe(clean());
 });
 
 gulp.task('copy-dist', ['copy-dist-js']);
 
 gulp.task('copy-dist-js', function() {
-    return gulp.src(path.join(tmp, config.jsPath, 'shark.ui.js')).pipe(gulp.dest('dist'));
+    return gulp.src(path.join(tmp, config.jsPath, 'shark.ui.js')).pipe(gulp.dest(distDir));
 });
 
 gulp.task('build', function(cb) {
