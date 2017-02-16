@@ -8,96 +8,8 @@ var ListGroup = require('./listgroup.ui');
 (function($) {
     //键盘上功能键键值数组
     var functionalKeyArray = [40, 38, 13, 27];
-    // 初始化输入框的dom
-    function initInputDom(config) {
-        var autoComplete = $('<input type="text" />');
-        return autoComplete;
-    }
-    // 初始化下拉列表的dom
-    function initSelectionsDom(actionObj, config) {
-        var selections = ListGroup.render();
-        selections.addClass('shark-autocomplete-list-group');
-        $(document.body).append(selections);
-        actionObj.selections = selections;
-        return actionObj;
-    }
-    // 初始化事件
-    function initEvents(actionObj, config) {
-        var autoComplete = actionObj.element;
-        var selections = actionObj.selections;
-        //防止按上下键时，输入框中的光标左右移动
-        autoComplete.on('keydown.autocomplete', autoComplete, BaseComponent.filterComponentAction(autoComplete, function(evt) {
-            if ($.inArray(evt.keyCode, functionalKeyArray) > -1) {
-                UI.preventAndStopEvent(evt);
-            }
-        }));
-        autoComplete.on('keyup.autocomplete', BaseComponent.filterComponentAction(autoComplete, function(evt) {
-            UI.preventAndStopEvent(evt);
-            var keyCode = evt.keyCode;
-            if ($.inArray(keyCode, functionalKeyArray) > -1) {
-                functionKeyUse(autoComplete, selections, keyCode, config);
-            }
-        }));
-        // 输入框事件，适配IE8
-        autoComplete.on('input.autocomplete propertychange.autocomplete', BaseComponent.filterComponentAction(autoComplete, UI.debounce(function() {
-            var value = autoComplete.val();
-            var result;
-            if (typeof config.filterData === 'function') {
-                result = config.filterData(value, config);
-            } else {
-                result = filterData(value, config);
-            }
-            if (result && typeof result.then === 'function') {
-                result.then(function(list) {
-                    doUpdate(autoComplete, selections, config, list);
-                }, function() {});
-            } else {
-                doUpdate(autoComplete, selections, config, result);
-            }
-        }, config.debounceTime, true)));
-        var lastMousePos = {
-            clientX: -1,
-            clientY: -1
-        };
-        // 鼠标事件
-        selections.on('mousemove', function(evt) {
-            var subPos = Math.sqrt(Math.pow(Math.abs(evt.clientX - lastMousePos.clientX), 2) + Math.pow(Math.abs(evt.clientY - lastMousePos.clientY), 2));
-            if (subPos >= 5) {
-                lastMousePos = {
-                    clientX: evt.clientX,
-                    clientY: evt.clientY
-                };
-                var selectionsRow = $(evt.target);
-                if (!selectionsRow.hasClass('active')) {
-                    selectionsRow.siblings().removeClass('active');
-                    selectionsRow.addClass('active');
-                    if (config.autocomplete) {
-                        setValue(autoComplete, selectionsRow, config);
-                    }
-                }
-            }
-        });
-        // 点击事件
-        selections.on('click', function(evt) {
-            if (!selections.is(':hidden')) {
-                var selectionsRow = $(evt.target);
-                selectionsRow.siblings().removeClass('active');
-                selectionsRow.addClass('active');
-                if (!config.autocomplete) {
-                    setValue(autoComplete, selectionsRow, config);
-                }
-                selections.hide();
-            }
-        });
-        // 输入框失焦点消失
-        UI.addCloseListener(selections.attr('id'), [autoComplete, selections], function() {
-            if (!selections.is(':hidden')) {
-                selections.hide();
-            }
-        });
-    }
     //更新autocomplete的下拉列表
-    function doUpdate(autoComplete, selections, config, list) {
+    function updateList(autoComplete, selections, config, list) {
         selections = ListGroup.update(selections, list, '', config.displayKey);
         if (selections.is(':hidden')) {
             // 定位并显示
@@ -106,13 +18,6 @@ var ListGroup = require('./listgroup.ui');
             var style = UI.extend({ width: inputWidth }, postion);
             selections.css(style);
             selections.show();
-        }
-    }
-    // 设置autoComplete的值
-    function setValue(autoComplete, item, config) {
-        autoComplete.val(item.data()[config.displayKey]);
-        if (typeof config.onSelected === 'function') {
-            config.onSelected.call(autoComplete, item.data());
         }
     }
     // 滚动到相应位置
@@ -188,81 +93,140 @@ var ListGroup = require('./listgroup.ui');
                 break;
         }
     }
-    // 数据联想模块
-    function filterData(keyword, config) {
-        var data = config.data;
-        var displayKey = config.displayKey;
-        var emailcomplete = config.emailcomplete;
-        var list = [];
-        if (keyword == null || keyword == "") {
-            return;
+    // 设置autoComplete的值
+    function setValue(autoComplete, item, config) {
+        autoComplete.val(item.data()[config.displayKey]);
+        autoComplete.data('value',item.data());
+        if (typeof config.onSelected === 'function') {
+            config.onSelected.call(autoComplete, item.data());
         }
-        if (data != null && $.isArray(data)) {
-            if (emailcomplete) {
-                // 补全邮箱后缀
-                if (keyword.indexOf('@') < 0) {
-                    // 未输入@时 
-                    for (var i = 0; i < data.length; i++) {
-                        var obj = {};
-                        obj[displayKey] = keyword + '@' + data[i][displayKey];
-                        list.push(obj);
-                    }
-                } else {
-                    // 输入了@以后
-                    for (var i = 0; i < data.length; i++) {
-                        if (data[i][displayKey].indexOf(keyword.split('@')[1]) > -1) {
-                            var obj = {};
-                            obj[displayKey] = keyword.split('@')[0] + '@' + data[i][displayKey];
-                            list.push(obj);
-                        }
-                    }
-                }
+    }
+    // 初始化输入框的dom
+    function initInputDom(config) {
+        var autoComplete = $('<input type="text" />');
+        return autoComplete;
+    }
+    // 初始化下拉列表的dom
+    function initSelectionsDom(actionObj, config) {
+        var selections = ListGroup.render();
+        selections.addClass('shark-autocomplete-list-group');
+        $(document.body).append(selections);
+        actionObj.selections = selections;
+        return actionObj;
+    }
+    // 初始化事件
+    function initEvents(actionObj, config) {
+        var autoComplete = actionObj.component;
+        var selections = actionObj.selections;
+        var lastMousePos = {
+            clientX: -1,
+            clientY: -1
+        };
+        //防止按上下键时，输入框中的光标左右移动
+        autoComplete.on('keydown.autocomplete', autoComplete, BaseComponent.filterComponentAction(autoComplete, function(evt) {
+            if ($.inArray(evt.keyCode, functionalKeyArray) > -1) {
+                UI.preventAndStopEvent(evt);
+            }
+        }));
+        autoComplete.on('keyup.autocomplete', BaseComponent.filterComponentAction(autoComplete, function(evt) {
+            UI.preventAndStopEvent(evt);
+            var keyCode = evt.keyCode;
+            if ($.inArray(keyCode, functionalKeyArray) > -1) {
+                functionKeyUse(autoComplete, selections, keyCode, config);
+            }
+            else if(document.documentMode === 9 && (keyCode === 8 || keyCode === 46)){
+                //IE9的一个BUG：[按键BackSpace / 按键Delete / 鼠标拖拽 / 鼠标剪切 / 鼠标删除]，不会触发propertychange和input事件
+                //这里只处理了键盘BackSpace和Delete，鼠标的坑就暂时不管了。
+                autoComplete.trigger('input');
+            }
+        }));
+        // 输入框事件，适配IE8
+        autoComplete.on('input.autocomplete propertychange.autocomplete', BaseComponent.filterComponentAction(autoComplete, UI.debounce(function() {
+            var value = autoComplete.val();
+            var result = config.filterData(value, config);
+            if (result && typeof result.then === 'function') {
+                result.then(function(list) {
+                    updateList(autoComplete, selections, config, list);
+                }, function() {});
             } else {
-                // 自动联想补全
-                for (var i = 0; i < data.length; i++) {
-                    if (data[i][displayKey].indexOf(keyword) > -1) {
-                        list.push(data[i]);
+                updateList(autoComplete, selections, config, result);
+            }
+        }, config.debounceTime, true)));
+        // 鼠标事件
+        selections.on('mousemove', function(evt) {
+            var subPos = Math.sqrt(Math.pow(Math.abs(evt.clientX - lastMousePos.clientX), 2) + Math.pow(Math.abs(evt.clientY - lastMousePos.clientY), 2));
+            if (subPos >= 5) {
+                lastMousePos = {
+                    clientX: evt.clientX,
+                    clientY: evt.clientY
+                };
+                var selectionsRow = $(evt.target);
+                if (!selectionsRow.hasClass('active')) {
+                    selectionsRow.siblings().removeClass('active');
+                    selectionsRow.addClass('active');
+                    if (config.autocomplete) {
+                        setValue(autoComplete, selectionsRow, config);
                     }
                 }
             }
-        }
-        return list;
+        });
+        // 点击事件
+        selections.on('click', function(evt) {
+            if (!selections.is(':hidden')) {
+                var selectionsRow = $(evt.target);
+                selectionsRow.siblings().removeClass('active');
+                selectionsRow.addClass('active');
+                if (!config.autocomplete) {
+                    setValue(autoComplete, selectionsRow, config);
+                }
+                selections.hide();
+            }
+        });
+        // 输入框失焦点消失
+        UI.addCloseListener(selections.attr('id'), [autoComplete, selections], function() {
+            if (!selections.is(':hidden')) {
+                selections.hide();
+            }
+        });
     }
     $.fn.extend({
         sharkAutoComplete: function(options) {
             /*********默认参数配置*************/
             var config = {
                 autocomplete: false,
-                emailcomplete: false,
-                data: null,
                 displayKey: 'name',
-                debounceTime: 300,
                 filterData: null,
+                debounceTime: 300,
                 onSelected: function() {}
             };
             UI.extend(config, options);
-            // 初始化整个组件
+            // 初始化组件
             var actionObj = {};
             if (this === $.fn) {
                 actionObj.createType = 'new';
-                actionObj.element = initInputDom(config);
+                actionObj.component = initInputDom(config);
             } else {
-                actionObj.createType = 'normal';
-                actionObj.element = this;
+                actionObj.createType = 'dom';
+                actionObj.component = this;
             }
-            actionObj.element.addClass('shark-autocomplete');
+            actionObj.component.addClass('shark-autocomplete');
             initSelectionsDom(actionObj, config);
             BaseComponent.addComponentBaseFn(actionObj, config);
             initEvents(actionObj, config);
+            // 获取当前autocomplete的值
+            actionObj.getValue = function() {
+                return actionObj.component.data('value') || null;
+            };
             // 销毁函数
             actionObj.destroy = function() {
+                // 销毁listgroup
                 UI.removeCloseListener(actionObj.selections.attr('id'));
                 actionObj.selections.destroy();
-                actionObj.selections = null;
+                // 销毁component
                 if (actionObj.createType === 'new') {
-                    actionObj.element.remove();
+                    actionObj.component.remove();
                 } else {
-                    actionObj.element.off('input.autocomplete propertychange.autocomplete keyup.autocomplete keydown.autocomplete');
+                    actionObj.component.off('input.autocomplete propertychange.autocomplete keyup.autocomplete keydown.autocomplete');
                 }
                 actionObj = null;
             };
