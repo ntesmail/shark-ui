@@ -101,11 +101,6 @@ var ListGroup = require('./listgroup.ui');
             config.onSelected.call(autoComplete, item.data());
         }
     }
-    // 初始化输入框的dom
-    function initInputDom(config) {
-        var autoComplete = $('<input type="text" />');
-        return autoComplete;
-    }
     // 初始化下拉列表的dom
     function initSelectionsDom(actionObj, config) {
         var selections = ListGroup.render();
@@ -197,14 +192,15 @@ var ListGroup = require('./listgroup.ui');
                 displayKey: 'name',
                 filterData: null,
                 debounceTime: 300,
+                dom: '<input type="text" />',
                 onSelected: function() {}
             };
             UI.extend(config, options);
-            // 初始化组件
+            /*********初始化组件*************/
             var actionObj = {};
             if (this === $.fn) {
                 actionObj.createType = 'new';
-                actionObj.component = initInputDom(config);
+                actionObj.component = $(config.dom);
             } else {
                 actionObj.createType = 'dom';
                 actionObj.component = this;
