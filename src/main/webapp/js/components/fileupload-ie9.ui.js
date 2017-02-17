@@ -33,13 +33,13 @@ function createIframe(iframeId) {
     return iframe;
 }
 
-function makeIE9Able(uploader, config) {
+function makeIE9Able(actionObj, config) {
     //初始化form和input
     var inputId = UI.createUUID();
     var formId = UI.createUUID();
     var iframeId = UI.createUUID();
     var form = createForm(formId, iframeId, config.url);
-    uploader.append(form);
+    actionObj.component.append(form);
     var input = createInput(inputId);
     form.append(input);
     //设置可选文件类型
@@ -47,8 +47,8 @@ function makeIE9Able(uploader, config) {
         input.attr('accept', config.accept);
     }
     //初始化样式
-    if (uploader.css('position') === 'static') {
-        uploader.css({
+    if (actionObj.component.css('position') === 'static') {
+        actionObj.component.css({
             position: 'relative'
         });
     }
@@ -56,8 +56,8 @@ function makeIE9Able(uploader, config) {
         position: 'absolute',
         left: 0,
         top: 0,
-        width: uploader.outerWidth(),
-        height: uploader.outerHeight(),
+        width: actionObj.component.outerWidth(),
+        height: actionObj.component.outerHeight(),
         overflow: 'hidden'
     });
     input.css({
@@ -72,27 +72,26 @@ function makeIE9Able(uploader, config) {
         height: '1000px'
     });
     //监听事件
-    input.on('change', BaseComponent.filterComponentAction(uploader, function(e) {
+    input.on('change', BaseComponent.filterComponentAction(actionObj.component, function(e) {
         //IE9及以下无法获取文件
         var v = input.val();
         if (v.length > 0) {
-            uploader.file = { name: v };
+            actionObj.file = { name: v };
             if (typeof config.onSelected === 'function') {
-                config.onSelected.call(uploader, uploader.file);
+                config.onSelected.call(actionObj.component, actionObj.file);
             }
             if (config.autoupload) {
-                uploader.upload();
+                actionObj.upload();
             }
         }
     }));
-    uploader.clear = function() {
-        uploader.file = null;
+    actionObj.clear = function() {
+        actionObj.file = null;
         form[0].reset();
-        return uploader;
     };
-    uploader.upload = function(u, p) {
-        if (uploader.file) {
-            var defer = $.Deferred();
+    actionObj.upload = function(u, p) {
+        var defer = $.Deferred();
+        if (actionObj.file) {
             var url;
             if (u && p) {
                 url = u + '?' + $.param(p);
@@ -105,7 +104,15 @@ function makeIE9Able(uploader, config) {
             var iframe = createIframe(iframeId);
             $(document.body).append(iframe);
             iframe.on('load', function(evt) {
-                // console.log('iframe load...');
+                // ie9下接收表单数据数据需要使用 text/html 格式，如：
+                // var c = `{
+                //             "code":200,
+                //             "data":{
+                //                 "url":"http://jizhang.nosdn.127.net/merrill-3.png"
+                //             }
+                //         }`;
+                // res.set('Content-Type', 'text/html').status(200).send(c);
+                // res.end();
                 var responseData;
                 try {
                     var responseHtml = this.contentWindow.document.body.innerHTML;
@@ -114,23 +121,29 @@ function makeIE9Able(uploader, config) {
                     responseData = eval('(' + $(responseHtml).html() + ')');
                 } finally {
                     if (responseData) {
-                        config.onUploaded.call(uploader, uploader.file, responseData);
+                        config.onUploaded.call(actionObj.component, actionObj.file, responseData);
                         defer.resolve(responseData);
                     } else {
-                        config.onFailed.call(uploader, evt);
+                        config.onFailed.call(actionObj.component, evt);
                         defer.reject(evt);
                     }
                 }
             });
             form[0].submit();
-            return defer.promise();
         }
+        else{
+            defer.reject({type:'noFileSelected'});
+        }
+        return defer.promise();
     };
-    uploader.destroy = function() {
+    actionObj.destroy = function() {
         input.remove();
         form.remove();
-        uploader.remove();
-        uploader = null
+        // 销毁component
+        if (actionObj.createType === 'new') {
+            actionObj.component.remove();
+        }
+        actionObj = null;
     };
 }
 module.exports = makeIE9Able;
