@@ -9,19 +9,19 @@ var UI = require('../common/core');
  * @param {object} 配置项
  */
 function addComponentBaseFn(actionObj, config) {
-    var component = actionObj.element;
+    var component = actionObj.component;
     actionObj.getConfig = function() {
         return config;
     };
     actionObj.disable = function() {
-        component.addClass('disabled').attr('disabled', true).find('input select button').attr('disabled', true);
+        component.addClass('disabled').attr('disabled', true).find('input,select,button').attr('disabled', true);
         if (typeof config.onDisable === 'function') {
             config.onDisable.call(component);
         }
         return actionObj;
     };
     actionObj.enable = function() {
-        component.removeClass('disabled').attr('disabled', false).find('input select button').attr('disabled', false);
+        component.removeClass('disabled').attr('disabled', false).find('input,select,button').attr('disabled', false);
         if (typeof config.onEnable === 'function') {
             config.onEnable.call(component);
         }
