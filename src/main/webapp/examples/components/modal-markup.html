@@ -16,15 +16,15 @@ $(function(){
     var mymodal = $.fn.sharkModal({
         animate: 'fade',
         size:'',
-        backdrop:'static',
+        // backdrop:'static',
         content: $('#modal-content').text()
     });
-    mymodal.find('.btn-success').on('click', function() {
+    mymodal.component.find('.btn-success').on('click', function() {
         console.log('todo...');
-        mymodal.hideMe();
+        mymodal.hide();
     });
     $('#modalBtn').on('click', function() {
-        mymodal.showMe();
+        mymodal.show();
     });
 });
 </script>

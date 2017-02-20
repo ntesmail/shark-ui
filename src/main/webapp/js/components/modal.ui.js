@@ -25,16 +25,17 @@ var Templates = require('../common/templates');
     }
 
     // 初始化事件
-    function initEvents(modal, config, dtd) {
+    function initEvents(actionObj, config) {
+        var modal = actionObj.component;
         modal.on('click.modal', '.js-ok,.js-cancel,.close', BaseComponent.filterComponentAction(modal, function(evt) {
             var curEle = $(this);
-            if (config.type === 'confirm' && curEle.hasClass('js-ok')) {
-                dtd.resolve();
+            if (curEle.hasClass('js-ok')) {
+                config.deffer && config.deffer.resolve();
             }
-            if (config.type === 'confirm' && curEle.hasClass('js-cancel')) {
-                dtd.reject();
+            if (curEle.hasClass('js-cancel')) {
+                config.deffer && config.deffer.reject();
             }
-            modal.hideMe();
+            actionObj.hide();
         }));
     }
 
@@ -50,21 +51,23 @@ var Templates = require('../common/templates');
                 onHide: function() {}
             };
             UI.extend(config, options);
-            config.type = 'modal';
+            /*********初始化组件*************/
             var body = $(document.body);
-            var modal = initDom(config);
+            var actionObj = {};
+            actionObj.component = initDom(config);
+            var modal = actionObj.component;
             var backdropEle;
             body.append(modal);
             BaseComponent.addComponentBaseFn(modal, config);
             if (config.backdrop !== 'static') {
                 modal.on('click', function(evt) {
                     if (evt.target === evt.currentTarget) {
-                        modal.hideMe();
+                        actionObj.hide();
                     }
                 });
             }
-            initEvents(modal, config);
-            modal.showMe = function() {
+            initEvents(actionObj, config);
+            actionObj.show = function() {
                 backdropEle = $('<div class="modal-backdrop ' + config.animate + ' in"></div>');
                 body.append(backdropEle);
                 body.addClass('modal-open');
@@ -75,7 +78,7 @@ var Templates = require('../common/templates');
                     config.onShow.call(modal);
                 }
             };
-            modal.hideMe = function() {
+            actionObj.hide = function() {
                 backdropEle.remove();
                 body.removeClass('modal-open');
                 modal.hide();
@@ -84,14 +87,14 @@ var Templates = require('../common/templates');
                     config.onHide.call(modal);
                 }
             };
-            modal.destroy = function() {
+            actionObj.destroy = function() {
                 if (backdropEle) {
                     backdropEle.remove();
                 }
                 modal.remove();
-                modal = null;
+                actionObj = null;
             };
-            return modal;
+            return actionObj;
         },
         sharkConfirm: function(options) {
             var deffer = $.Deferred();
@@ -107,8 +110,9 @@ var Templates = require('../common/templates');
                 onHide: function() {}
             };
             UI.extend(config, options);
+            /*********初始化组件*************/
             config.backdrop = 'static';
-            config.type = 'confirm';
+            config.deffer = deffer;
             var templateData = {
                 title: config.title,
                 content: config.content,
@@ -116,13 +120,12 @@ var Templates = require('../common/templates');
                 cancelText: config.cancelText
             };
             config.content = templateConfirmFun.apply(templateData);
-            var confirm = $.fn.sharkModal(config);
-            confirm.addClass('shark-confirm');
-            confirm.showMe();
-            initEvents(confirm, config, deffer);
+            var actionObj = $.fn.sharkModal(config);
+            actionObj.show();
             return deffer.promise();
         },
         sharkAlert: function(options) {
+            var deffer = $.Deferred();
             /*********默认参数配置*************/
             var config = {
                 animate: 'fade',
@@ -134,18 +137,18 @@ var Templates = require('../common/templates');
                 onHide: function() {}
             };
             UI.extend(config, options);
+            /*********初始化组件*************/
             config.backdrop = 'static';
-            config.type = 'alert';
+            config.deffer = deffer;
             var templateData = {
                 title: config.title,
                 content: config.content,
                 okText: config.okText
             };
             config.content = templateConfirmFun.apply(templateData);
-            var alert = $.fn.sharkModal(config);
-            alert.addClass('shark-alert');
-            initEvents(alert, config);
-            alert.showMe();
+            var actionObj = $.fn.sharkModal(config);
+            actionObj.show();
+            return deffer.promise();
         }
     });
 })(jQuery || $);
