@@ -15,7 +15,7 @@ function render(id) {
     };
     return ul;
 }
-
+//更新列表组
 function update(ul, data, actualKey, displayKey) {
     ul.empty();
     $.each(data, function(i, item) {

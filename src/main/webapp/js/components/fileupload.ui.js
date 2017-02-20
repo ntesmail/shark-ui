@@ -3,6 +3,7 @@
  * @description 文件上传插件
  */
 var UI = require('../common/core');
+var Templates = require('../common/templates');
 var BaseComponent = require('../common/base');
 var makeIE9Able = require('./fileupload-ie9.ui');
 (function($) {
@@ -42,9 +43,8 @@ var makeIE9Able = require('./fileupload-ie9.ui');
     }
     //绑定事件
     function initEvents(actionObj, config) {
-        var uploader = actionObj.component;
         var inputId = UI.createUUID();
-        uploader.on('click.fileupload', BaseComponent.filterComponentAction(uploader, function() {
+        actionObj.component.on('click.fileupload', BaseComponent.filterComponentAction(actionObj.component, function() {
             //每次都创建一个input是为了解决ie和chrome下input选择文件之后行为不一致的问题
             //chrome的input选择文件之后，如果再次选择文件的过程中取消选择文件，那么下次选择【同一个文件】的时候就会重新触发input的change事件
             //ie的input选择文件之后，无论过程如何操作，下次选择【同一个文件】的时候都不会重新触发input的change事件
@@ -60,7 +60,7 @@ var makeIE9Able = require('./fileupload-ie9.ui');
                 if (files && files.length > 0) {
                     actionObj.file = files[0];
                     if (typeof config.onSelected === 'function') {
-                        config.onSelected.call(uploader, actionObj.file);
+                        config.onSelected.call(actionObj.component, actionObj.file);
                     }
                     if (config.autoupload) {
                         actionObj.upload();
@@ -70,17 +70,17 @@ var makeIE9Able = require('./fileupload-ie9.ui');
             input.trigger('click');
         }));
         if (config.dragable) {
-            uploader.on('dragover.fileupload', function(e) {
+            actionObj.component.on('dragover.fileupload', function(e) {
                 UI.preventAndStopEvent(e); //一定要将dragover的默认事件取消掉，不然无法触发drop事件。如需拖拽页面里的元素，需要给其添加属性draggable="true"
             });
-            uploader.on('drop.fileupload', BaseComponent.filterComponentAction(uploader, function(e) {
+            actionObj.component.on('drop.fileupload', BaseComponent.filterComponentAction(actionObj.component, function(e) {
                 UI.preventAndStopEvent(e);
                 e = e.originalEvent; //低版本jquery的事件没有dataTransfer属性，取浏览器原生事件originalEvent
                 var files = e.dataTransfer && e.dataTransfer.files ? e.dataTransfer.files : null;
                 if (files && files.length > 0) {
                     actionObj.file = files[0];
                     if (typeof config.onSelected === 'function') {
-                        config.onSelected.call(uploader, actionObj.file);
+                        config.onSelected.call(actionObj.component, actionObj.file);
                     }
                     if (config.autoupload) {
                         actionObj.upload();
@@ -104,7 +104,7 @@ var makeIE9Able = require('./fileupload-ie9.ui');
                 autoupload: false,
                 accept: '',
                 dragable: false,
-                dom: '<button>上传文件</button>',
+                dom: '',
                 onSelected: function(file) {},
                 onUploading: function(file, percent) {},
                 onUploaded: function(file, res) {},
@@ -114,10 +114,10 @@ var makeIE9Able = require('./fileupload-ie9.ui');
             /*********初始化组件*************/
             var actionObj = {};
             if (this === $.fn) {
-                actionObj.createType = 'new';
-                actionObj.component = $(config.dom);
+                actionObj.createType = 'construct';
+                actionObj.component = $(config.dom || Templates.fileupload);
             } else {
-                actionObj.createType = 'dom';
+                actionObj.createType = 'normal';
                 actionObj.component = this;
             }
             actionObj.component.addClass('shark-fileupload');
@@ -156,7 +156,7 @@ var makeIE9Able = require('./fileupload-ie9.ui');
                 };
                 actionObj.destroy = function() {
                     // 销毁component
-                    if (actionObj.createType === 'new') {
+                    if (actionObj.createType === 'construct') {
                         actionObj.component.remove();
                     } else {
                         actionObj.component.off('click.fileupload dragover.fileupload drop.fileupload');

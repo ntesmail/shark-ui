@@ -39,7 +39,25 @@ $(function() {
             console.log('上传失败');
         }
     });
-    window.mf = myfileupload;
+    // var myfileupload = $.fn.sharkFileupload({
+    //     autoupload: false,
+    //     url: '',
+    //     accept: '',
+    //     dragable: true,
+    //     onSelected: function(file) {
+    //         filename.text(file.name);
+    //     },
+    //     onUploading: function(file, percent) {
+    //         myprogress.text(percent);
+    //     },
+    //     onUploaded: function(file, res) {
+    //         console.log('上传成功');
+    //     },
+    //     onFailed: function(file, error) {
+    //         console.log('上传失败');
+    //     }
+    // });
+    // $('#myfileupload').append(myfileupload.component);
     $('#uploadBtn').on('click', function() {
         myfileupload.upload('/shark-ui/xhr/file/upload.do', {
             id: 12345

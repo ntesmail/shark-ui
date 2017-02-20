@@ -3,6 +3,7 @@
  * @description 自动补全插件
  */
 var UI = require('../common/core');
+var Templates = require('../common/templates');
 var BaseComponent = require('../common/base');
 var ListGroup = require('./listgroup.ui');
 (function($) {
@@ -192,17 +193,17 @@ var ListGroup = require('./listgroup.ui');
                 displayKey: 'name',
                 filterData: null,
                 debounceTime: 300,
-                dom: '<input type="text" />',
+                dom: '',
                 onSelected: function() {}
             };
             UI.extend(config, options);
             /*********初始化组件*************/
             var actionObj = {};
             if (this === $.fn) {
-                actionObj.createType = 'new';
-                actionObj.component = $(config.dom);
+                actionObj.createType = 'construct';
+                actionObj.component = $(config.dom || Templates.autocomplete);
             } else {
-                actionObj.createType = 'dom';
+                actionObj.createType = 'normal';
                 actionObj.component = this;
             }
             actionObj.component.addClass('shark-autocomplete');
@@ -219,7 +220,7 @@ var ListGroup = require('./listgroup.ui');
                 UI.removeCloseListener(actionObj.selections.attr('id'));
                 actionObj.selections.destroy();
                 // 销毁component
-                if (actionObj.createType === 'new') {
+                if (actionObj.createType === 'construct') {
                     actionObj.component.remove();
                 } else {
                     actionObj.component.off('input.autocomplete propertychange.autocomplete keyup.autocomplete keydown.autocomplete');

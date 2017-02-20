@@ -140,7 +140,7 @@ function makeIE9Able(actionObj, config) {
         input.remove();
         form.remove();
         // 销毁component
-        if (actionObj.createType === 'new') {
+        if (actionObj.createType === 'construct') {
             actionObj.component.remove();
         }
         actionObj = null;

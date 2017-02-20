@@ -2,6 +2,12 @@
  * @author sweetyx
  * 组件基础模板
  */
+var autocomplete = '\
+    <input type="text" />\
+';
+var fileupload = '\
+    <button>上传文件</button>\
+';
 var listgroup = '\
     <ul class="shark-list-group list-group position-absolute" style="display: none;"></ul>\
 ';
@@ -159,6 +165,8 @@ function template2html(template, data) {
 }
 
 var Templates = {
+    autocomplete: autocomplete,
+    fileupload: fileupload,
     listgroup: listgroup,
     modal: modal,
     confirm: confirm,
