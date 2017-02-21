@@ -13,21 +13,19 @@ var Templates = require('../common/templates');
     var templateConfirmFun = Templates.templateAoT(templateConfirm);
 
     //初始化modal的dom
-    function initDom(config) {
+    function initDom(actionObj, config) {
         var templateData = {
             animate: config.animate,
             size: config.size,
             content: config.content
         };
-        var modal = $(templateFun.apply(templateData));
-        modal.attr('id', UI.createUUID());
-        return modal;
+        actionObj.component = $(templateFun.apply(templateData));
+        return actionObj;
     }
 
     // 初始化事件
     function initEvents(actionObj, config) {
-        var modal = actionObj.component;
-        modal.on('click.modal', '.js-ok,.js-cancel,.close', BaseComponent.filterComponentAction(modal, function(evt) {
+        actionObj.component.on('click.modal', '.js-ok,.js-cancel,.close', BaseComponent.filterComponentAction(actionObj, function(evt) {
             var curEle = $(this);
             if (curEle.hasClass('js-ok')) {
                 config.deffer && config.deffer.resolve();
@@ -54,13 +52,12 @@ var Templates = require('../common/templates');
             /*********初始化组件*************/
             var body = $(document.body);
             var actionObj = {};
-            actionObj.component = initDom(config);
-            var modal = actionObj.component;
+            initDom.call(this, actionObj, config);
             var backdropEle;
-            body.append(modal);
-            BaseComponent.addComponentBaseFn(modal, config);
+            body.append(actionObj.component);
+            BaseComponent.addComponentBaseFn(actionObj, config);
             if (config.backdrop !== 'static') {
-                modal.on('click', function(evt) {
+                actionObj.component.on('click', function(evt) {
                     if (evt.target === evt.currentTarget) {
                         actionObj.hide();
                     }
@@ -71,27 +68,27 @@ var Templates = require('../common/templates');
                 backdropEle = $('<div class="modal-backdrop ' + config.animate + ' in"></div>');
                 body.append(backdropEle);
                 body.addClass('modal-open');
-                modal.show();
-                modal.scrollTop(0); //触发重绘
-                modal.addClass('in');
+                actionObj.component.show();
+                actionObj.component.scrollTop(0); //触发重绘
+                actionObj.component.addClass('in');
                 if (typeof config.onShow === 'function') {
-                    config.onShow.call(modal);
+                    config.onShow.call(actionObj);
                 }
             };
             actionObj.hide = function() {
                 backdropEle.remove();
                 body.removeClass('modal-open');
-                modal.hide();
-                modal.removeClass('in');
+                actionObj.component.hide();
+                actionObj.component.removeClass('in');
                 if (typeof config.onHide === 'function') {
-                    config.onHide.call(modal);
+                    config.onHide.call(actionObj);
                 }
             };
             actionObj.destroy = function() {
                 if (backdropEle) {
                     backdropEle.remove();
                 }
-                modal.remove();
+                actionObj.component.remove();
                 actionObj = null;
             };
             return actionObj;

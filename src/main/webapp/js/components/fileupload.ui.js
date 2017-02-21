@@ -41,10 +41,22 @@ var makeIE9Able = require('./fileupload-ie9.ui');
         xhr.send(data);
         return defer;
     }
+    //初始化文件上传的dom
+    function initDom(actionObj, config) {
+        if (this === $.fn) {
+            actionObj.createType = 'construct';
+            actionObj.component = $(config.dom || Templates.fileupload);
+        } else {
+            actionObj.createType = 'normal';
+            actionObj.component = this;
+        }
+        actionObj.component.addClass('shark-fileupload');
+        return actionObj;
+    }
     //绑定事件
     function initEvents(actionObj, config) {
         var inputId = UI.createUUID();
-        actionObj.component.on('click.fileupload', BaseComponent.filterComponentAction(actionObj.component, function() {
+        actionObj.component.on('click.fileupload', BaseComponent.filterComponentAction(actionObj, function() {
             //每次都创建一个input是为了解决ie和chrome下input选择文件之后行为不一致的问题
             //chrome的input选择文件之后，如果再次选择文件的过程中取消选择文件，那么下次选择【同一个文件】的时候就会重新触发input的change事件
             //ie的input选择文件之后，无论过程如何操作，下次选择【同一个文件】的时候都不会重新触发input的change事件
@@ -60,7 +72,7 @@ var makeIE9Able = require('./fileupload-ie9.ui');
                 if (files && files.length > 0) {
                     actionObj.file = files[0];
                     if (typeof config.onSelected === 'function') {
-                        config.onSelected.call(actionObj.component, actionObj.file);
+                        config.onSelected.call(actionObj, actionObj.file);
                     }
                     if (config.autoupload) {
                         actionObj.upload();
@@ -73,14 +85,14 @@ var makeIE9Able = require('./fileupload-ie9.ui');
             actionObj.component.on('dragover.fileupload', function(e) {
                 UI.preventAndStopEvent(e); //一定要将dragover的默认事件取消掉，不然无法触发drop事件。如需拖拽页面里的元素，需要给其添加属性draggable="true"
             });
-            actionObj.component.on('drop.fileupload', BaseComponent.filterComponentAction(actionObj.component, function(e) {
+            actionObj.component.on('drop.fileupload', BaseComponent.filterComponentAction(actionObj, function(e) {
                 UI.preventAndStopEvent(e);
                 e = e.originalEvent; //低版本jquery的事件没有dataTransfer属性，取浏览器原生事件originalEvent
                 var files = e.dataTransfer && e.dataTransfer.files ? e.dataTransfer.files : null;
                 if (files && files.length > 0) {
                     actionObj.file = files[0];
                     if (typeof config.onSelected === 'function') {
-                        config.onSelected.call(actionObj.component, actionObj.file);
+                        config.onSelected.call(actionObj, actionObj.file);
                     }
                     if (config.autoupload) {
                         actionObj.upload();
@@ -113,14 +125,7 @@ var makeIE9Able = require('./fileupload-ie9.ui');
             UI.extend(config, options);
             /*********初始化组件*************/
             var actionObj = {};
-            if (this === $.fn) {
-                actionObj.createType = 'construct';
-                actionObj.component = $(config.dom || Templates.fileupload);
-            } else {
-                actionObj.createType = 'normal';
-                actionObj.component = this;
-            }
-            actionObj.component.addClass('shark-fileupload');
+            initDom.call(this, actionObj, config);
             actionObj.file = null; //当前选中的文件
             BaseComponent.addComponentBaseFn(actionObj, config);
             if (isNative()) {
@@ -134,18 +139,18 @@ var makeIE9Able = require('./fileupload-ie9.ui');
                         uploadByNative(actionObj.file, u ? u : config.url, p)
                             .progress(function(percent) {
                                 if (typeof config.onUploading === 'function') {
-                                    config.onUploading.call(actionObj.component, actionObj.file, percent);
+                                    config.onUploading.call(actionObj, actionObj.file, percent);
                                 }
                             })
                             .done(function(res) {
                                 if (typeof config.onUploaded === 'function') {
-                                    config.onUploaded.call(actionObj.component, actionObj.file, res);
+                                    config.onUploaded.call(actionObj, actionObj.file, res);
                                 }
                                 defer.resolve(res);
                             })
                             .fail(function(evt) {
                                 if (typeof config.onFailed === 'function') {
-                                    config.onFailed.call(actionObj.component, evt);
+                                    config.onFailed.call(actionObj, evt);
                                 }
                                 defer.reject(evt);
                             });

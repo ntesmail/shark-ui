@@ -35,7 +35,8 @@ function addComponentBaseFn(actionObj, config) {
  * @param  {Function} 实际绑定事件的函数
  * @return {Function}
  */
-function filterComponentAction(component, fn) {
+function filterComponentAction(actionObj, fn) {
+    var component = actionObj.component;
     return function(evt) {
         if (component.hasClass('disabled')) {
             return;

@@ -5,19 +5,24 @@
 var UI = require('../common/core');
 var BaseComponent = require('../common/base');
 var Templates = require('../common/templates');
-(function ($) {
-    var template = Templates.pager;
-    var templateFun = Templates.templateAoT(template);
+(function($) {
     //初始化分页器外层ul的dom，内层的li不用模板生成（因为重新渲染分页器时，仍然需要提供renderPages方法重置分页）
-    function initDom(config) {
-        var pager = $(templateFun.apply());
-        pager.attr('id', UI.createUUID());
-        return pager;
+    function initDom(actionObj, config) {
+        if (this === $.fn) {
+            actionObj.createType = 'construct';
+            actionObj.component = $(config.dom || Templates.pager);
+        } else {
+            actionObj.createType = 'normal';
+            actionObj.component = this;
+        }
+        actionObj.component.addClass('shark-pager pagination');
+        return actionObj;
     }
     //初始化事件
-    function initEvents(pager, config) {
+    function initEvents(actionObj, config) {
+        var pager = actionObj.component;
         var lastvalue = '';
-        pager.on('input propertychange', '.form-control', function (evt) {
+        pager.on('input.pager propertychange.pager', '.form-control', function(evt) {
             var pageinput = $(this);
             var v = pageinput.val();
             if (UI.testNum(v)) {
@@ -26,12 +31,12 @@ var Templates = require('../common/templates');
                 pageinput.val(lastvalue);
             }
         });
-        pager.on('keydown', '.form-control', function (evt) {
+        pager.on('keydown.pager', '.form-control', function(evt) {
             if (evt.keyCode == 13) {
                 pager.find('.btn').trigger('click');
             }
         });
-        pager.on('click', '.page,.presegment,.nextsegment,.firstpage,.prevpage,.nextpage,.lastpage,.btn', BaseComponent.filterComponentAction(pager, function (evt) {
+        pager.on('click.pager', '.page,.presegment,.nextsegment,.firstpage,.prevpage,.nextpage,.lastpage,.btn', BaseComponent.filterComponentAction(actionObj, function(evt) {
             var curEle = $(this);
             var newPage;
             if (curEle.hasClass('page')) {
@@ -70,11 +75,12 @@ var Templates = require('../common/templates');
                 curEle.prev().val('');
                 lastvalue = '';
             }
-            willPageChange(pager, parseInt(newPage), config);
+            willPageChange(actionObj, parseInt(newPage), config);
         }));
     }
     //生成页码
-    function renderPages(pager, config) {
+    function renderPages(actionObj, config) {
+        var pager = actionObj.component;
         var page = config.page;
         var totalPages = config.totalPages;
         var startFrom = config.startFrom;
@@ -154,15 +160,15 @@ var Templates = require('../common/templates');
         }
     };
     //将要改变页码时调用的函数
-    function willPageChange(pager, newPage, config) {
+    function willPageChange(actionObj, newPage, config) {
         var startFrom = config.startFrom;
         newPage = newPage - (1 - startFrom);
         if (typeof config.onWillChange === 'function') {
-            config.onWillChange.call(pager, newPage);
+            config.onWillChange.call(actionObj, newPage);
         }
     };
     $.fn.extend({
-        sharkPager: function (options) {
+        sharkPager: function(options) {
             /*********默认参数配置*************/
             var config = {
                 totalPages: 1,
@@ -177,34 +183,34 @@ var Templates = require('../common/templates');
                 segmentSize: 5,
                 startFrom: 1,
                 gopage: false,
-                onWillChange: function () { }
+                dom: '',
+                onWillChange: function() {}
             };
             UI.extend(config, options);
-            var pager;
-            if(this === $.fn){
-                pager = initDom(config);
-            }
-            else{
-                pager = this;
-                pager.addClass('shark-pager pagination');
-            }
-            BaseComponent.addComponentBaseFn(pager, config);
-            initEvents(pager, config);
-            renderPages(pager, config);
+            /*********初始化组件*************/
+            var actionObj = {};
+            initDom.call(this, actionObj, config);
+            BaseComponent.addComponentBaseFn(actionObj, config);
+            initEvents(actionObj, config);
+            renderPages(actionObj, config);
             /**********初始化***********************/
-            pager.setPage = function (page, totalPages) {
+            actionObj.setPage = function(page, totalPages) {
                 config.page = page;
                 if (!UI.isEmpty(totalPages)) {
                     config.totalPages = totalPages;
                 }
-                renderPages(pager, config);
-                return pager;
+                renderPages(actionObj, config);
             };
-            pager.destroy = function () {
-                pager.remove();
-                pager = null;
+            actionObj.destroy = function() {
+                // 销毁component
+                if (actionObj.createType === 'construct') {
+                    actionObj.component.remove();
+                } else {
+                    actionObj.component.off('input.pager propertychange.pager keydown.pager click.pager');
+                }
+                actionObj = null;
             };
-            return pager;
+            return actionObj;
         }
     });
 })(jQuery || $);

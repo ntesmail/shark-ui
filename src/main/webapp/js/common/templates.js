@@ -3,10 +3,10 @@
  * 组件基础模板
  */
 var autocomplete = '\
-    <input type="text" />\
+    <input class="shark-autocomplete" type="text" />\
 ';
 var fileupload = '\
-    <button>上传文件</button>\
+    <button class="shark-fileupload">上传文件</button>\
 ';
 var listgroup = '\
     <ul class="shark-list-group list-group position-absolute" style="display: none;"></ul>\
