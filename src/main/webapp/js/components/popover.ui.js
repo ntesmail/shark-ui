@@ -5,50 +5,54 @@
 var UI = require('../common/core');
 var BaseComponent = require('../common/base');
 var Templates = require('../common/templates');
-(function ($) {
+(function($) {
     var template = Templates.popover;
     var templateFun = Templates.templateAoT(template);
     //初始化popover的dom
-    function initDom(config) {
+    function initDom(actionObj, config) {
         var templateData = {
             title: config.title,
             content: config.content
         };
-        var popover = $(templateFun.apply(templateData));
-        popover.attr('id', UI.createUUID());
-        return popover;
+        actionObj.component = $(templateFun.apply(templateData));
+        actionObj.component.attr('id', UI.createUUID());
+        return actionObj;
     }
     //初始化事件
-    function initEvents(origin, popover, config) {
+    function initEvents(actionObj, config) {
+        var origin = actionObj.origin;
+        var popover = actionObj.component;
         if (origin.length == 0) {
             return;
         }
         if (config.event === 'click') {
-            origin.on('click.popover', BaseComponent.filterComponentAction(popover, function (evt) {
+            origin.on('click.popover', BaseComponent.filterComponentAction(actionObj, function(evt) {
                 if (popover.is(':hidden')) {
-                    popover.showMe();
+                    actionObj.show();
                 } else {
-                    popover.hideMe();
+                    actionObj.hide();
                 }
             }));
             if (config.close === 'bodyclick') {
-                UI.addCloseListener(popover.attr('id'), [origin, popover], function () {
+                UI.addCloseListener(popover.attr('id'), [origin, popover], function() {
                     if (popover.is(':visible')) {
-                        popover.hideMe();
+                        actionObj.hide();
                     }
                 });
             }
         } else if (config.event === 'mouseover') {
-            origin.on('mouseover.popover', BaseComponent.filterComponentAction(popover, function (evt) {
-                popover.showMe();
+            origin.on('mouseover.popover', BaseComponent.filterComponentAction(actionObj, function(evt) {
+                actionObj.show();
             }));
-            origin.on('mouseout.popover', BaseComponent.filterComponentAction(popover, function (evt) {
-                popover.hideMe();
+            origin.on('mouseout.popover', BaseComponent.filterComponentAction(actionObj, function(evt) {
+                actionObj.hide();
             }));
         }
     }
     //通用方法popover应展示的位置
-    var getPopoverPos = function (origin, popover, direction) {
+    var getPopoverPos = function(actionObj, direction) {
+        var origin = actionObj.origin;
+        var popover = actionObj.component;
         var postion;
         popover.removeClass('top right bottom left');
         popover.addClass(direction);
@@ -59,12 +63,14 @@ var Templates = require('../common/templates');
         }
         postion = UI.calcOffset(origin, popover, direction, fix);
         if (direction !== postion.actualDirection) {
-            return getPopoverPos(origin, popover, postion.actualDirection);
+            return getPopoverPos(actionObj, postion.actualDirection);
         }
         return postion;
     };
     //利用通用方法取到的结果postion，修正popover的位置
-    var fixPopover = function (origin, popover, postion) {
+    var fixPopover = function(actionObj, postion) {
+        var origin = actionObj.origin;
+        var popover = actionObj.component;
         var arrow = popover.find('.arrow');
         var direction = postion.actualDirection;
         var popoverWidth = popover.outerWidth();
@@ -101,7 +107,7 @@ var Templates = require('../common/templates');
         popover.css(postion);
     };
     $.fn.extend({
-        sharkPopover: function (options) {
+        sharkPopover: function(options) {
             /*********默认参数配置*************/
             var config = {
                 event: 'click',
@@ -110,62 +116,60 @@ var Templates = require('../common/templates');
                 title: '',
                 content: '',
                 reRenderOnShow: false,
-                onShow: function () { },
-                onHide: function () { }
+                onShow: function() {},
+                onHide: function() {}
             };
             UI.extend(config, options);
-            var origin;
-            var popover = initDom(config);
-            BaseComponent.addComponentBaseFn(popover, config);
-            $(document.body).append(popover);
-            if(this === $.fn){
-                popover.linkTo = function (target) {
-                    origin = target;
-                    initEvents(origin, popover, config);
+            /*********初始化组件*************/
+            var actionObj = {};
+            initDom.call(this, actionObj, config);
+            BaseComponent.addComponentBaseFn(actionObj, config);
+            $(document.body).append(actionObj.component);
+            if (this === $.fn) {
+                actionObj.linkTo = function(target) {
+                    actionObj.origin = target;
+                    initEvents(actionObj, config);
                 };
+            } else {
+                actionObj.origin = this;
+                initEvents(actionObj, config);
             }
-            else{
-                origin = this;
-                initEvents(origin, popover, config);
-            }
-            popover.adjustPostion = function () {
-                var postion = getPopoverPos(origin, popover, config.direction);
-                fixPopover(origin, popover, postion);
-                return popover;
+            actionObj.adjustPostion = function() {
+                var postion = getPopoverPos(actionObj, config.direction);
+                fixPopover(actionObj, postion);
             };
-            popover.showMe = function () {
+            actionObj.show = function() {
                 if (config.reRenderOnShow) {
-                    popover.find('.popover-title').html(config.title);
-                    popover.find('.popover-content').html(config.content);
+                    actionObj.component.find('.popover-title').html(config.title);
+                    actionObj.component.find('.popover-content').html(config.content);
                 }
-                popover.show();
-                popover.adjustPostion();
+                actionObj.component.show();
+                actionObj.adjustPostion();
                 if (typeof config.onShow === 'function') {
-                    config.onShow.call(popover);
+                    config.onShow.call(actionObj);
                 }
             };
-            popover.hideMe = function () {
-                popover.hide();
+            actionObj.hide = function() {
+                actionObj.component.hide();
                 if (typeof config.onHide === 'function') {
-                    config.onHide.call(popover);
+                    config.onHide.call(actionObj);
                 }
             };
-            popover.destroy = function () {
-                UI.removeCloseListener(popover.attr('id'));
-                if(origin){
-                    origin.off('click.popover mouseover.popover mouseout.popover');
-                    origin = null;
+            actionObj.destroy = function() {
+                UI.removeCloseListener(actionObj.component.attr('id'));
+                actionObj.component.remove();
+                if (actionObj.origin) {
+                    actionObj.origin.off('click.popover mouseover.popover mouseout.popover');
                 }
-                popover.remove();
-                popover = null;
+                actionObj = null;
             };
-            return popover;
+            return actionObj;
         },
-        sharkTooltip: function (options) {
+        sharkTooltip: function(options) {
             options.event = 'mouseover';
-            var tooltip = this.sharkPopover(options);
-            tooltip.addClass('shark-tooltip');
-            return tooltip;
+            var actionObj = this.sharkPopover(options);
+            actionObj.component.addClass('shark-tooltip');
+            return actionObj;
         }
     });
 })(jQuery || $);
