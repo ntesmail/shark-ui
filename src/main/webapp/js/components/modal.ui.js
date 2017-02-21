@@ -25,7 +25,8 @@ var Templates = require('../common/templates');
 
     // 初始化事件
     function initEvents(actionObj, config) {
-        actionObj.component.on('click.modal', '.js-ok,.js-cancel,.close', BaseComponent.filterComponentAction(actionObj, function(evt) {
+        var modal = actionObj.component;
+        modal.on('click.modal', '.js-ok,.js-cancel,.close', BaseComponent.filterComponentAction(actionObj, function(evt) {
             var curEle = $(this);
             if (curEle.hasClass('js-ok')) {
                 config.deffer && config.deffer.resolve();

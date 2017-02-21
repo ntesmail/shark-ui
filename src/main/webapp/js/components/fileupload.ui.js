@@ -55,8 +55,9 @@ var makeIE9Able = require('./fileupload-ie9.ui');
     }
     //绑定事件
     function initEvents(actionObj, config) {
+        var uploader = actionObj.component;
         var inputId = UI.createUUID();
-        actionObj.component.on('click.fileupload', BaseComponent.filterComponentAction(actionObj, function() {
+        uploader.on('click.fileupload', BaseComponent.filterComponentAction(actionObj, function() {
             //每次都创建一个input是为了解决ie和chrome下input选择文件之后行为不一致的问题
             //chrome的input选择文件之后，如果再次选择文件的过程中取消选择文件，那么下次选择【同一个文件】的时候就会重新触发input的change事件
             //ie的input选择文件之后，无论过程如何操作，下次选择【同一个文件】的时候都不会重新触发input的change事件
@@ -82,10 +83,10 @@ var makeIE9Able = require('./fileupload-ie9.ui');
             input.trigger('click');
         }));
         if (config.dragable) {
-            actionObj.component.on('dragover.fileupload', function(e) {
+            uploader.on('dragover.fileupload', function(e) {
                 UI.preventAndStopEvent(e); //一定要将dragover的默认事件取消掉，不然无法触发drop事件。如需拖拽页面里的元素，需要给其添加属性draggable="true"
             });
-            actionObj.component.on('drop.fileupload', BaseComponent.filterComponentAction(actionObj, function(e) {
+            uploader.on('drop.fileupload', BaseComponent.filterComponentAction(actionObj, function(e) {
                 UI.preventAndStopEvent(e);
                 e = e.originalEvent; //低版本jquery的事件没有dataTransfer属性，取浏览器原生事件originalEvent
                 var files = e.dataTransfer && e.dataTransfer.files ? e.dataTransfer.files : null;
