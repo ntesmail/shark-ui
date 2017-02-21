@@ -7,20 +7,20 @@ var BaseComponent = require('../common/base');
 var Templates = require('../common/templates');
 (function($) {
     //初始化分页器外层ul的dom，内层的li不用模板生成（因为重新渲染分页器时，仍然需要提供renderPages方法重置分页）
-    function initDom(actionObj, config) {
+    function initDom(sharkComponent, config) {
         if (this === $.fn) {
-            actionObj.createType = 'construct';
-            actionObj.component = $(config.dom || Templates.pager);
+            sharkComponent.createType = 'construct';
+            sharkComponent.component = $(config.dom || Templates.pager);
         } else {
-            actionObj.createType = 'normal';
-            actionObj.component = this;
+            sharkComponent.createType = 'normal';
+            sharkComponent.component = this;
         }
-        actionObj.component.addClass('shark-pager pagination');
-        return actionObj;
+        sharkComponent.component.addClass('shark-pager pagination');
+        return sharkComponent;
     }
     //初始化事件
-    function initEvents(actionObj, config) {
-        var pager = actionObj.component;
+    function initEvents(sharkComponent, config) {
+        var pager = sharkComponent.component;
         var lastvalue = '';
         pager.on('input.pager propertychange.pager', '.form-control', function(evt) {
             var pageinput = $(this);
@@ -36,7 +36,7 @@ var Templates = require('../common/templates');
                 pager.find('.btn').trigger('click');
             }
         });
-        pager.on('click.pager', '.page,.presegment,.nextsegment,.firstpage,.prevpage,.nextpage,.lastpage,.btn', BaseComponent.filterComponentAction(actionObj, function(evt) {
+        pager.on('click.pager', '.page,.presegment,.nextsegment,.firstpage,.prevpage,.nextpage,.lastpage,.btn', BaseComponent.filterComponentAction(sharkComponent, function(evt) {
             var curEle = $(this);
             var newPage;
             if (curEle.hasClass('page')) {
@@ -75,12 +75,12 @@ var Templates = require('../common/templates');
                 curEle.prev().val('');
                 lastvalue = '';
             }
-            willPageChange(actionObj, parseInt(newPage), config);
+            willPageChange(sharkComponent, parseInt(newPage), config);
         }));
     }
     //生成页码
-    function renderPages(actionObj, config) {
-        var pager = actionObj.component;
+    function renderPages(sharkComponent, config) {
+        var pager = sharkComponent.component;
         var page = config.page;
         var totalPages = config.totalPages;
         var startFrom = config.startFrom;
@@ -160,11 +160,11 @@ var Templates = require('../common/templates');
         }
     };
     //将要改变页码时调用的函数
-    function willPageChange(actionObj, newPage, config) {
+    function willPageChange(sharkComponent, newPage, config) {
         var startFrom = config.startFrom;
         newPage = newPage - (1 - startFrom);
         if (typeof config.onWillChange === 'function') {
-            config.onWillChange.call(actionObj, newPage);
+            config.onWillChange.call(sharkComponent, newPage);
         }
     };
     $.fn.extend({
@@ -188,29 +188,29 @@ var Templates = require('../common/templates');
             };
             UI.extend(config, options);
             /*********初始化组件*************/
-            var actionObj = {};
-            initDom.call(this, actionObj, config);
-            BaseComponent.addComponentBaseFn(actionObj, config);
-            initEvents(actionObj, config);
-            renderPages(actionObj, config);
+            var sharkComponent = {};
+            initDom.call(this, sharkComponent, config);
+            BaseComponent.addComponentBaseFn(sharkComponent, config);
+            initEvents(sharkComponent, config);
+            renderPages(sharkComponent, config);
             /**********初始化***********************/
-            actionObj.setPage = function(page, totalPages) {
+            sharkComponent.setPage = function(page, totalPages) {
                 config.page = page;
                 if (!UI.isEmpty(totalPages)) {
                     config.totalPages = totalPages;
                 }
-                renderPages(actionObj, config);
+                renderPages(sharkComponent, config);
             };
-            actionObj.destroy = function() {
+            sharkComponent.destroy = function() {
                 // 销毁component
-                if (actionObj.createType === 'construct') {
-                    actionObj.component.remove();
+                if (sharkComponent.createType === 'construct') {
+                    sharkComponent.component.remove();
                 } else {
-                    actionObj.component.off('input.pager propertychange.pager keydown.pager click.pager');
+                    sharkComponent.component.off('input.pager propertychange.pager keydown.pager click.pager');
                 }
-                actionObj = null;
+                sharkComponent = null;
             };
-            return actionObj;
+            return sharkComponent;
         }
     });
 })(jQuery || $);

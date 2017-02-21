@@ -9,50 +9,50 @@ var Templates = require('../common/templates');
     var template = Templates.popover;
     var templateFun = Templates.templateAoT(template);
     //初始化popover的dom
-    function initDom(actionObj, config) {
+    function initDom(sharkComponent, config) {
         var templateData = {
             title: config.title,
             content: config.content
         };
-        actionObj.component = $(templateFun.apply(templateData));
-        actionObj.component.attr('id', UI.createUUID());
-        return actionObj;
+        sharkComponent.component = $(templateFun.apply(templateData));
+        sharkComponent.component.attr('id', UI.createUUID());
+        return sharkComponent;
     }
     //初始化事件
-    function initEvents(actionObj, config) {
-        var origin = actionObj.origin;
-        var popover = actionObj.component;
+    function initEvents(sharkComponent, config) {
+        var origin = sharkComponent.origin;
+        var popover = sharkComponent.component;
         if (origin.length == 0) {
             return;
         }
         if (config.event === 'click') {
-            origin.on('click.popover', BaseComponent.filterComponentAction(actionObj, function(evt) {
+            origin.on('click.popover', BaseComponent.filterComponentAction(sharkComponent, function(evt) {
                 if (popover.is(':hidden')) {
-                    actionObj.show();
+                    sharkComponent.show();
                 } else {
-                    actionObj.hide();
+                    sharkComponent.hide();
                 }
             }));
             if (config.close === 'bodyclick') {
                 UI.addCloseListener(popover.attr('id'), [origin, popover], function() {
                     if (popover.is(':visible')) {
-                        actionObj.hide();
+                        sharkComponent.hide();
                     }
                 });
             }
         } else if (config.event === 'mouseover') {
-            origin.on('mouseover.popover', BaseComponent.filterComponentAction(actionObj, function(evt) {
-                actionObj.show();
+            origin.on('mouseover.popover', BaseComponent.filterComponentAction(sharkComponent, function(evt) {
+                sharkComponent.show();
             }));
-            origin.on('mouseout.popover', BaseComponent.filterComponentAction(actionObj, function(evt) {
-                actionObj.hide();
+            origin.on('mouseout.popover', BaseComponent.filterComponentAction(sharkComponent, function(evt) {
+                sharkComponent.hide();
             }));
         }
     }
     //通用方法popover应展示的位置
-    var getPopoverPos = function(actionObj, direction) {
-        var origin = actionObj.origin;
-        var popover = actionObj.component;
+    var getPopoverPos = function(sharkComponent, direction) {
+        var origin = sharkComponent.origin;
+        var popover = sharkComponent.component;
         var postion;
         popover.removeClass('top right bottom left');
         popover.addClass(direction);
@@ -63,14 +63,14 @@ var Templates = require('../common/templates');
         }
         postion = UI.calcOffset(origin, popover, direction, fix);
         if (direction !== postion.actualDirection) {
-            return getPopoverPos(actionObj, postion.actualDirection);
+            return getPopoverPos(sharkComponent, postion.actualDirection);
         }
         return postion;
     };
     //利用通用方法取到的结果postion，修正popover的位置
-    var fixPopover = function(actionObj, postion) {
-        var origin = actionObj.origin;
-        var popover = actionObj.component;
+    var fixPopover = function(sharkComponent, postion) {
+        var origin = sharkComponent.origin;
+        var popover = sharkComponent.component;
         var arrow = popover.find('.arrow');
         var direction = postion.actualDirection;
         var popoverWidth = popover.outerWidth();
@@ -121,55 +121,55 @@ var Templates = require('../common/templates');
             };
             UI.extend(config, options);
             /*********初始化组件*************/
-            var actionObj = {};
-            initDom.call(this, actionObj, config);
-            BaseComponent.addComponentBaseFn(actionObj, config);
-            $(document.body).append(actionObj.component);
+            var sharkComponent = {};
+            initDom.call(this, sharkComponent, config);
+            BaseComponent.addComponentBaseFn(sharkComponent, config);
+            $(document.body).append(sharkComponent.component);
             if (this === $.fn) {
-                actionObj.linkTo = function(target) {
-                    actionObj.origin = target;
-                    initEvents(actionObj, config);
+                sharkComponent.linkTo = function(target) {
+                    sharkComponent.origin = target;
+                    initEvents(sharkComponent, config);
                 };
             } else {
-                actionObj.origin = this;
-                initEvents(actionObj, config);
+                sharkComponent.origin = this;
+                initEvents(sharkComponent, config);
             }
-            actionObj.adjustPostion = function() {
-                var postion = getPopoverPos(actionObj, config.direction);
-                fixPopover(actionObj, postion);
+            sharkComponent.adjustPostion = function() {
+                var postion = getPopoverPos(sharkComponent, config.direction);
+                fixPopover(sharkComponent, postion);
             };
-            actionObj.show = function() {
+            sharkComponent.show = function() {
                 if (config.reRenderOnShow) {
-                    actionObj.component.find('.popover-title').html(config.title);
-                    actionObj.component.find('.popover-content').html(config.content);
+                    sharkComponent.component.find('.popover-title').html(config.title);
+                    sharkComponent.component.find('.popover-content').html(config.content);
                 }
-                actionObj.component.show();
-                actionObj.adjustPostion();
+                sharkComponent.component.show();
+                sharkComponent.adjustPostion();
                 if (typeof config.onShow === 'function') {
-                    config.onShow.call(actionObj);
+                    config.onShow.call(sharkComponent);
                 }
             };
-            actionObj.hide = function() {
-                actionObj.component.hide();
+            sharkComponent.hide = function() {
+                sharkComponent.component.hide();
                 if (typeof config.onHide === 'function') {
-                    config.onHide.call(actionObj);
+                    config.onHide.call(sharkComponent);
                 }
             };
-            actionObj.destroy = function() {
-                UI.removeCloseListener(actionObj.component.attr('id'));
-                actionObj.component.remove();
-                if (actionObj.origin) {
-                    actionObj.origin.off('click.popover mouseover.popover mouseout.popover');
+            sharkComponent.destroy = function() {
+                UI.removeCloseListener(sharkComponent.component.attr('id'));
+                sharkComponent.component.remove();
+                if (sharkComponent.origin) {
+                    sharkComponent.origin.off('click.popover mouseover.popover mouseout.popover');
                 }
-                actionObj = null;
+                sharkComponent = null;
             };
-            return actionObj;
+            return sharkComponent;
         },
         sharkTooltip: function(options) {
             options.event = 'mouseover';
-            var actionObj = this.sharkPopover(options);
-            actionObj.component.addClass('shark-tooltip');
-            return actionObj;
+            var sharkComponent = this.sharkPopover(options);
+            sharkComponent.component.addClass('shark-tooltip');
+            return sharkComponent;
         }
     });
 })(jQuery || $);

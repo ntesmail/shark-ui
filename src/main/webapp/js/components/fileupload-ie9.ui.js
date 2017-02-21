@@ -33,13 +33,13 @@ function createIframe(iframeId) {
     return iframe;
 }
 
-function makeIE9Able(actionObj, config) {
+function makeIE9Able(sharkComponent, config) {
     //初始化form和input
     var inputId = UI.createUUID();
     var formId = UI.createUUID();
     var iframeId = UI.createUUID();
     var form = createForm(formId, iframeId, config.url);
-    actionObj.component.append(form);
+    sharkComponent.component.append(form);
     var input = createInput(inputId);
     form.append(input);
     //设置可选文件类型
@@ -47,8 +47,8 @@ function makeIE9Able(actionObj, config) {
         input.attr('accept', config.accept);
     }
     //初始化样式
-    if (actionObj.component.css('position') === 'static') {
-        actionObj.component.css({
+    if (sharkComponent.component.css('position') === 'static') {
+        sharkComponent.component.css({
             position: 'relative'
         });
     }
@@ -56,8 +56,8 @@ function makeIE9Able(actionObj, config) {
         position: 'absolute',
         left: 0,
         top: 0,
-        width: actionObj.component.outerWidth(),
-        height: actionObj.component.outerHeight(),
+        width: sharkComponent.component.outerWidth(),
+        height: sharkComponent.component.outerHeight(),
         overflow: 'hidden'
     });
     input.css({
@@ -72,26 +72,26 @@ function makeIE9Able(actionObj, config) {
         height: '1000px'
     });
     //监听事件
-    input.on('change', BaseComponent.filterComponentAction(actionObj.component, function(e) {
+    input.on('change', BaseComponent.filterComponentAction(sharkComponent.component, function(e) {
         //IE9及以下无法获取文件
         var v = input.val();
         if (v.length > 0) {
-            actionObj.file = { name: v };
+            sharkComponent.file = { name: v };
             if (typeof config.onSelected === 'function') {
-                config.onSelected.call(actionObj.component, actionObj.file);
+                config.onSelected.call(sharkComponent.component, sharkComponent.file);
             }
             if (config.autoupload) {
-                actionObj.upload();
+                sharkComponent.upload();
             }
         }
     }));
-    actionObj.clear = function() {
-        actionObj.file = null;
+    sharkComponent.clear = function() {
+        sharkComponent.file = null;
         form[0].reset();
     };
-    actionObj.upload = function(u, p) {
+    sharkComponent.upload = function(u, p) {
         var defer = $.Deferred();
-        if (actionObj.file) {
+        if (sharkComponent.file) {
             var url;
             if (u && p) {
                 url = u + '?' + $.param(p);
@@ -121,10 +121,10 @@ function makeIE9Able(actionObj, config) {
                     responseData = eval('(' + $(responseHtml).html() + ')');
                 } finally {
                     if (responseData) {
-                        config.onUploaded.call(actionObj.component, actionObj.file, responseData);
+                        config.onUploaded.call(sharkComponent.component, sharkComponent.file, responseData);
                         defer.resolve(responseData);
                     } else {
-                        config.onFailed.call(actionObj.component, evt);
+                        config.onFailed.call(sharkComponent.component, evt);
                         defer.reject(evt);
                     }
                 }
@@ -136,14 +136,14 @@ function makeIE9Able(actionObj, config) {
         }
         return defer.promise();
     };
-    actionObj.destroy = function() {
+    sharkComponent.destroy = function() {
         input.remove();
         form.remove();
         // 销毁component
-        if (actionObj.createType === 'construct') {
-            actionObj.component.remove();
+        if (sharkComponent.createType === 'construct') {
+            sharkComponent.component.remove();
         }
-        actionObj = null;
+        sharkComponent = null;
     };
 }
 module.exports = makeIE9Able;

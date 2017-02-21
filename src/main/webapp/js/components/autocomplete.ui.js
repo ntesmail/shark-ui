@@ -37,9 +37,9 @@ var ListGroup = require('./listgroup.ui');
         }
     }
     // 按下功能键时的处理函数
-    function functionKeyUse(actionObj, keyCode, config) {
-        var autoComplete = actionObj.component;
-        var selections = actionObj.selections;
+    function functionKeyUse(sharkComponent, keyCode, config) {
+        var autoComplete = sharkComponent.component;
+        var selections = sharkComponent.selections;
         if (selections.is(':hidden')) {
             return;
         }
@@ -58,7 +58,7 @@ var ListGroup = require('./listgroup.ui');
                 if ($next.length > 0) {
                     $next.addClass("active");
                     if (config.autocomplete) {
-                        setValue(actionObj, $next, config);
+                        setValue(sharkComponent, $next, config);
                     }
                     scrollHeight(autoComplete, selections, $next, 'down');
                 }
@@ -77,7 +77,7 @@ var ListGroup = require('./listgroup.ui');
                 if ($previous.length > 0) {
                     $previous.addClass("active");
                     if (config.autocomplete) {
-                        setValue(actionObj, $previous, config);
+                        setValue(sharkComponent, $previous, config);
                     }
                     scrollHeight(autoComplete, selections, $previous, 'up');
                 }
@@ -86,7 +86,7 @@ var ListGroup = require('./listgroup.ui');
                 var $current = selections.children('.active');
                 if ($current.length > 0) {
                     if (!config.autocomplete) {
-                        setValue(actionObj, $current, config);
+                        setValue(sharkComponent, $current, config);
                     }
                     selections.hide();
                 }
@@ -97,54 +97,54 @@ var ListGroup = require('./listgroup.ui');
         }
     }
     // 设置autoComplete的值
-    function setValue(actionObj, item, config) {
+    function setValue(sharkComponent, item, config) {
         var itemData = item.data();
-        actionObj.component.val(itemData[config.displayKey]);
-        actionObj.value = itemData;
+        sharkComponent.component.val(itemData[config.displayKey]);
+        sharkComponent.value = itemData;
         if (typeof config.onSelected === 'function') {
-            config.onSelected.call(actionObj, item.data());
+            config.onSelected.call(sharkComponent, item.data());
         }
     }
     //初始化autocomplete的dom
-    function initDom(actionObj, config) {
+    function initDom(sharkComponent, config) {
         if (this === $.fn) {
-            actionObj.createType = 'construct';
-            actionObj.component = $(config.dom || Templates.autocomplete);
+            sharkComponent.createType = 'construct';
+            sharkComponent.component = $(config.dom || Templates.autocomplete);
         } else {
-            actionObj.createType = 'normal';
-            actionObj.component = this;
+            sharkComponent.createType = 'normal';
+            sharkComponent.component = this;
         }
-        actionObj.component.addClass('shark-autocomplete');
-        initSelectionsDom(actionObj, config);
-        return actionObj;
+        sharkComponent.component.addClass('shark-autocomplete');
+        initSelectionsDom(sharkComponent, config);
+        return sharkComponent;
     }
     // 初始化下拉列表的dom
-    function initSelectionsDom(actionObj, config) {
+    function initSelectionsDom(sharkComponent, config) {
         var selections = ListGroup.render();
         selections.addClass('shark-autocomplete-list-group');
         $(document.body).append(selections);
-        actionObj.selections = selections;
-        return actionObj;
+        sharkComponent.selections = selections;
+        return sharkComponent;
     }
     // 初始化事件
-    function initEvents(actionObj, config) {
-        var autoComplete = actionObj.component;
-        var selections = actionObj.selections;
+    function initEvents(sharkComponent, config) {
+        var autoComplete = sharkComponent.component;
+        var selections = sharkComponent.selections;
         var lastMousePos = {
             clientX: -1,
             clientY: -1
         };
         //防止按上下键时，输入框中的光标左右移动
-        autoComplete.on('keydown.autocomplete', autoComplete, BaseComponent.filterComponentAction(actionObj, function(evt) {
+        autoComplete.on('keydown.autocomplete', autoComplete, BaseComponent.filterComponentAction(sharkComponent, function(evt) {
             if ($.inArray(evt.keyCode, functionalKeyArray) > -1) {
                 UI.preventAndStopEvent(evt);
             }
         }));
-        autoComplete.on('keyup.autocomplete', BaseComponent.filterComponentAction(actionObj, function(evt) {
+        autoComplete.on('keyup.autocomplete', BaseComponent.filterComponentAction(sharkComponent, function(evt) {
             UI.preventAndStopEvent(evt);
             var keyCode = evt.keyCode;
             if ($.inArray(keyCode, functionalKeyArray) > -1) {
-                functionKeyUse(actionObj, keyCode, config);
+                functionKeyUse(sharkComponent, keyCode, config);
             } else if (document.documentMode === 9 && (keyCode === 8 || keyCode === 46)) {
                 //IE9的一个BUG：[按键BackSpace / 按键Delete / 鼠标拖拽 / 鼠标剪切 / 鼠标删除]，不会触发propertychange和input事件
                 //这里只处理了键盘BackSpace和Delete，鼠标的坑就暂时不管了。
@@ -152,7 +152,7 @@ var ListGroup = require('./listgroup.ui');
             }
         }));
         // 输入框事件，适配IE8
-        autoComplete.on('input.autocomplete propertychange.autocomplete', BaseComponent.filterComponentAction(actionObj, UI.debounce(function() {
+        autoComplete.on('input.autocomplete propertychange.autocomplete', BaseComponent.filterComponentAction(sharkComponent, UI.debounce(function() {
             var value = autoComplete.val();
             var result = config.filterData(value, config);
             if (result && typeof result.then === 'function') {
@@ -176,7 +176,7 @@ var ListGroup = require('./listgroup.ui');
                     selectionsRow.siblings().removeClass('active');
                     selectionsRow.addClass('active');
                     if (config.autocomplete) {
-                        setValue(actionObj, selectionsRow, config);
+                        setValue(sharkComponent, selectionsRow, config);
                     }
                 }
             }
@@ -188,7 +188,7 @@ var ListGroup = require('./listgroup.ui');
                 selectionsRow.siblings().removeClass('active');
                 selectionsRow.addClass('active');
                 if (!config.autocomplete) {
-                    setValue(actionObj, selectionsRow, config);
+                    setValue(sharkComponent, selectionsRow, config);
                 }
                 selections.hide();
             }
@@ -213,29 +213,29 @@ var ListGroup = require('./listgroup.ui');
             };
             UI.extend(config, options);
             /*********初始化组件*************/
-            var actionObj = {};
-            actionObj.value = null;
-            initDom.call(this, actionObj, config);
-            BaseComponent.addComponentBaseFn(actionObj, config);
-            initEvents(actionObj, config);
+            var sharkComponent = {};
+            sharkComponent.value = null;
+            initDom.call(this, sharkComponent, config);
+            BaseComponent.addComponentBaseFn(sharkComponent, config);
+            initEvents(sharkComponent, config);
             // 获取当前autocomplete的值
-            actionObj.getValue = function() {
-                return actionObj.value;
+            sharkComponent.getValue = function() {
+                return sharkComponent.value;
             };
             // 销毁函数
-            actionObj.destroy = function() {
+            sharkComponent.destroy = function() {
                 // 销毁listgroup
-                UI.removeCloseListener(actionObj.selections.attr('id'));
-                actionObj.selections.destroy();
+                UI.removeCloseListener(sharkComponent.selections.attr('id'));
+                sharkComponent.selections.destroy();
                 // 销毁component
-                if (actionObj.createType === 'construct') {
-                    actionObj.component.remove();
+                if (sharkComponent.createType === 'construct') {
+                    sharkComponent.component.remove();
                 } else {
-                    actionObj.component.off('input.autocomplete propertychange.autocomplete keyup.autocomplete keydown.autocomplete');
+                    sharkComponent.component.off('input.autocomplete propertychange.autocomplete keyup.autocomplete keydown.autocomplete');
                 }
-                actionObj = null;
+                sharkComponent = null;
             };
-            return actionObj;
+            return sharkComponent;
         }
     });
 })(jQuery || $);
