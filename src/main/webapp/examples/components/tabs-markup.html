@@ -1,44 +1,71 @@
-
-<div id="tabsDemo" class="shark-tabs">
-    <ul class="nav nav-tabs">
-        <li>
-            <a href="javascript:void(0);">前端组</a>
-        </li>
-        <li>
-            <a href="javascript:void(0);">视觉组</a>
-        </li>
-        <li>
-            <a href="javascript:void(0);">运营组</a>
-        </li>
-        <li>
-            <a href="javascript:void(0);">市场组</a>
-        </li>
-    </ul>
-    <div class="tab-content">
-        <div class="tab-pane">
-            都是小哥
-        </div>
-        <div class="tab-pane">
-            都是大姐
-        </div>
-        <div class="tab-pane">
-            都是妹纸
-        </div>
-        <div class="tab-pane">
-            都是阿姨
+<div id="tabsContainer">
+    <div id="mytabs" class="shark-tabs">
+        <ul class="nav nav-tabs">
+            <li>
+                <a href="javascript:void(0);">前端组</a>
+            </li>
+            <li>
+                <a href="javascript:void(0);">视觉组</a>
+            </li>
+            <li>
+                <a href="javascript:void(0);">运营组</a>
+            </li>
+            <li>
+                <a href="javascript:void(0);">市场组</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane">
+                都是小哥
+            </div>
+            <div class="tab-pane">
+                都是大姐
+            </div>
+            <div class="tab-pane">
+                都是妹纸
+            </div>
+            <div class="tab-pane">
+                都是阿姨
+            </div>
         </div>
     </div>
 </div>
 <script type="text/javascript">
-$(function(){
-    var mytabs = $('#tabsDemo').sharkTabs({
-        event: 'click',
-        active: 0,
-        auto: 0,
+$(function() {
+    var mytabs = $('#mytabs').sharkTabs({
+        initTab: 1,
         onTabSwitch: function(index) {
             console.log(index);
         }
     });
-    mytabs.switchTo(3);
+    var mytabs2 = $.fn.sharkTabs({
+        tabs: [{
+            title: '前端组',
+            pane: `
+                <span style="color:red;">都是小哥</span>
+            `
+        }, {
+            title: '视觉组',
+            pane: `
+                <span style="color:green;">都是大姐</span>
+            `
+        }, {
+            title: '运营组',
+            pane: `
+                <span style="color:yellow;">都是妹纸</span>
+            `
+        }, {
+            title: '市场组',
+            pane: `
+                <span style="color:blue;">都是阿姨</span>
+            `
+        }],
+        onTabSwitch: function(index) {
+            console.log(index);
+        }
+    });
+    $('#tabsContainer').append(mytabs2.component);
+    mytabs2.switchTo(3);
+    window.mytabs2 = mytabs2;
 });
 </script>
