@@ -7,6 +7,9 @@ var Templates = require('../common/templates');
 var BaseComponent = require('../common/base');
 var makeIE9Able = require('./fileupload-ie9.ui');
 (function($) {
+    // selecter模板
+    var templateFileupload = Templates.fileupload;
+    var templateFileuploadFun = Templates.templateAoT(templateFileupload);
     function uploadByNative(file, url, params) {
         var defer = $.Deferred();
         var xhr = new XMLHttpRequest();
@@ -45,7 +48,9 @@ var makeIE9Able = require('./fileupload-ie9.ui');
     function initDom(sharkComponent, config) {
         if (this === $.fn) {
             sharkComponent.createType = 'construct';
-            sharkComponent.component = $(config.dom || Templates.fileupload);
+            var fun = config.dom ? Templates.templateAoT(config.dom) : templateFileuploadFun;
+            var html = fun.apply(config);
+            sharkComponent.component = $(html);
         } else {
             sharkComponent.createType = 'normal';
             sharkComponent.component = this;

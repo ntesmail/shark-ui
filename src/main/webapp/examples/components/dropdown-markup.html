@@ -1,8 +1,11 @@
-<div id="dropdownContainer"></div>
+<div id="dropdownContainer">
+</div>
 <script type="text/javascript">
 $(function(){
-    var dropdown = $.fn.sharkDropdown({
+    var mydropdown = $.fn.sharkDropdown({
         text: '操作',
+        actualKey: 'value',
+        displayKey: 'name',
         data: [{
             value: 'create',
             name: '新建'
@@ -17,6 +20,6 @@ $(function(){
             console.log(item);
         }
     });
-    $('#dropdownContainer').append(dropdown);
+    $('#dropdownContainer').append(mydropdown.component);
 });
 </script>

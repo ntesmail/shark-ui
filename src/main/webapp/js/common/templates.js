@@ -23,7 +23,7 @@ var popover = '\
     </div>\
 ';
 var selecter = '\
-    <div class="shark-selecter">\
+    <div class="shark-selecter position-relative">\
         <a class="selecter">\
             <span class="value"></span>\
             <span class="caret"></span>\

@@ -1,6 +1,7 @@
-<div id="selecterContainer"></div>
+<div id="selecterContainer">
+</div>
 <script type="text/javascript">
-$(function(){
+$(function() {
     var myselecter = $.fn.sharkSelecter({
         actualKey: 'value', //对应data中的value
         displayKey: 'name', //对应data中的name
@@ -19,7 +20,7 @@ $(function(){
             console.log(value, item);
         }
     });
-    $('#selecterContainer').append(myselecter);
-    myselecter.setValue('');
+    $('#selecterContainer').append(myselecter.component);
+    myselecter.setValue(1001);
 });
 </script>

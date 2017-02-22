@@ -6,11 +6,16 @@ var UI = require('../common/core');
 var BaseComponent = require('../common/base');
 var Templates = require('../common/templates');
 (function($) {
+    // selecter模板
+    var templatePager = Templates.pager;
+    var templatePagerFun = Templates.templateAoT(templatePager);
     //初始化分页器外层ul的dom，内层的li不用模板生成（因为重新渲染分页器时，仍然需要提供renderPages方法重置分页）
     function initDom(sharkComponent, config) {
         if (this === $.fn) {
             sharkComponent.createType = 'construct';
-            sharkComponent.component = $(config.dom || Templates.pager);
+            var fun = config.dom ? Templates.templateAoT(config.dom) : templatePagerFun;
+            var html = fun.apply(config);
+            sharkComponent.component = $(html);
         } else {
             sharkComponent.createType = 'normal';
             sharkComponent.component = this;

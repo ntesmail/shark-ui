@@ -1,4 +1,5 @@
 require('./components/autocomplete.ui');
+require('./components/dropdown.ui');
 require('./components/fileupload.ui');
 require('./components/modal.ui');
 require('./components/pager.ui');

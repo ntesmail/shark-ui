@@ -7,6 +7,9 @@ var Templates = require('../common/templates');
 var BaseComponent = require('../common/base');
 var ListGroup = require('./listgroup.ui');
 (function($) {
+    // selecter模板
+    var templateAutocomplete = Templates.autocomplete;
+    var templateAutocompleteFun = Templates.templateAoT(templateAutocomplete);
     //键盘上功能键键值数组
     var functionalKeyArray = [40, 38, 13, 27];
     //更新autocomplete的下拉列表
@@ -109,7 +112,9 @@ var ListGroup = require('./listgroup.ui');
     function initDom(sharkComponent, config) {
         if (this === $.fn) {
             sharkComponent.createType = 'construct';
-            sharkComponent.component = $(config.dom || Templates.autocomplete);
+            var fun = config.dom ? Templates.templateAoT(config.dom) : templateAutocompleteFun;
+            var html = fun.apply(config);
+            sharkComponent.component = $(html);
         } else {
             sharkComponent.createType = 'normal';
             sharkComponent.component = this;
