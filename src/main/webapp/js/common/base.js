@@ -9,23 +9,20 @@ var UI = require('../common/core');
  * @param {object} 配置项
  */
 function addComponentBaseFn(sharkComponent, config) {
-    var component = sharkComponent.component;
     sharkComponent.getConfig = function() {
         return config;
     };
     sharkComponent.disable = function() {
-        component.addClass('disabled').attr('disabled', true).find('input,select,button').attr('disabled', true);
+        sharkComponent.component.addClass('disabled').attr('disabled', true).find('input,select,button').attr('disabled', true);
         if (typeof config.onDisable === 'function') {
-            config.onDisable.call(component);
+            config.onDisable.call(sharkComponent);
         }
-        return sharkComponent;
     };
     sharkComponent.enable = function() {
-        component.removeClass('disabled').attr('disabled', false).find('input,select,button').attr('disabled', false);
+        sharkComponent.component.removeClass('disabled').attr('disabled', false).find('input,select,button').attr('disabled', false);
         if (typeof config.onEnable === 'function') {
-            config.onEnable.call(component);
+            config.onEnable.call(sharkComponent);
         }
-        return sharkComponent;
     };
     return sharkComponent;
 }
@@ -36,9 +33,8 @@ function addComponentBaseFn(sharkComponent, config) {
  * @return {Function}
  */
 function filterComponentAction(sharkComponent, fn) {
-    var component = sharkComponent.component;
     return function(evt) {
-        if (component.hasClass('disabled')) {
+        if (sharkComponent.component && sharkComponent.component.hasClass('disabled')) {
             return;
         }
         fn.apply(this, arguments);

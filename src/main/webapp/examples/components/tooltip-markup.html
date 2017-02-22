@@ -1,7 +1,6 @@
 
 <button id="tooltipBtn" class="btn btn-primary">悬浮查看效果</button>
 <script type="text/javascript">
-$(function(){
     var myTooltip = $.fn.sharkTooltip({
         direction: 'right',
         content: '<div>月落乌啼霜满天，</div>\
@@ -10,5 +9,4 @@ $(function(){
                 <div>夜半钟声到客船。</div>'
     });
     myTooltip.linkTo($('#tooltipBtn'));
-});
 </script>

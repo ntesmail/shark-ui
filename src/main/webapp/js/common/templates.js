@@ -126,7 +126,7 @@ var confirm = '\
 ';
 var toastr = '\
 <div class="shark-toastr toastr toastr-<%= this.type %>">\
-    <span><%= this.content %></span>\
+    <div><%= this.content %></div>\
 </div>\
 ';
 
