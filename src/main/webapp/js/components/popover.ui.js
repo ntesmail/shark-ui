@@ -10,14 +10,19 @@ var Templates = require('../common/templates');
     var templateFun = Templates.templateAoT(template);
     //初始化popover的dom
     function initDom(sharkComponent, config) {
-        if (this === $.fn) {
-            sharkComponent.linkTo = function(target) {
-                sharkComponent.origin = target;
-                initEvents(sharkComponent, config);
-            };
-        } else {
-            sharkComponent.origin = this;
+        sharkComponent.linkTo = function(target) {
+            if(sharkComponent.origin){
+                throw Error('only one element can be linked');
+                return;
+            }
+            sharkComponent.origin = target;
             initEvents(sharkComponent, config);
+            if(config.preInit){
+                initComponent(sharkComponent, config);
+            }
+        };
+        if (this !== $.fn) {
+            sharkComponent.linkTo(this);
         }
         return sharkComponent;
     }
@@ -31,7 +36,15 @@ var Templates = require('../common/templates');
         sharkComponent.component.attr('id', UI.createUUID());
         sharkComponent.component.addClass('shark-' + config.type);
         $(document.body).append(sharkComponent.component);
+        sharkComponent.component.hide();
         sharkComponent.isPopoverInit = true;
+        if (config.event === 'click' && config.close === 'bodyclick') {
+            UI.addCloseListener(sharkComponent.component.attr('id'), [sharkComponent.origin, sharkComponent.component], function() {
+                if (sharkComponent.component.is(':visible')) {
+                    sharkComponent.hide();
+                }
+            });
+        }
     }
     //初始化事件
     function initEvents(sharkComponent, config) {
@@ -40,13 +53,6 @@ var Templates = require('../common/templates');
             origin.on('click.popover', BaseComponent.filterComponentAction(sharkComponent, function(evt) {
                 if (!sharkComponent.isPopoverInit) {
                     initComponent(sharkComponent, config);
-                    if (config.close === 'bodyclick') {
-                        UI.addCloseListener(sharkComponent.component.attr('id'), [origin, sharkComponent.component], function() {
-                            if (sharkComponent.component.is(':visible')) {
-                                sharkComponent.hide();
-                            }
-                        });
-                    }
                 }
                 if (sharkComponent.component.is(':hidden')) {
                     sharkComponent.show();
@@ -132,6 +138,7 @@ var Templates = require('../common/templates');
                 direction: 'right',
                 title: '',
                 content: '',
+                preInit: false,//是否把popover组件预先生成并添加到body
                 reRenderOnShow: false,
                 onShow: function() {},
                 onHide: function() {}
