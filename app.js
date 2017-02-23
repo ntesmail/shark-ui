@@ -11,7 +11,7 @@ var showdown  = require('showdown'),
     converter = new showdown.Converter();
 
 var app = express();
-var webappDir = 'build/';
+var webappDir = 'dist/';
 
 custombuild.makeCustomBuildAble(app, config);
 app.engine('.html', require('ejs').__express);

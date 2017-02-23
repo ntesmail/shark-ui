@@ -12,7 +12,7 @@ var Templates = require('../common/templates');
     var toastrArr = [];
     // 创建父容器
     function initContainer() {
-        container = $('<div class="shark-toastr-container"></div>');
+        container = $('<div class="shark-toastr-container" style="position:fixed;"></div>');
         $(document.body).append(container);
     }
     //初始化toastr的dom
