@@ -9,24 +9,6 @@ var Templates = require('../common/templates');
     var template = Templates.popover;
     var templateFun = Templates.templateAoT(template);
     //初始化popover的dom
-    function initDom(sharkComponent, config) {
-        sharkComponent.linkTo = function(target) {
-            if(sharkComponent.origin){
-                throw Error('only one element can be linked');
-                return;
-            }
-            sharkComponent.origin = target;
-            initEvents(sharkComponent, config);
-            if(config.preInit){
-                initComponent(sharkComponent, config);
-            }
-        };
-        if (this !== $.fn) {
-            sharkComponent.linkTo(this);
-        }
-        return sharkComponent;
-    }
-
     function initComponent(sharkComponent, config) {
         var templateData = {
             title: config.title,
@@ -147,8 +129,17 @@ var Templates = require('../common/templates');
             options.type = 'popover';
             /*********初始化组件*************/
             var sharkComponent = {};
-            initDom.call(this, sharkComponent, config);
-            BaseComponent.addComponentBaseFn(sharkComponent, config);
+            sharkComponent.linkTo = function(target) {
+                if(sharkComponent.origin){
+                    throw Error('only one element can be linked');
+                    return;
+                }
+                sharkComponent.origin = target;
+                initEvents(sharkComponent, config);
+                if(config.preInit){
+                    initComponent(sharkComponent, config);
+                }
+            };
             sharkComponent.adjustPostion = function() {
                 var postion = getPopoverPos(sharkComponent, config.direction);
                 fixPopover(sharkComponent, postion);
@@ -180,6 +171,10 @@ var Templates = require('../common/templates');
                 }
                 sharkComponent = null;
             };
+            if (this !== $.fn) {
+                sharkComponent.linkTo(this);
+            }
+            BaseComponent.addComponentBaseFn(sharkComponent, config);
             return sharkComponent;
         },
         sharkTooltip: function(options) {

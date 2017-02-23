@@ -1,6 +1,5 @@
 <div id="pagerContainer"></div>
 <script type="text/javascript">
-$(function(){
     var mypager = $.fn.sharkPager({
         page: 1,
         totalPages: 100,
@@ -14,11 +13,9 @@ $(function(){
         segmentSize: 5,
         startFrom: 1,
         gopage: true,
-        onWillChange: function(p) {
-            alert('即将跳转到第：' + p + '页');
-            this.setPage(p);
+        onPageChanged: function(p) {
+            console.log('跳转到第：' + p + '页');
         }
     });
     $('#pagerContainer').append(mypager.component);
-});
 </script>

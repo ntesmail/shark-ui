@@ -80,7 +80,12 @@ var Templates = require('../common/templates');
                 curEle.prev().val('');
                 lastvalue = '';
             }
-            willPageChange(sharkComponent, parseInt(newPage), config);
+            var startFrom = config.startFrom;
+            newPage = newPage - (1 - startFrom);
+            sharkComponent.setPage(newPage);
+            if (typeof config.onPageChanged === 'function') {
+                config.onPageChanged.call(sharkComponent, newPage);
+            }
         }));
     }
     //生成页码
@@ -164,14 +169,6 @@ var Templates = require('../common/templates');
             pager.append($('<li class="gopage"><input class="form-control" type="text"/><a class="btn">' + config.hl['gopage'] + '</a></li>'));
         }
     };
-    //将要改变页码时调用的函数
-    function willPageChange(sharkComponent, newPage, config) {
-        var startFrom = config.startFrom;
-        newPage = newPage - (1 - startFrom);
-        if (typeof config.onWillChange === 'function') {
-            config.onWillChange.call(sharkComponent, newPage);
-        }
-    };
     $.fn.extend({
         sharkPager: function(options) {
             /*********默认参数配置*************/
@@ -189,7 +186,7 @@ var Templates = require('../common/templates');
                 startFrom: 1,
                 gopage: false,
                 dom: '',
-                onWillChange: function() {}
+                onPageChanged: function() {}
             };
             UI.extend(config, options);
             /*********初始化组件*************/

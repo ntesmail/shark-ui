@@ -13,13 +13,15 @@ function addComponentBaseFn(sharkComponent, config) {
         return config;
     };
     sharkComponent.disable = function() {
-        sharkComponent.component.addClass('disabled').attr('disabled', true).find('input,select,button').attr('disabled', true);
+        sharkComponent.disabled = true;
+        sharkComponent.component && sharkComponent.component.addClass('disabled').attr('disabled', true).find('input,select,button').attr('disabled', true);
         if (typeof config.onDisable === 'function') {
             config.onDisable.call(sharkComponent);
         }
     };
     sharkComponent.enable = function() {
-        sharkComponent.component.removeClass('disabled').attr('disabled', false).find('input,select,button').attr('disabled', false);
+        delete sharkComponent.disabled;
+        sharkComponent.component && sharkComponent.component.removeClass('disabled').attr('disabled', false).find('input,select,button').attr('disabled', false);
         if (typeof config.onEnable === 'function') {
             config.onEnable.call(sharkComponent);
         }
@@ -34,7 +36,7 @@ function addComponentBaseFn(sharkComponent, config) {
  */
 function filterComponentAction(sharkComponent, fn) {
     return function(evt) {
-        if (sharkComponent.component && sharkComponent.component.hasClass('disabled')) {
+        if (sharkComponent.disabled === true || (sharkComponent.component && sharkComponent.component.hasClass('disabled'))) {
             return;
         }
         fn.apply(this, arguments);
