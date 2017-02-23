@@ -1,25 +1,23 @@
 <div id="dropdownContainer">
 </div>
 <script type="text/javascript">
-$(function(){
-    var mydropdown = $.fn.sharkDropdown({
-        text: '操作',
-        actualKey: 'value',
-        displayKey: 'name',
-        data: [{
-            value: 'create',
-            name: '新建'
-        }, {
-            value: 'edit',
-            name: '编辑'
-        }, {
-            value: 'delete',
-            name: '删除'
-        }],
-        onSelected: function(item) {
-            console.log(item);
-        }
-    });
-    $('#dropdownContainer').append(mydropdown.component);
+var mydropdown = $.fn.sharkDropdown({
+    text: '操作',
+    actualKey: 'value',
+    displayKey: 'html',
+    data: [{
+        value: 'create',
+        html: '<span class="icon-plus"></span>&nbsp;&nbsp;新建'
+    }, {
+        value: 'edit',
+        html: '<span class="icon-chevron-right"></span>&nbsp;&nbsp;编辑'
+    }, {
+        value: 'delete',
+        html: '<span class="icon-close"></span>&nbsp;&nbsp;删除'
+    }],
+    onSelected: function(item) {
+        console.log(item);
+    }
 });
+$('#dropdownContainer').append(mydropdown.component);
 </script>

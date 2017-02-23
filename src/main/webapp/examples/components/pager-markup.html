@@ -1,21 +1,21 @@
 <div id="pagerContainer"></div>
 <script type="text/javascript">
-    var mypager = $.fn.sharkPager({
-        page: 1,
-        totalPages: 100,
-        hl: {
-            firstpage: 'first',
-            prevpage: 'previous',
-            nextpage: 'next',
-            lastpage: 'last',
-            gopage: 'go'
-        },
-        segmentSize: 5,
-        startFrom: 1,
-        gopage: true,
-        onPageChanged: function(p) {
-            console.log('跳转到第：' + p + '页');
-        }
-    });
-    $('#pagerContainer').append(mypager.component);
+var mypager = $.fn.sharkPager({
+    page: 1,
+    totalPages: 100,
+    hl: {
+        firstpage: 'first',
+        prevpage: 'previous',
+        nextpage: 'next',
+        lastpage: 'last',
+        gopage: 'go'
+    },
+    segmentSize: 5,
+    startFrom: 1,
+    gopage: true,
+    onPageChanged: function(p) {
+        console.log('跳转到第：' + p + '页');
+    }
+});
+$('#pagerContainer').append(mypager.component);
 </script>

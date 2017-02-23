@@ -124,15 +124,14 @@ function makeIE9Able(sharkComponent, config) {
                         config.onUploaded.call(sharkComponent.component, sharkComponent.file, responseData);
                         defer.resolve(responseData);
                     } else {
-                        config.onFailed.call(sharkComponent.component, evt);
+                        config.onFailed.call(sharkComponent.component, sharkComponent.file, evt);
                         defer.reject(evt);
                     }
                 }
             });
             form[0].submit();
-        }
-        else{
-            defer.reject({type:'noFileSelected'});
+        } else {
+            defer.reject({ type: 'noFileSelected' });
         }
         return defer.promise();
     };

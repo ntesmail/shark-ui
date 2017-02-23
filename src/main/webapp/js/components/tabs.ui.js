@@ -44,7 +44,7 @@ var Templates = require('../common/templates');
         menu.children().siblings().removeClass('active').end().eq(index).addClass('active');
         tabpane.siblings().removeClass('active').end().eq(index).addClass('active');
         if (typeof cb === 'function') {
-            cb.call(tabs, index);
+            cb.call(sharkComponent, index);
         }
     }
     // 开始自动切换

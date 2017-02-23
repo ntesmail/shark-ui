@@ -10,6 +10,7 @@ var makeIE9Able = require('./fileupload-ie9.ui');
     // selecter模板
     var templateFileupload = Templates.fileupload;
     var templateFileuploadFun = Templates.templateAoT(templateFileupload);
+
     function uploadByNative(file, url, params) {
         var defer = $.Deferred();
         var xhr = new XMLHttpRequest();
@@ -156,7 +157,7 @@ var makeIE9Able = require('./fileupload-ie9.ui');
                             })
                             .fail(function(evt) {
                                 if (typeof config.onFailed === 'function') {
-                                    config.onFailed.call(sharkComponent, evt);
+                                    config.onFailed.call(sharkComponent, sharkComponent.file, evt);
                                 }
                                 defer.reject(evt);
                             });

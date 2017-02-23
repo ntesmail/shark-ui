@@ -1,26 +1,24 @@
 <div id="selecterContainer">
 </div>
 <script type="text/javascript">
-$(function() {
-    var myselecter = $.fn.sharkSelecter({
-        actualKey: 'value', //对应data中的value
-        displayKey: 'name', //对应data中的name
-        data: [{
-            value: '',
-            name: '请选择'
-        }, {
-            value: 1001,
-            name: '一年级'
-        }, {
-            value: 1002,
-            name: '二年级'
-        }],
-        activeStyle: 'point',
-        onSelected: function(value, item) {
-            console.log(value, item);
-        }
-    });
-    $('#selecterContainer').append(myselecter.component);
-    myselecter.setValue(1001);
+var myselecter = $.fn.sharkSelecter({
+    actualKey: 'value', //对应data中的value
+    displayKey: 'name', //对应data中的name
+    data: [{
+        value: '',
+        name: '请选择'
+    }, {
+        value: 1001,
+        name: '一年级'
+    }, {
+        value: 1002,
+        name: '二年级'
+    }],
+    activeStyle: 'point',
+    onSelected: function(value, item) {
+        console.log(value, item);
+    }
 });
+$('#selecterContainer').append(myselecter.component);
+myselecter.setValue(1001);
 </script>

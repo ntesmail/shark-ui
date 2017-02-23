@@ -1,21 +1,18 @@
-
-<button class="btn btn-primary" id="toastr1">提示成功</button>
-<button class="btn btn-danger" id="toastr2">提示失败</button>
+<button class="btn btn-primary" id="toastrBtn1">提示成功</button>
+<button class="btn btn-danger" id="toastrBtn2">提示失败</button>
 <script type="text/javascript">
-$(function(){
-    $('#toastr1').click(function() {
-        $.fn.sharkToastr({
-            type: 'success',
-            content: '保存成功',
-            duration: 2000
-        });
-    })
-    $('#toastr2').click(function() {
-        $.fn.sharkToastr({
-            type: 'error',
-            content: '保存失败',
-            duration: 2000
-        });
-    })
-});
+$('#toastrBtn1').click(function() {
+    $.fn.sharkToastr({
+        type: 'success',
+        content: '保存成功',
+        duration: 2000
+    });
+})
+$('#toastrBtn2').click(function() {
+    $.fn.sharkToastr({
+        type: 'error',
+        content: '保存失败',
+        duration: 2000
+    });
+})
 </script>

@@ -1,38 +1,26 @@
 
 > 配置项：
 
->> animate
-- 是否必须：否  
-- 类型：string  
-- 默认值：'fade'
-- 说明：需要的动画效果
-
->> size
-- 是否必须：否
-- 类型：string
-- 默认值：''
-- 说明：弹窗尺寸
-
->> backdrop
-- 是否必须：否
-- 类型：string
-- 默认值：''
-- 说明：点击背景是否消失：static不消失 | ''消失
-
 >> content
 - 是否必须：是
 - 类型：string
 - 默认值：''
 - 说明：弹窗主体内容
 
->> onShow
+>> title
 - 是否必须：否
-- 类型：function
-- 默认值：function() {}
-- 说明：modal显示时的回调函数
+- 类型：string
+- 默认值：''
+- 说明：弹窗标题
 
->> onHide
+>> okText
 - 是否必须：否
-- 类型：function
-- 默认值：function() {}
-- 说明：modal隐藏时的回调函数
+- 类型：string
+- 默认值：'确定'
+- 说明：确定按钮的文案
+
+>> cancelText
+- 是否必须：否
+- 类型：string
+- 默认值：'取消'
+- 说明：取消按钮的文案

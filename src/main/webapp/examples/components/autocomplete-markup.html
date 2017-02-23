@@ -1,58 +1,41 @@
-<p>请输入「守望先锋」进行测试</p>
+<p>邮箱后缀自动补全：</p>
 <div id="autocompleteContainer">
-    <input id="myautocompleteIpt1" type="text" class="form-control" />
 </div>
 <script type="text/javascript">
-$(function(){
-    $('#myautocompleteIpt1').sharkAutoComplete({
-        autocomplete: false,
-        debounceTime: 300,
-        displayKey: 'name',
-        filterData: function(value) {
-            var defer = $.Deferred();
-            $.ajax({
-                type: "POST",
-                url: '/shark-ui/xhr/demo/list.do?rnd=' + Date.now(),
-                dataType: "json",
-                success: function(res) {
-                    if (res.code === 200) {
-                        var arr = [];
-                        for (var i = 0; i < res.data.length; i++) {
-                            if (res.data[i].name.indexOf(value) > -1) {
-                                arr.push(res.data[i]);
-                            }
-                        }
-                        defer.resolve(arr);
-                    }
-                },
-                error: function() {}
-            });
-            return defer.promise();
-        },
-        onSelected: function(res) {
-            console.log(res);
-        }
-    });
-    var myautocomplete = $.fn.sharkAutoComplete({
-        dom: '<input id="myautocompleteIpt2" type="text" class="form-control" />',
-        autocomplete: false,
-        debounceTime: 0,
-        displayKey: 'name',
-        filterData: function(value) {
-            return [{
+var myautocomplete = $.fn.sharkAutoComplete({
+    debounceTime: 0, //防抖间隔
+    displayKey: 'name', //对应返回数据中的展示字段
+    filterData: function(value) {
+        var defer = $.Deferred();
+        if (!value) {
+            defer.resolve([]);
+        } else {
+            defer.resolve([{
                 name: value + '@163.com'
-            },{
-                name: value + '@163.vipcom'
-            },{
+            }, {
+                name: value + '@163.vip.com'
+            }, {
                 name: value + '@126.com'
-            },{
+            }, {
                 name: value + '@126.vip.com'
-            }];
-        },
-        onSelected: function(res) {
-            console.log(res);
+            }, {
+                name: value + '@qq.com'
+            }, {
+                name: value + '@qq.vip.com'
+            }, {
+                name: value + '@sina.com'
+            }, {
+                name: value + '@gmail.com'
+            }, {
+                name: value + '@yahoo.com'
+            }]);
         }
-    });
-    $('#autocompleteContainer').append(myautocomplete.component);
+        return defer.promise();
+    },
+    onSelected: function(res) {
+        console.log(res);
+    }
 });
+myautocomplete.component.addClass('form-control');
+$('#autocompleteContainer').append(myautocomplete.component);
 </script>
