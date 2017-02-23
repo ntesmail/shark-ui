@@ -135,10 +135,10 @@ var Templates = require('../common/templates');
                     return;
                 }
                 sharkComponent.origin = target;
-                initEvents(sharkComponent, config);
                 if(config.preInit){
                     initComponent(sharkComponent, config);
                 }
+                initEvents(sharkComponent, config);
             };
             sharkComponent.adjustPostion = function() {
                 var postion = getPopoverPos(sharkComponent, config.direction);

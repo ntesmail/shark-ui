@@ -5,7 +5,8 @@
 var UI = require('../common/core');
 var BaseComponent = require('../common/base');
 
-function makeCheckable(tree, config) {
+function makeCheckable(sharkComponent, config) {
+    var tree = sharkComponent.component;
     tree.addClass('tree-checkable');
     //获取Checked的节点
     function getCheckedNodes() {
@@ -20,7 +21,7 @@ function makeCheckable(tree, config) {
                 continue;
             addedMap[node.node_id] = true;
             nodeList.push(node);
-            if(config.autolink === true){
+            if (config.autolink === true) {
                 var nextUl = label.next('ul');
                 if (nextUl.length === 0) {
                     getAllChildren(nodeList, node);
@@ -30,16 +31,16 @@ function makeCheckable(tree, config) {
         return nodeList;
     }
     //获取所有子节点
-    function getAllChildren(list, node) {
+    function getAllChildren(nodeList, node) {
         if (!$.isArray(node.children))
             return;
         for (var i = 0; i < node.children.length; i++) {
-            list.push(node.children[i]);
-            getAllChildren(list, node.children[i]);
+            nodeList.push(node.children[i]);
+            getAllChildren(nodeList, node.children[i]);
         };
     }
     // 全选,全不选
-    function selectAll(flag) {
+    function checkAll(flag) {
         if (flag) {
             tree.find('.tree-icon-check-empty,.tree-icon-check-minus').removeClass('tree-icon-check-empty tree-icon-check-minus').addClass('tree-icon-check');
         } else {
@@ -47,7 +48,7 @@ function makeCheckable(tree, config) {
         }
     }
     // 反选
-    function reverseSelect() {
+    function reverseCheckAll() {
         var emptys = tree.find('.tree-icon-check-empty');
         var checks = tree.find('.tree-icon-check');
         emptys.removeClass('tree-icon-check-empty').addClass('tree-icon-check');
@@ -57,7 +58,6 @@ function makeCheckable(tree, config) {
      * 修改所有子节点
      * @param  {element}  liEle    li
      * @param  {Boolean} isChecked 是否check
-     * @return {void} 
      */
     function changeChildChecked(liEle, isChecked) {
         var groupEle = liEle.children('.tree-group');
@@ -100,7 +100,7 @@ function makeCheckable(tree, config) {
     /**
      * check节点的复选框
      */
-    function checkNode(checkEle, updateLinkNodes, callback) {
+    function reverseCheckNode(checkEle, updateLinkNodes, callback) {
         var parentLabel = checkEle.parent();
         var parentLi = parentLabel.parent();
         var isChecked = false;
@@ -119,7 +119,7 @@ function makeCheckable(tree, config) {
         }
         var node_id = parentLabel.attr('tree-group-id');
         var node = config.nodesMap[node_id];
-        if(typeof callback === 'function') {
+        if (typeof callback === 'function') {
             callback.call(tree, node, isChecked);
         }
         return tree;
@@ -128,77 +128,71 @@ function makeCheckable(tree, config) {
      * 获取所有选中的节点
      * @return {[nodes]}
      */
-    tree.getCheckedNodes = function() {
+    sharkComponent.getCheckedNodes = function() {
         return getCheckedNodes();
     };
     /**
      * 全选
      */
-    tree.selectAll = function() {
-        selectAll(true);
-        return tree;
+    sharkComponent.checkAll = function() {
+        checkAll(true);
     };
     /**
      * 反选
      */
-    tree.reverseSelect = function() {
-        reverseSelect();
-        return tree;
+    sharkComponent.reverseCheck = function() {
+        reverseCheckAll();
     };
     /**
      * 全不选
      */
-    tree.selectNo = function() {
-        selectAll(false);
-        return tree;
+    sharkComponent.checkNo = function() {
+        checkAll(false);
     };
     /**
-     * check节点的复选框
+     * check节点
      * @param  {node}   node            [节点对象或节点id]
-     * @param  {boolean}   updateLinkNodes [是否需要check相关联的节点]
-     * @param  {Function} callback        [回调函数]
-     * @return {[tree]}                   [tree]
      */
-    tree.checkNode = function(node, updateLinkNodes, callback) {
+    sharkComponent.reverseCheckNode = function(node) {
         var nodeId = node.node_id || node;
         var groupEle = tree.find('.tree-group[tree-group-id="' + nodeId + '"]');
-        if (groupEle.length == 0) {
-            //节点不存在
-            return tree;
-        } else {
+        if (groupEle.length > 0) {
             var checkEle = groupEle.children('.tree-icon-check-empty,.tree-icon-check-minus,.tree-icon-check');
-            checkNode(checkEle, updateLinkNodes, callback || function() {});
-            return tree;
+            reverseCheckNode(checkEle, config.autolink, config.onNodeChecked);
         }
     };
     /**
-     * check节点的复选框（强制选中状态）
+     * 强制check节点
      * @param  {node}   node            [节点对象或节点id]
-     * @param  {boolean}   updateLinkNodes [是否需要check相关联的节点]
-     * @param  {Function} callback        [回调函数]
-     * @return {[tree]}                   [tree]
      */
-    tree.checkNodeForce = function(node, updateLinkNodes, callback) {
+    sharkComponent.checkNode = function(node) {
         var nodeId = node.node_id || node;
         var groupEle = tree.find('.tree-group[tree-group-id="' + nodeId + '"]');
-        if (groupEle.length == 0) {
-            //节点不存在
-            return tree;
+        if (groupEle.length > 0) {
+            var checkEle = groupEle.children('.tree-icon-check-empty,.tree-icon-check-minus');
+            if (checkEle.length > 0) {
+                reverseCheckNode(checkEle, config.autolink, config.onNodeChecked);
+            }
         }
-        var checkEle = groupEle.children('.tree-icon-check-empty,.tree-icon-check-minus');
-        if (checkEle.length == 0) {
-            //节点已经check
-            return tree;
-        } else {
-            checkNode(checkEle, updateLinkNodes, callback || function() {});
-            return tree;
+    };
+    /**
+     * 强制取消check节点
+     * @param  {node}   node            [节点对象或节点id]
+     */
+    sharkComponent.unCheckNode = function(node) {
+        var nodeId = node.node_id || node;
+        var groupEle = tree.find('.tree-group[tree-group-id="' + nodeId + '"]');
+        if (groupEle.length > 0) {
+            var checkEle = groupEle.children('.tree-icon-check');
+            if (checkEle.length > 0) {
+                reverseCheckNode(checkEle, config.autolink, config.onNodeChecked);
+            }
         }
     };
     //点击复选框
     tree.on('click', '.tree-icon-check-empty,.tree-icon-check-minus,.tree-icon-check', BaseComponent.filterComponentAction(tree, function(evt) {
         var checkEle = $(this);
-        checkNode(checkEle, config.autolink, config.onNodeChecked);
+        reverseCheckNode(checkEle, config.autolink, config.onNodeChecked);
     }));
-    return tree;
 }
 module.exports = makeCheckable;

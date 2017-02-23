@@ -1,15 +1,14 @@
 <div id="treeContainer"></div>
 <div>
     请选择需要构建的组件：
-    <button id="selectAllBtn" class="btn btn-primary">全选</button>
-    <button id="reverseSelectBtn" class="btn btn-primary">反选</button>
-    <button id="selectNoBtn" class="btn btn-primary">不选</button>
+    <button id="checkAllBtn" class="btn btn-primary">全选</button>
+    <button id="reverseCheckBtn" class="btn btn-primary">反选</button>
+    <button id="checkNoBtn" class="btn btn-primary">不选</button>
 </div>
 <div>
     <button id="build-btn" class="btn btn-primary">开始构建</button>
 </div>
 <script type="text/javascript">
-$(function(){
     var treeData = [{
         node_id: 'all',
         node_name: '所有组件',
@@ -48,7 +47,7 @@ $(function(){
     var mytree = $.fn.sharkTree({
         nodes: treeData,
         checkable: true,
-        autolink: true,
+        autolink: false,
         selectable: false,
         onNodeChecked: function(node, isChecked) {
             console.log(node, isChecked);
@@ -57,8 +56,8 @@ $(function(){
 
         }
     });
+    $('#treeContainer').append(mytree.component);
     mytree.expandAll();
-    $('#treeContainer').append(mytree);
     $('#build-btn').on('click', function() {
         var nodes = mytree.getCheckedNodes();
         var modules = [];
@@ -69,14 +68,13 @@ $(function(){
         };
         window.open('/shark-ui/custom/build/modules/shark.ui.js?modules=' + modules.join(','));
     });
-    $('#selectAllBtn').click(function(){
-        mytree.selectAll();
+    $('#checkAllBtn').click(function(){
+        mytree.checkAll();
     });
-    $('#reverseSelectBtn').click(function(){
-        mytree.reverseSelect();
+    $('#reverseCheckBtn').click(function(){
+        mytree.reverseCheck();
     });
-    $('#selectNoBtn').click(function(){
-        mytree.selectNo();
+    $('#checkNoBtn').click(function(){
+        mytree.checkNo();
     });
-})
 </script>
