@@ -1,7 +1,8 @@
 /.tmp/*
 /.vscode/*
 /build/*
-/build_dist/*
 /cache/*
+/dist/*
+/build_dist/*
 /node_modules/*
 /src/**/build.ui.js

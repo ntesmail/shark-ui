@@ -187,7 +187,8 @@ var ListGroup = require('./listgroup.ui');
             }
         });
         // 点击事件
-        selections.on('click', function(evt) {
+        selections.on('mousedown', function(evt) {
+            UI.preventAndStopEvent(evt);
             if (!selections.is(':hidden')) {
                 var selectionsRow = $(evt.target);
                 selectionsRow.siblings().removeClass('active');

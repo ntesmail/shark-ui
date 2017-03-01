@@ -3,6 +3,6 @@
 /build/*
 /cache/*
 /dist/*
-/node_modules/*
 /build_dist/*
+/node_modules/*
 /src/**/build.ui.js
