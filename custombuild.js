@@ -54,7 +54,7 @@ function makeCustomBuildAble(app, config) {
         if (!modules) {
             modules = 'autocomplete,dropdown,fileupload,modal,pager,popover,selecter,tabs,toastr,tree';
         }
-        modules = modules.split(',').sort(); //排序，保证同样的模块只生成一次
+        modules = modules.split(',').sort().toString(); //排序，保证同样的模块只生成一次
         var md5map = JSON.parse(fs.readFileSync(cacheUrl));
         var modulesMd5 = md5(modules) + '.js';
         if (md5map[modulesMd5]) {
