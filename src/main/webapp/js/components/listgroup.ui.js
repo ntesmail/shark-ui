@@ -15,11 +15,11 @@ function render(id) {
     };
     return ul;
 }
-
+//更新列表组
 function update(ul, data, actualKey, displayKey) {
     ul.empty();
     $.each(data, function(i, item) {
-        var li = $('<li class="shark-list-group list-group-item" value="' + item[actualKey] + '">' + item[displayKey] + '</li>');
+        var li = $('<li class="list-group-item" value="' + item[actualKey] + '">' + item[displayKey] + '</li>');
         li.data(item);
         ul.append(li);
     });

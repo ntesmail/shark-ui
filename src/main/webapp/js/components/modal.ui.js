@@ -13,28 +13,28 @@ var Templates = require('../common/templates');
     var templateConfirmFun = Templates.templateAoT(templateConfirm);
 
     //初始化modal的dom
-    function initDom(config) {
+    function initDom(sharkComponent, config) {
         var templateData = {
             animate: config.animate,
             size: config.size,
             content: config.content
         };
-        var modal = $(templateFun.apply(templateData));
-        modal.attr('id', UI.createUUID());
-        return modal;
+        sharkComponent.component = $(templateFun.apply(templateData));
+        return sharkComponent;
     }
 
     // 初始化事件
-    function initEvents(modal, config, dtd) {
-        modal.on('click.modal', '.js-ok,.js-cancel,.close', BaseComponent.filterComponentAction(modal, function(evt) {
+    function initEvents(sharkComponent, config) {
+        var modal = sharkComponent.component;
+        modal.on('click.modal', '.js-ok,.js-cancel,.close', BaseComponent.filterComponentAction(sharkComponent, function(evt) {
             var curEle = $(this);
-            if (config.type === 'confirm' && curEle.hasClass('js-ok')) {
-                dtd.resolve();
+            if (curEle.hasClass('js-ok')) {
+                config.deffer && config.deffer.resolve();
             }
-            if (config.type === 'confirm' && curEle.hasClass('js-cancel')) {
-                dtd.reject();
+            if (curEle.hasClass('js-cancel')) {
+                config.deffer && config.deffer.reject();
             }
-            modal.hideMe();
+            sharkComponent.hide();
         }));
     }
 
@@ -50,48 +50,49 @@ var Templates = require('../common/templates');
                 onHide: function() {}
             };
             UI.extend(config, options);
-            config.type = 'modal';
+            /*********初始化组件*************/
             var body = $(document.body);
-            var modal = initDom(config);
+            var sharkComponent = {};
+            initDom.call(this, sharkComponent, config);
             var backdropEle;
-            body.append(modal);
-            BaseComponent.addComponentBaseFn(modal, config);
+            body.append(sharkComponent.component);
+            BaseComponent.addComponentBaseFn(sharkComponent, config);
             if (config.backdrop !== 'static') {
-                modal.on('click', function(evt) {
+                sharkComponent.component.on('click', function(evt) {
                     if (evt.target === evt.currentTarget) {
-                        modal.hideMe();
+                        sharkComponent.hide();
                     }
                 });
             }
-            initEvents(modal, config);
-            modal.showMe = function() {
+            initEvents(sharkComponent, config);
+            sharkComponent.show = function() {
                 backdropEle = $('<div class="modal-backdrop ' + config.animate + ' in"></div>');
                 body.append(backdropEle);
                 body.addClass('modal-open');
-                modal.show();
-                modal.scrollTop(0); //触发重绘
-                modal.addClass('in');
+                sharkComponent.component.show();
+                sharkComponent.component.scrollTop(0); //触发重绘
+                sharkComponent.component.addClass('in');
                 if (typeof config.onShow === 'function') {
-                    config.onShow.call(modal);
+                    config.onShow.call(sharkComponent);
                 }
             };
-            modal.hideMe = function() {
+            sharkComponent.hide = function() {
                 backdropEle.remove();
                 body.removeClass('modal-open');
-                modal.hide();
-                modal.removeClass('in');
+                sharkComponent.component.hide();
+                sharkComponent.component.removeClass('in');
                 if (typeof config.onHide === 'function') {
-                    config.onHide.call(modal);
+                    config.onHide.call(sharkComponent);
                 }
             };
-            modal.destroy = function() {
+            sharkComponent.destroy = function() {
                 if (backdropEle) {
                     backdropEle.remove();
                 }
-                modal.remove();
-                modal = null;
+                sharkComponent.component.remove();
+                sharkComponent = null;
             };
-            return modal;
+            return sharkComponent;
         },
         sharkConfirm: function(options) {
             var deffer = $.Deferred();
@@ -107,8 +108,9 @@ var Templates = require('../common/templates');
                 onHide: function() {}
             };
             UI.extend(config, options);
+            /*********初始化组件*************/
             config.backdrop = 'static';
-            config.type = 'confirm';
+            config.deffer = deffer;
             var templateData = {
                 title: config.title,
                 content: config.content,
@@ -116,13 +118,12 @@ var Templates = require('../common/templates');
                 cancelText: config.cancelText
             };
             config.content = templateConfirmFun.apply(templateData);
-            var confirm = $.fn.sharkModal(config);
-            confirm.addClass('shark-confirm');
-            confirm.showMe();
-            initEvents(confirm, config, deffer);
+            var sharkComponent = $.fn.sharkModal(config);
+            sharkComponent.show();
             return deffer.promise();
         },
         sharkAlert: function(options) {
+            var deffer = $.Deferred();
             /*********默认参数配置*************/
             var config = {
                 animate: 'fade',
@@ -134,18 +135,18 @@ var Templates = require('../common/templates');
                 onHide: function() {}
             };
             UI.extend(config, options);
+            /*********初始化组件*************/
             config.backdrop = 'static';
-            config.type = 'alert';
+            config.deffer = deffer;
             var templateData = {
                 title: config.title,
                 content: config.content,
                 okText: config.okText
             };
             config.content = templateConfirmFun.apply(templateData);
-            var alert = $.fn.sharkModal(config);
-            alert.addClass('shark-alert');
-            initEvents(alert, config);
-            alert.showMe();
+            var sharkComponent = $.fn.sharkModal(config);
+            sharkComponent.show();
+            return deffer.promise();
         }
     });
 })(jQuery || $);

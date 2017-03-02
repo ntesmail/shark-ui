@@ -1,24 +1,6 @@
 
 > 配置项：
 
->> autocomplete
-- 是否必须：否
-- 类型：boolean
-- 默认值：false
-- 说明：是否开启鼠标移动或者按下方向键时，将输入框中的内容补全
-
->> emailcomplete
-- 是否必须：否
-- 类型：boolean
-- 默认值：false
-- 说明：是否开启邮箱后缀自动补全，默认是联想模式
-
->> debounceTime
-- 是否必须：否
-- 类型：number
-- 默认值：300
-- 说明：防抖动，间隔300毫秒触发一次数据过滤
-
 >> displayKey
 - 是否必须：是
 - 类型：string
@@ -26,19 +8,25 @@
 - 说明：要展示的字段名
 
 >> filterData
-- 是否必须：否
+- 是否必须：是
 - 类型：function @return [{}]
 - 默认值：无
 - 说明：用户自定义的过滤函数，得到需要展示的列表，建议使用
 
->> data
+>> autocomplete
 - 是否必须：否
-- 类型：array
-- 默认值：null
-- 说明：待选列表数据，如果没有filterData则需要
+- 类型：boolean
+- 默认值：false
+- 说明：是否开启鼠标移动或者按下方向键时，将输入框中的内容补全
+
+>> debounceTime
+- 是否必须：否
+- 类型：number
+- 默认值：300
+- 说明：防抖动，间隔300毫秒触发一次数据过滤
 
 >> onSelected
 - 是否必须：否
 - 类型：function
-- 默认值：function(item) {}
+- 默认值：function(itemData) {}
 - 说明：选中下拉列表中的某一项后的回调函数

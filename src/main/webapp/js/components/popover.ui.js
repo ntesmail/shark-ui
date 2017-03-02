@@ -5,50 +5,59 @@
 var UI = require('../common/core');
 var BaseComponent = require('../common/base');
 var Templates = require('../common/templates');
-(function ($) {
+(function($) {
     var template = Templates.popover;
     var templateFun = Templates.templateAoT(template);
     //初始化popover的dom
-    function initDom(config) {
+    function initComponent(sharkComponent, config) {
         var templateData = {
             title: config.title,
             content: config.content
         };
-        var popover = $(templateFun.apply(templateData));
-        popover.attr('id', UI.createUUID());
-        return popover;
+        sharkComponent.component = $(templateFun.apply(templateData));
+        sharkComponent.component.attr('id', UI.createUUID());
+        sharkComponent.component.addClass('shark-' + config.type);
+        $(document.body).append(sharkComponent.component);
+        sharkComponent.component.hide();
+        sharkComponent.isPopoverInit = true;
+        if (config.event === 'click' && config.close === 'bodyclick') {
+            UI.addCloseListener(sharkComponent.component.attr('id'), [sharkComponent.origin, sharkComponent.component], function() {
+                if (sharkComponent.component.is(':visible')) {
+                    sharkComponent.hide();
+                }
+            });
+        }
     }
     //初始化事件
-    function initEvents(origin, popover, config) {
-        if (origin.length == 0) {
-            return;
-        }
+    function initEvents(sharkComponent, config) {
+        var origin = sharkComponent.origin;
         if (config.event === 'click') {
-            origin.on('click.popover', BaseComponent.filterComponentAction(popover, function (evt) {
-                if (popover.is(':hidden')) {
-                    popover.showMe();
+            origin.on('click.popover', BaseComponent.filterComponentAction(sharkComponent, function(evt) {
+                if (!sharkComponent.isPopoverInit) {
+                    initComponent(sharkComponent, config);
+                }
+                if (sharkComponent.component.is(':hidden')) {
+                    sharkComponent.show();
                 } else {
-                    popover.hideMe();
+                    sharkComponent.hide();
                 }
             }));
-            if (config.close === 'bodyclick') {
-                UI.addCloseListener(popover.attr('id'), [origin, popover], function () {
-                    if (popover.is(':visible')) {
-                        popover.hideMe();
-                    }
-                });
-            }
         } else if (config.event === 'mouseover') {
-            origin.on('mouseover.popover', BaseComponent.filterComponentAction(popover, function (evt) {
-                popover.showMe();
+            origin.on('mouseover.popover', BaseComponent.filterComponentAction(sharkComponent, function(evt) {
+                if (!sharkComponent.isPopoverInit) {
+                    initComponent(sharkComponent, config);
+                }
+                sharkComponent.show();
             }));
-            origin.on('mouseout.popover', BaseComponent.filterComponentAction(popover, function (evt) {
-                popover.hideMe();
+            origin.on('mouseout.popover', BaseComponent.filterComponentAction(sharkComponent, function(evt) {
+                sharkComponent.hide();
             }));
         }
     }
     //通用方法popover应展示的位置
-    var getPopoverPos = function (origin, popover, direction) {
+    var getPopoverPos = function(sharkComponent, direction) {
+        var origin = sharkComponent.origin;
+        var popover = sharkComponent.component;
         var postion;
         popover.removeClass('top right bottom left');
         popover.addClass(direction);
@@ -59,12 +68,14 @@ var Templates = require('../common/templates');
         }
         postion = UI.calcOffset(origin, popover, direction, fix);
         if (direction !== postion.actualDirection) {
-            return getPopoverPos(origin, popover, postion.actualDirection);
+            return getPopoverPos(sharkComponent, postion.actualDirection);
         }
         return postion;
     };
     //利用通用方法取到的结果postion，修正popover的位置
-    var fixPopover = function (origin, popover, postion) {
+    var fixPopover = function(sharkComponent, postion) {
+        var origin = sharkComponent.origin;
+        var popover = sharkComponent.component;
         var arrow = popover.find('.arrow');
         var direction = postion.actualDirection;
         var popoverWidth = popover.outerWidth();
@@ -101,7 +112,7 @@ var Templates = require('../common/templates');
         popover.css(postion);
     };
     $.fn.extend({
-        sharkPopover: function (options) {
+        sharkPopover: function(options) {
             /*********默认参数配置*************/
             var config = {
                 event: 'click',
@@ -109,63 +120,68 @@ var Templates = require('../common/templates');
                 direction: 'right',
                 title: '',
                 content: '',
+                preInit: false,//是否把popover组件预先生成并添加到body
                 reRenderOnShow: false,
-                onShow: function () { },
-                onHide: function () { }
+                onShow: function() {},
+                onHide: function() {}
             };
             UI.extend(config, options);
-            var origin;
-            var popover = initDom(config);
-            BaseComponent.addComponentBaseFn(popover, config);
-            $(document.body).append(popover);
-            if(this === $.fn){
-                popover.linkTo = function (target) {
-                    origin = target;
-                    initEvents(origin, popover, config);
-                };
-            }
-            else{
-                origin = this;
-                initEvents(origin, popover, config);
-            }
-            popover.adjustPostion = function () {
-                var postion = getPopoverPos(origin, popover, config.direction);
-                fixPopover(origin, popover, postion);
-                return popover;
+            options.type = 'popover';
+            /*********初始化组件*************/
+            var sharkComponent = {};
+            sharkComponent.linkTo = function(target) {
+                if(sharkComponent.origin){
+                    throw Error('only one element can be linked');
+                    return;
+                }
+                sharkComponent.origin = target;
+                if(config.preInit){
+                    initComponent(sharkComponent, config);
+                }
+                initEvents(sharkComponent, config);
             };
-            popover.showMe = function () {
+            sharkComponent.adjustPostion = function() {
+                var postion = getPopoverPos(sharkComponent, config.direction);
+                fixPopover(sharkComponent, postion);
+            };
+            sharkComponent.show = function() {
                 if (config.reRenderOnShow) {
-                    popover.find('.popover-title').html(config.title);
-                    popover.find('.popover-content').html(config.content);
+                    sharkComponent.component.find('.popover-title').html(config.title);
+                    sharkComponent.component.find('.popover-content').html(config.content);
                 }
-                popover.show();
-                popover.adjustPostion();
+                sharkComponent.component.show();
+                sharkComponent.adjustPostion();
                 if (typeof config.onShow === 'function') {
-                    config.onShow.call(popover);
+                    config.onShow.call(sharkComponent);
                 }
             };
-            popover.hideMe = function () {
-                popover.hide();
+            sharkComponent.hide = function() {
+                sharkComponent.component.hide();
                 if (typeof config.onHide === 'function') {
-                    config.onHide.call(popover);
+                    config.onHide.call(sharkComponent);
                 }
             };
-            popover.destroy = function () {
-                UI.removeCloseListener(popover.attr('id'));
-                if(origin){
-                    origin.off('click.popover mouseover.popover mouseout.popover');
-                    origin = null;
+            sharkComponent.destroy = function() {
+                if(sharkComponent.isPopoverInit){
+                    UI.removeCloseListener(sharkComponent.component.attr('id'));
+                    sharkComponent.component.remove();
                 }
-                popover.remove();
-                popover = null;
+                if (sharkComponent.origin) {
+                    sharkComponent.origin.off('click.popover mouseover.popover mouseout.popover');
+                }
+                sharkComponent = null;
             };
-            return popover;
+            if (this !== $.fn) {
+                sharkComponent.linkTo(this);
+            }
+            BaseComponent.addComponentBaseFn(sharkComponent, config);
+            return sharkComponent;
         },
-        sharkTooltip: function (options) {
+        sharkTooltip: function(options) {
             options.event = 'mouseover';
-            var tooltip = this.sharkPopover(options);
-            tooltip.addClass('shark-tooltip');
-            return tooltip;
+            options.type = 'tooltip';
+            var sharkComponent = this.sharkPopover(options);
+            return sharkComponent;
         }
     });
 })(jQuery || $);

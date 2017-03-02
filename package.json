@@ -1,20 +1,19 @@
 {
   "name": "@ntesmail/shark-ui",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "description": "简单好用的pc端组件，基于jquery开发",
   "keywords": "shark ui jquery",
   "main": "index.js",
   "author": "sweetyx",
   "license": "MIT",
   "scripts": {
-    "test": "gulp serve"
+    "start": "gulp serve"
   },
-  "homepage": "https://github.com/ntesmail",
+  "homepage": "http://shark.mail.netease.com/shark-ui/index.html",
   "dependencies": {
-    "showdown": "^1.5.4"
+    "@ntesmail/shark-css": "^1.2.6"
   },
   "devDependencies": {
-    "@ntesmail/shark-css": "^1.2.6",
     "body-parser": "^1.5.12",
     "ejs": "^2.5.2",
     "express": "^4.13.3",
@@ -23,12 +22,14 @@
     "md5": "^2.2.1 ",
     "run-sequence": "^1.2.2",
     "shark-automation": "^1.3.6",
+    "showdown": "^1.6.0",
+    "sync-exec": "^0.6.2",
     "sync-request": "^3.0.1",
     "yargs": "^5.0.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/z827101859"
+    "url": "https://github.com/ntesmail/shark-ui"
   },
   "engines": {
     "node": ">=5.9.0"

@@ -1,7 +1,7 @@
 # shark-ui组件库
 
 - 基于jquery打造，简单易用
-- 组件丰富，包括 autocomplete,fileupload,modal,pager,popover,selecter,tabs,tree等
+- 组件丰富，包括 autocomplete,dropdown,fileupload,modal,pager,popover,selecter,tabs,toastr,tree等
 - 兼容性好，支持IE8+，chrome，firefox，safari等所有主流浏览器
 
 

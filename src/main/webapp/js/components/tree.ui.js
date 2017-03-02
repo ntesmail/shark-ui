@@ -10,20 +10,20 @@ var makeSelectable = require('./tree-selectable.ui');
 (function($) {
     var template = Templates.tree;
     var templateFun = Templates.templateAoT(template);
+    var isCalced = false;
     //缓存icon的宽度
     var baseIconWidth = 16;
     var calcWidth = function() {
+        if (isCalced) {
+            return;
+        }
         var iconWrap = $('<div class="shark-tree"><a class="tree-icon"></a></div>');
         $(document.body).append(iconWrap);
         var icon = iconWrap.children('.tree-icon');
         baseIconWidth = icon.outerWidth();
         iconWrap.remove();
+        isCalced = true;
     };
-    if ($(document.body).length > 0) {
-        calcWidth();
-    } else {
-        $(document).ready(calcWidth);
-    }
     /**
      * 展开节点
      * @param  {tree-icon-right,tree-icon-down} element [节点前面的 展开/收起 按钮]
@@ -96,7 +96,7 @@ var makeSelectable = require('./tree-selectable.ui');
         }
     }
     //初始化树的第一层级dom
-    function initDom(config) {
+    function initDom(sharkComponent, config) {
         var templateData = {
             nodes: config.nodes,
             checkable: config.checkable,
@@ -105,26 +105,32 @@ var makeSelectable = require('./tree-selectable.ui');
             basePl: -baseIconWidth,
             isRoot: true
         };
-        var tree = $(templateFun.apply(templateData));
-        tree.attr('id', UI.createUUID());
-        return tree;
+        sharkComponent.createType = 'construct';
+        sharkComponent.component = $(templateFun.apply(templateData));
+        sharkComponent.component.addClass('shark-tree');
+        if (this !== $.fn) {
+            this.append(sharkComponent.component);
+        }
+        return sharkComponent
     }
     //初始化事件
-    function initEvents(tree, config) {
+    function initEvents(sharkComponent, config) {
+        var tree = sharkComponent.component;
         /**
          * 点击节点的 展开/收起 按钮
          */
         tree.on('click', '.tree-icon-right,.tree-icon-down', BaseComponent.filterComponentAction(tree, function(evt) {
-            var ele = $(this);
-            if (ele.hasClass('tree-icon-right')) {
-                unfoldNode(ele, config);
-            } else if (ele.hasClass('tree-icon-down')) {
-                foldNode(ele);
+            var iconEle = $(this);
+            if (iconEle.hasClass('tree-icon-right')) {
+                unfoldNode(iconEle, config);
+            } else if (iconEle.hasClass('tree-icon-down')) {
+                foldNode(iconEle);
             }
         }));
     }
     $.fn.extend({
         sharkTree: function(options) {
+            calcWidth();
             /*********默认参数配置*************/
             var config = {
                 nodes: [],
@@ -137,56 +143,64 @@ var makeSelectable = require('./tree-selectable.ui');
             };
             UI.extend(config, options);
             initNodesMap(config.nodes, config.nodesMap);
-            var tree;
-            if(this === $.fn){
-                tree = initDom(config);
-            }
-            else{
-                tree = initDom(config);
-                this.append(tree);
-            }
-            BaseComponent.addComponentBaseFn(tree, config);
-            initEvents(tree, config);
+            /*********初始化组件*************/
+            var sharkComponent = {};
+            initDom.call(this, sharkComponent, config);
+            var tree = sharkComponent.component;
+            BaseComponent.addComponentBaseFn(sharkComponent, config);
+            initEvents(sharkComponent, config);
             //可check
             if (config.checkable) {
-                makeCheckable(tree, config);
+                makeCheckable(sharkComponent, config);
             }
             //可select
             if (config.selectable) {
-                makeSelectable(tree, config);
+                makeSelectable(sharkComponent, config);
             }
             /**********初始化***********************/
             /**
              * 按节点路径展开树
-             * @param  {[]} nodesArr   [节点路径,eg.[{node_id:100},{node_id:110},{node_id:111}] 或者 [100,110,111]]
+             * @param  {[]} path   [节点路径,eg.[{node_id:100},{node_id:110},{node_id:111}] 或者 [100,110,111]]
              */
-            tree.expandByPathArr = function(nodesArr) {
-                for (var i = 0; i < nodesArr.length; i++) {
-                    var nodeId = nodesArr[i].node_id || nodesArr[i];
+            sharkComponent.expandByPath = function(path) {
+                for (var i = 0; i < path.length; i++) {
+                    var nodeId = path[i].node_id || path[i];
                     var groupEle = tree.find('.tree-group[tree-group-id="' + nodeId + '"]');
-                    var actionEle = groupEle.children('.tree-icon-right');
-                    if (actionEle.length > 0) {
-                        unfoldNode(actionEle, config);
+                    var iconEle = groupEle.children('.tree-icon-right');
+                    if (iconEle.length > 0) {
+                        unfoldNode(iconEle, config);
                     }
                 }
-                return tree;
+            };
+            /**
+             * 按节点展开树
+             * @param node   [节点id或者节点]
+             */
+            sharkComponent.expandByNode = function(node) {
+                var nodeId = node || node.node_id;
+                var tmpNode = config.nodesMap[nodeId];
+                var path = [tmpNode];
+                while (tmpNode.parentNode) {
+                    var tmpNode = tmpNode.parentNode;
+                    path.unshift(tmpNode);
+                }
+                sharkComponent.expandByPath(path);
             };
             /**
              * 展开树的全部节点
              */
-            tree.expandAll = (function() {
+            sharkComponent.expandAll = (function() {
                 var expandAll = function(nodesArr) {
                     if (!$.isArray(nodesArr)) {
                         return;
                     }
                     for (var i = 0; i < nodesArr.length; i++) {
-                        tree.expandByPathArr([nodesArr[i]]);
+                        sharkComponent.expandByPath([nodesArr[i]]);
                         expandAll(nodesArr[i].children);
                     }
-                    return tree;
                 };
                 return function() {
-                    return expandAll(config.nodes);
+                    expandAll(config.nodes);
                 };
             })();
             /**
@@ -194,23 +208,23 @@ var makeSelectable = require('./tree-selectable.ui');
              * @param  {[string]} keyword [搜索关键字]
              * @return {[node]}         [节点数组]
              */
-            tree.searchNodes = function(keyword) {
-                var searchedNodes = [];
+            sharkComponent.search = function(keyword) {
+                var result = [];
                 for (var p in config.nodesMap) {
                     if (config.nodesMap.hasOwnProperty(p) && !UI.isEmpty(config.nodesMap[p].node_name) && config.nodesMap[p].node_name.indexOf(keyword) !== -1) {
-                        searchedNodes.push(config.nodesMap[p]);
+                        result.push(config.nodesMap[p]);
                     }
                 }
-                return searchedNodes;
+                return result;
             };
             /**
              * 销毁树
              */
-            tree.destroy = function() {
-                tree.remove();
-                tree = null;
+            sharkComponent.destroy = function() {
+                sharkComponent.component.remove();
+                sharkComponent = null;
             };
-            return tree;
+            return sharkComponent;
         }
     });
 })(jQuery || $);
