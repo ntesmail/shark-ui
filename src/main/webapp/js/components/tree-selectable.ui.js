@@ -5,7 +5,8 @@
 var UI = require('../common/core');
 var BaseComponent = require('../common/base');
 
-function makeSelectable(tree, config) {
+function makeSelectable(sharkComponent, config) {
+    var tree = sharkComponent.component;
     tree.addClass('tree-selectable');
     //获取selected的节点
     function getSelectedNode() {
@@ -34,7 +35,7 @@ function makeSelectable(tree, config) {
      * 获取selected的节点
      * @return {[nodes]}
      */
-    tree.getSelectedNode = function () {
+    sharkComponent.getSelectedNode = function() {
         return getSelectedNode();
     };
     /**
@@ -44,23 +45,18 @@ function makeSelectable(tree, config) {
      * @param  {Function} callback        [回调函数]
      * @return {[tree]}                   [tree]
      */
-    tree.selectNode = function (node, callback) {
+    sharkComponent.selectNode = function(node) {
         var nodeId = node.node_id || node;
         var groupEle = tree.find('.tree-group[tree-group-id="' + nodeId + '"]');
-        if (groupEle.length == 0) {
-            //节点不存在
-            return tree;
-        } else {
+        if (groupEle.length > 0) {
             var nameEle = groupEle.children('.tree-node-name');
-            selectNode(nameEle, callback || function () { });
-            return tree;
+            selectNode(nameEle, config.onNodeSelected);
         }
     };
     //树的点击事件
-    tree.on('click', '.tree-node-name', BaseComponent.filterComponentAction(tree, function (evt) {
+    tree.on('click', '.tree-node-name', BaseComponent.filterComponentAction(tree, function(evt) {
         var nameEle = $(this);
         selectNode(nameEle, config.onNodeSelected);
     }));
-    return tree;
 }
 module.exports = makeSelectable;

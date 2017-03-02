@@ -1,17 +1,15 @@
 <button id="confirmBtn" class="btn btn-primary">confirm</button>
 <script type="text/javascript">
-$(function(){
-    $('#confirmBtn').on('click', function() {
-        $.fn.sharkConfirm({
-            title: '提示',
-            content: '<span style="color:#ff0000;">确定删除吗？</span>',
-            okText: '确定',
-            cancelText: '取消'
-        }).then(function() {
-            console.log('ok');
-        }, function() {
-            console.log('cancel');
-        });
+$('#confirmBtn').on('click', function() {
+    $.fn.sharkConfirm({
+        title: '提示',
+        content: '<span style="color:#ff0000;">确定删除吗？</span>',
+        okText: '确定',
+        cancelText: '取消'
+    }).then(function() {
+        console.log('ok');
+    }, function() {
+        console.log('cancel');
     });
 });
 </script>

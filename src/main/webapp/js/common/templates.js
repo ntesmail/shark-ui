@@ -2,6 +2,12 @@
  * @author sweetyx
  * 组件基础模板
  */
+var autocomplete = '\
+    <input class="shark-autocomplete" type="text" />\
+';
+var fileupload = '\
+    <button class="shark-fileupload">上传文件</button>\
+';
 var listgroup = '\
     <ul class="shark-list-group list-group position-absolute" style="display: none;"></ul>\
 ';
@@ -17,7 +23,7 @@ var popover = '\
     </div>\
 ';
 var selecter = '\
-    <div class="shark-selecter">\
+    <div class="shark-selecter position-relative">\
         <a class="selecter">\
             <span class="value"></span>\
             <span class="caret"></span>\
@@ -120,7 +126,7 @@ var confirm = '\
 ';
 var toastr = '\
 <div class="shark-toastr toastr toastr-<%= this.type %>">\
-    <span><%= this.content %></span>\
+    <div><%= this.content %></div>\
 </div>\
 ';
 
@@ -159,6 +165,8 @@ function template2html(template, data) {
 }
 
 var Templates = {
+    autocomplete: autocomplete,
+    fileupload: fileupload,
     listgroup: listgroup,
     modal: modal,
     confirm: confirm,
