@@ -439,7 +439,9 @@
 	';
 	var confirm = '\
 	<div class="modal-header">\
-	    <button class="close js-cancel"> x</button >\
+	    <button type="button" class="btn btn-link pull-right js-cancel" ng-click="cancel();">\
+	        <span class="icon-close"></span>\
+	    </button>\
 	    <h4 class="modal-title"><%= this.title %></h4>\
 	</div>\
 	<div class="modal-body">\
@@ -1315,7 +1317,7 @@
 	    // 初始化事件
 	    function initEvents(sharkComponent, config) {
 	        var modal = sharkComponent.component;
-	        modal.on('click.modal', '.js-ok,.js-cancel,.close', BaseComponent.filterComponentAction(sharkComponent, function(evt) {
+	        modal.on('click.modal', '.js-ok,.js-cancel', BaseComponent.filterComponentAction(sharkComponent, function(evt) {
 	            var curEle = $(this);
 	            if (curEle.hasClass('js-ok')) {
 	                config.deffer && config.deffer.resolve();
