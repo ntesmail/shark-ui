@@ -111,7 +111,9 @@ var modal = '\
 ';
 var confirm = '\
 <div class="modal-header">\
-    <button class="close js-cancel"> x</button >\
+    <button type="button" class="btn btn-link pull-right js-cancel" ng-click="cancel();">\
+        <span class="icon-close"></span>\
+    </button>\
     <h4 class="modal-title"><%= this.title %></h4>\
 </div>\
 <div class="modal-body">\
