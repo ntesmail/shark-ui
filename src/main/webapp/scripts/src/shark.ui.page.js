@@ -1,6 +1,3 @@
-require('./common/core');
-require('./common/base.ui');
-require('./common/templates.ui');
 require('./components/autocomplete.ui');
 require('./components/dropdown.ui');
 require('./components/fileupload.ui');
@@ -11,3 +8,5 @@ require('./components/selecter.ui');
 require('./components/tabs.ui');
 require('./components/toastr.ui');
 require('./components/tree.ui');
+var $ = require('jquery');
+window.$ = $;

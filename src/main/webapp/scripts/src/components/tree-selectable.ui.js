@@ -2,6 +2,7 @@
  * @author sweetyx
  * @description 树插件的扩展，可select树
  */
+var $ = require('jquery');
 var UI = require('../common/core');
 var BaseComponent = require('../common/base');
 

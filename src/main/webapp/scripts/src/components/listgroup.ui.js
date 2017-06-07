@@ -2,10 +2,12 @@
  * @author sweetyx
  * @description 列表组
  */
+var $ = require('jquery');
 var UI = require('../common/core');
 var Templates = require('../common/templates');
 var template = Templates.listgroup;
 var templateFun = Templates.templateAoT(template);
+
 //创建列表组
 function render(id) {
     var ul = $(templateFun.apply());

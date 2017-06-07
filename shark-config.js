@@ -1,12 +1,21 @@
 const baseconfig = require('./shark-automation-config.js');
 const path = require('path');
-const request = require('sync-request');
 const fs = require('fs');
+const request = require('sync-request');
+const webpack = require('webpack');
 
 shark.baseconfig = baseconfig;
 
 shark.webpack = {
-    entry: 'filename'
+    entry: 'filename',
+    config: {
+        plugins: [
+            new webpack.ProvidePlugin({
+                $: 'jquery',
+                jQuery: 'jquery'
+            })
+        ]
+    } //webpack配置
 };
 
 shark.plugins = {

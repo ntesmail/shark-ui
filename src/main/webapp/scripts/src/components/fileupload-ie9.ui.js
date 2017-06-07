@@ -2,8 +2,10 @@
  * @author sweetyx
  * @description 文件上传插件的扩展，兼容ie9以下浏览器
  */
+var $ = require('jquery');
 var UI = require('../common/core');
 var BaseComponent = require('../common/base');
+
 var blankSrc = /^https/i.test(window.location.href || '') ? 'javascript:void(0);' : 'about:blank';
 //创建input
 function createInput(inputId) {

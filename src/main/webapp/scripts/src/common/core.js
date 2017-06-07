@@ -3,6 +3,8 @@
  * 提供一些公共的核心方法
  */
 
+var $ = require('jquery');
+
 var registerCloseArray = [];
 var isCloseRegister = false;
 

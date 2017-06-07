@@ -1,35 +1,39 @@
 {
-    "name": "@ntesmail/shark-ui",
-    "version": "2.0.0",
-    "description": "简单好用的pc端组件",
-    "keywords": [
-        "shark",
-        "ui"
-    ],
-    "main": "index.js",
-    "author": "sweetyx",
-    "license": "MIT",
-    "scripts": {
-        "server": "./node_modules/.bin/shark server",
-        "build": "./node_modules/.bin/shark build online"
-    },
-    "homepage": "http://shark.mail.netease.com/shark-ui/index.html",
-    "dependencies": {
-        "@ntesmail/shark-css": "^1.2.6",
-        "jquery": "^3.2.1"
-    },
-    "devDependencies": {
-        "ejs": "^2.5.2",
-        "express": "^4.13.3",
-        "shark-automation": "^2.1.0",
-        "showdown": "^1.6.0",
-        "yargs": "^5.0.0"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/ntesmail/shark-ui"
-    },
-    "engines": {
-        "node": ">=6.10.0"
-    }
+  "name": "@ntesmail/shark-ui",
+  "version": "2.0.0",
+  "description": "简单好用的pc端组件",
+  "keywords": [
+    "shark",
+    "ui"
+  ],
+  "main": "index.js",
+  "author": "sweetyx",
+  "license": "MIT",
+  "scripts": {
+    "server": "./node_modules/.bin/shark server",
+    "build": "./node_modules/.bin/shark build online"
+  },
+  "homepage": "http://shark.mail.netease.com/shark-ui/index.html",
+  "dependencies": {
+    "@ntesmail/shark-css": "^1.2.6",
+    "jquery": "^3.2.1"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.24.1",
+    "ejs": "^2.5.2",
+    "express": "^4.13.3",
+    "gulp-babel": "^6.1.2",
+    "shark-automation": "^2.1.0",
+    "showdown": "^1.6.0",
+    "sync-request": "^4.1.0",
+    "webpack": "^2.6.1",
+    "yargs": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ntesmail/shark-ui"
+  },
+  "engines": {
+    "node": ">=6.10.0"
+  }
 }

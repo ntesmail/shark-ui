@@ -2,7 +2,7 @@ module.exports = {
     comment: 'shark-ui',
     version: '2.0.0',
     product: 'shark-ui', //项目名称
-    contextPath: '/', //请求的根路径
+    contextPath: '/shark-ui', //请求的根路径
     protocol: 'http', //项目使用的协议
     browserPort: 9300, //给browser sync使用的端口
     port: 9200, //express 起的端口
