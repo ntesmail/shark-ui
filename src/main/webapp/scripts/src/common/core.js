@@ -35,7 +35,7 @@ function dispatchHandler(evt) {
  * @param {[type]} key   [组件的id]
  * @param {[type]} elems [点击哪些元素时，不关闭组件]
  */
-var addCloseListener = function(key, elems, cb) {
+var addCloseListener = function (key, elems, cb) {
     if (!isCloseRegister) {
         isCloseRegister = true;
         $(document).on('mousedown.sharkcore', dispatchHandler);
@@ -46,7 +46,7 @@ var addCloseListener = function(key, elems, cb) {
         cb: cb
     });
 };
-var removeCloseListener = function(key) {
+var removeCloseListener = function (key) {
     for (var i = 0; i < registerCloseArray.length; i++) {
         if (key === registerCloseArray[i].key) {
             registerCloseArray.splice(i, 1);
@@ -58,11 +58,11 @@ var removeCloseListener = function(key) {
         $(document).off('mousedown.sharkcore', dispatchHandler);
     }
 };
-var preventAndStopEvent = function(evt) {
+var preventAndStopEvent = function (evt) {
     evt.preventDefault();
     evt.stopPropagation();
 };
-var calcOffset = function(target, elem, direction, fixOption) {
+var calcOffset = function (target, elem, direction, fixOption) {
     //根据绑定的目标元素和展示方向计算位置
     var fixWidth = fixOption ? (fixOption.width || 0) : 0;
     var fixHeight = fixOption ? (fixOption.height || 0) : 0;
@@ -102,18 +102,13 @@ var calcOffset = function(target, elem, direction, fixOption) {
         top: top
     };
 };
-var createUUID = (function() {
-    var uuidRegEx = /[xy]/g;
-    var uuidReplacer = function(c) {
-        var r = Math.random() * 16 | 0,
-            v = c == 'x' ? r : (r & 3 | 8);
-        return v.toString(16);
-    };
-    return function() {
-        return 'uuid-xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(uuidRegEx, uuidReplacer).toUpperCase();
+var createUUID = (function () {
+    var index = 0;
+    return function () {
+        return 'uuid-x'.replace(/x/, index++);
     };
 })();
-var extend = function(o1, o2) {
+var extend = function (o1, o2) {
     if ($.isPlainObject(o1) && $.isPlainObject(o2)) {
         var temp = $.extend(true, {}, o2);
         return $.extend(o1, temp);
@@ -121,22 +116,22 @@ var extend = function(o1, o2) {
         return o1;
     }
 }
-var isEmpty = function(val) {
+var isEmpty = function (val) {
     if (typeof val === 'undefined' || val === null || val === '') {
         return true;
     } else {
         return false;
     }
 };
-var testNum = function(val) {
+var testNum = function (val) {
     return /^[0-9]{0,}$/.test(val);
 };
-var throttle = function(func, wait, maxtime) {
+var throttle = function (func, wait, maxtime) {
     var timer = null;
     var args;
     var context;
     var lastTime = Date.now();
-    return function() {
+    return function () {
         context = this;
         args = arguments;
         if (!wait) {
@@ -148,20 +143,20 @@ var throttle = function(func, wait, maxtime) {
                 lastTime = curTime;
                 func.apply(context, args);
             } else {
-                timer = setTimeout(function() {
+                timer = setTimeout(function () {
                     func.apply(context, args);
                 }, wait);
             }
         }
     }
 };
-var debounce = function(func, wait, immediate) {
+var debounce = function (func, wait, immediate) {
     var timeout;
     var args;
     var context;
     var timestamp;
     var count = 0;
-    var later = function() {
+    var later = function () {
         // 当wait指定的时间间隔期间多次调用_.debounce返回的函数，则会不断更新timestamp的值，导致last < wait && last >= 0一直为true，从而不断启动新的计时器延时执行func
         var last = Date.now() - timestamp;
         if (last < wait && last >= 0) {
@@ -176,7 +171,7 @@ var debounce = function(func, wait, immediate) {
             }
         }
     };
-    return function() {
+    return function () {
         context = this;
         args = arguments;
         if (!wait) {
@@ -195,7 +190,7 @@ var debounce = function(func, wait, immediate) {
     };
 };
 
-var UI = {
+var SharkUI = {
     addCloseListener: addCloseListener,
     removeCloseListener: removeCloseListener,
     preventAndStopEvent: preventAndStopEvent,
@@ -205,6 +200,7 @@ var UI = {
     isEmpty: isEmpty,
     testNum: testNum,
     throttle: throttle,
-    debounce: debounce
+    debounce: debounce,
+    $: $
 };
-module.exports = UI
+module.exports = SharkUI

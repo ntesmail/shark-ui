@@ -2,7 +2,7 @@
  * @author sweetyx
  * 提供操作组件的一些公共方法
  */
-var UI = require('../common/core');
+
 /**
  * 初始化组件对象的公共函数，设置公共组件的一些公共方法，
  * @param {component} 组件对象

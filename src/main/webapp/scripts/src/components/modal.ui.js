@@ -3,7 +3,7 @@
  * @description 弹窗插件
  */
 var $ = require('jquery');
-var UI = require('../common/core');
+var SharkUI = require('../common/core');
 var BaseComponent = require('../common/base');
 var Templates = require('../common/templates');
 var template = Templates.modal;
@@ -48,7 +48,7 @@ $.fn.extend({
             onShow: function() {},
             onHide: function() {}
         };
-        UI.extend(config, options);
+        SharkUI.extend(config, options);
         /*********初始化组件*************/
         var body = $(document.body);
         var sharkComponent = {};
@@ -106,7 +106,7 @@ $.fn.extend({
             onShow: function() {},
             onHide: function() {}
         };
-        UI.extend(config, options);
+        SharkUI.extend(config, options);
         /*********初始化组件*************/
         config.backdrop = 'static';
         config.deffer = deffer;
@@ -133,7 +133,7 @@ $.fn.extend({
             onShow: function() {},
             onHide: function() {}
         };
-        UI.extend(config, options);
+        SharkUI.extend(config, options);
         /*********初始化组件*************/
         config.backdrop = 'static';
         config.deffer = deffer;

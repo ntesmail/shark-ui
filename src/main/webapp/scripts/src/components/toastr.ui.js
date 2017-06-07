@@ -3,7 +3,7 @@
  * @description 提示框插件
  */
 var $ = require('jquery');
-var UI = require('../common/core');
+var SharkUI = require('../common/core');
 var BaseComponent = require('../common/base');
 var Templates = require('../common/templates');
 
@@ -23,7 +23,7 @@ function initDom(sharkComponent, config) {
         content: config.content
     };
     sharkComponent.component = $(templateFun.apply(templateData));
-    sharkComponent.toastrId = UI.createUUID();
+    sharkComponent.toastrId = SharkUI.createUUID();
     return sharkComponent;
 }
 //移除toastr
@@ -66,7 +66,7 @@ $.fn.extend({
             type: 'success', // 提示类型
             duration: 2000 // 停留时间
         };
-        UI.extend(config, options);
+        SharkUI.extend(config, options);
         if (!container) {
             // 如果父容器不存在，则创建父容器
             initContainer();

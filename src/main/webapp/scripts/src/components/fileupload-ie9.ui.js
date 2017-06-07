@@ -3,7 +3,7 @@
  * @description 文件上传插件的扩展，兼容ie9以下浏览器
  */
 var $ = require('jquery');
-var UI = require('../common/core');
+var SharkUI = require('../common/core');
 var BaseComponent = require('../common/base');
 
 var blankSrc = /^https/i.test(window.location.href || '') ? 'javascript:void(0);' : 'about:blank';
@@ -37,9 +37,9 @@ function createIframe(iframeId) {
 
 function makeIE9Able(sharkComponent, config) {
     //初始化form和input
-    var inputId = UI.createUUID();
-    var formId = UI.createUUID();
-    var iframeId = UI.createUUID();
+    var inputId = SharkUI.createUUID();
+    var formId = SharkUI.createUUID();
+    var iframeId = SharkUI.createUUID();
     var form = createForm(formId, iframeId, config.url);
     sharkComponent.component.append(form);
     var input = createInput(inputId);
@@ -74,7 +74,7 @@ function makeIE9Able(sharkComponent, config) {
         height: '1000px'
     });
     //监听事件
-    input.on('change', BaseComponent.filterComponentAction(sharkComponent.component, function(e) {
+    input.on('change', BaseComponent.filterComponentAction(sharkComponent.component, function (e) {
         //IE9及以下无法获取文件
         var v = input.val();
         if (v.length > 0) {
@@ -87,11 +87,11 @@ function makeIE9Able(sharkComponent, config) {
             }
         }
     }));
-    sharkComponent.clear = function() {
+    sharkComponent.clear = function () {
         sharkComponent.file = null;
         form[0].reset();
     };
-    sharkComponent.upload = function(u, p) {
+    sharkComponent.upload = function (u, p) {
         var defer = $.Deferred();
         if (sharkComponent.file) {
             var url;
@@ -105,7 +105,7 @@ function makeIE9Able(sharkComponent, config) {
             form.attr('action', url);
             var iframe = createIframe(iframeId);
             $(document.body).append(iframe);
-            iframe.on('load', function(evt) {
+            iframe.on('load', function (evt) {
                 // ie9下接收表单数据数据需要使用 text/html 格式，如：
                 // var c = `{
                 //             "code":200,
@@ -137,7 +137,7 @@ function makeIE9Able(sharkComponent, config) {
         }
         return defer.promise();
     };
-    sharkComponent.destroy = function() {
+    sharkComponent.destroy = function () {
         input.remove();
         form.remove();
         // 销毁component

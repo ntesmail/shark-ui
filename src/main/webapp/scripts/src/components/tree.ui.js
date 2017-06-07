@@ -3,7 +3,7 @@
  * @description 树插件
  */
 var $ = require('jquery');
-var UI = require('../common/core');
+var SharkUI = require('../common/core');
 var BaseComponent = require('../common/base');
 var Templates = require('../common/templates');
 var makeCheckable = require('./tree-checkable.ui');
@@ -142,7 +142,7 @@ $.fn.extend({
             onNodeChecked: function(node, isChecked) {},
             onNodeSelected: function(node) {}
         };
-        UI.extend(config, options);
+        SharkUI.extend(config, options);
         initNodesMap(config.nodes, config.nodesMap);
         /*********初始化组件*************/
         var sharkComponent = {};
@@ -212,7 +212,7 @@ $.fn.extend({
         sharkComponent.search = function(keyword) {
             var result = [];
             for (var p in config.nodesMap) {
-                if (config.nodesMap.hasOwnProperty(p) && !UI.isEmpty(config.nodesMap[p].node_name) && config.nodesMap[p].node_name.indexOf(keyword) !== -1) {
+                if (config.nodesMap.hasOwnProperty(p) && !SharkUI.isEmpty(config.nodesMap[p].node_name) && config.nodesMap[p].node_name.indexOf(keyword) !== -1) {
                     result.push(config.nodesMap[p]);
                 }
             }

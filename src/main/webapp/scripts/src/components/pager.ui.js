@@ -3,7 +3,7 @@
  * @description 分页插件
  */
 var $ = require('jquery');
-var UI = require('../common/core');
+var SharkUI = require('../common/core');
 var BaseComponent = require('../common/base');
 var Templates = require('../common/templates');
 
@@ -31,7 +31,7 @@ function initEvents(sharkComponent, config) {
     pager.on('input.pager propertychange.pager', '.form-control', function(evt) {
         var pageinput = $(this);
         var v = pageinput.val();
-        if (UI.testNum(v)) {
+        if (SharkUI.testNum(v)) {
             lastvalue = v;
         } else {
             pageinput.val(lastvalue);
@@ -75,7 +75,7 @@ function initEvents(sharkComponent, config) {
         //点击跳转按钮
         else if (curEle.hasClass('btn')) {
             newPage = curEle.prev().val();
-            if (UI.isEmpty(newPage) || !UI.testNum(newPage) || newPage == pager.find('.active').children().text() || parseInt(newPage) > config.totalPages || parseInt(newPage) < config.startFrom) {
+            if (SharkUI.isEmpty(newPage) || !SharkUI.testNum(newPage) || newPage == pager.find('.active').children().text() || parseInt(newPage) > config.totalPages || parseInt(newPage) < config.startFrom) {
                 return;
             }
             curEle.prev().val('');
@@ -189,7 +189,7 @@ $.fn.extend({
             dom: '',
             onPageChanged: function() {}
         };
-        UI.extend(config, options);
+        SharkUI.extend(config, options);
         /*********初始化组件*************/
         var sharkComponent = {};
         initDom.call(this, sharkComponent, config);
@@ -199,7 +199,7 @@ $.fn.extend({
         /**********初始化***********************/
         sharkComponent.setPage = function(page, totalPages) {
             config.page = page;
-            if (!UI.isEmpty(totalPages)) {
+            if (!SharkUI.isEmpty(totalPages)) {
                 config.totalPages = totalPages;
             }
             renderPages(sharkComponent, config);

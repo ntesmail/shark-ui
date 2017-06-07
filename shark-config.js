@@ -9,13 +9,15 @@ shark.baseconfig = baseconfig;
 shark.webpack = {
     entry: 'filename',
     config: {
-        plugins: [
-            new webpack.ProvidePlugin({
-                $: 'jquery',
-                jQuery: 'jquery'
-            })
-        ]
-    } //webpack配置
+        module: {
+            rules: [{
+                test: require.resolve('jquery'),
+                use: [{
+                    loader: 'expose-loader?$'
+                }]
+            }]
+        }
+    }
 };
 
 shark.plugins = {

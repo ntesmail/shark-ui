@@ -3,7 +3,7 @@
  * @description 树插件的扩展，可check树
  */
 var $ = require('jquery');
-var UI = require('../common/core');
+var SharkUI = require('../common/core');
 var BaseComponent = require('../common/base');
 
 function makeCheckable(sharkComponent, config) {

@@ -3,7 +3,7 @@
  * @description 提示框插件
  */
 var $ = require('jquery');
-var UI = require('../common/core');
+var SharkUI = require('../common/core');
 var BaseComponent = require('../common/base');
 var Templates = require('../common/templates');
 
@@ -16,13 +16,13 @@ function initComponent(sharkComponent, config) {
         content: config.content
     };
     sharkComponent.component = $(templateFun.apply(templateData));
-    sharkComponent.component.attr('id', UI.createUUID());
+    sharkComponent.component.attr('id', SharkUI.createUUID());
     sharkComponent.component.addClass('shark-' + config.type);
     $(document.body).append(sharkComponent.component);
     sharkComponent.component.hide();
     sharkComponent.isPopoverInit = true;
     if (config.event === 'click' && config.close === 'bodyclick') {
-        UI.addCloseListener(sharkComponent.component.attr('id'), [sharkComponent.origin, sharkComponent.component], function() {
+        SharkUI.addCloseListener(sharkComponent.component.attr('id'), [sharkComponent.origin, sharkComponent.component], function() {
             if (sharkComponent.component.is(':visible')) {
                 sharkComponent.hide();
             }
@@ -67,7 +67,7 @@ var getPopoverPos = function(sharkComponent, direction) {
         width: arrow.outerWidth(),
         height: arrow.outerHeight()
     }
-    postion = UI.calcOffset(origin, popover, direction, fix);
+    postion = SharkUI.calcOffset(origin, popover, direction, fix);
     if (direction !== postion.actualDirection) {
         return getPopoverPos(sharkComponent, postion.actualDirection);
     }
@@ -126,7 +126,7 @@ $.fn.extend({
             onShow: function() {},
             onHide: function() {}
         };
-        UI.extend(config, options);
+        SharkUI.extend(config, options);
         options.type = 'popover';
         /*********初始化组件*************/
         var sharkComponent = {};
@@ -164,7 +164,7 @@ $.fn.extend({
         };
         sharkComponent.destroy = function() {
             if(sharkComponent.isPopoverInit){
-                UI.removeCloseListener(sharkComponent.component.attr('id'));
+                SharkUI.removeCloseListener(sharkComponent.component.attr('id'));
                 sharkComponent.component.remove();
             }
             if (sharkComponent.origin) {

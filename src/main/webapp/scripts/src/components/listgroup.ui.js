@@ -3,7 +3,7 @@
  * @description 列表组
  */
 var $ = require('jquery');
-var UI = require('../common/core');
+var SharkUI = require('../common/core');
 var Templates = require('../common/templates');
 var template = Templates.listgroup;
 var templateFun = Templates.templateAoT(template);
@@ -11,7 +11,7 @@ var templateFun = Templates.templateAoT(template);
 //创建列表组
 function render(id) {
     var ul = $(templateFun.apply());
-    ul.attr('id', id || UI.createUUID());
+    ul.attr('id', id || SharkUI.createUUID());
     ul.destroy = function() {
         ul.remove();
     };

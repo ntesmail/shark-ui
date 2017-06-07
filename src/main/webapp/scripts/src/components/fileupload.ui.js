@@ -3,7 +3,7 @@
  * @description 文件上传插件
  */
 var $ = require('jquery');
-var UI = require('../common/core');
+var SharkUI = require('../common/core');
 var Templates = require('../common/templates');
 var BaseComponent = require('../common/base');
 var makeIE9Able = require('./fileupload-ie9.ui');
@@ -62,7 +62,7 @@ function initDom(sharkComponent, config) {
 //绑定事件
 function initEvents(sharkComponent, config) {
     var uploader = sharkComponent.component;
-    var inputId = UI.createUUID();
+    var inputId = SharkUI.createUUID();
     uploader.on('click.fileupload', BaseComponent.filterComponentAction(sharkComponent, function() {
         //每次都创建一个input是为了解决ie和chrome下input选择文件之后行为不一致的问题
         //chrome的input选择文件之后，如果再次选择文件的过程中取消选择文件，那么下次选择【同一个文件】的时候就会重新触发input的change事件
@@ -90,10 +90,10 @@ function initEvents(sharkComponent, config) {
     }));
     if (config.dragable) {
         uploader.on('dragover.fileupload', function(e) {
-            UI.preventAndStopEvent(e); //一定要将dragover的默认事件取消掉，不然无法触发drop事件。如需拖拽页面里的元素，需要给其添加属性draggable="true"
+            SharkUI.preventAndStopEvent(e); //一定要将dragover的默认事件取消掉，不然无法触发drop事件。如需拖拽页面里的元素，需要给其添加属性draggable="true"
         });
         uploader.on('drop.fileupload', BaseComponent.filterComponentAction(sharkComponent, function(e) {
-            UI.preventAndStopEvent(e);
+            SharkUI.preventAndStopEvent(e);
             e = e.originalEvent; //低版本jquery的事件没有dataTransfer属性，取浏览器原生事件originalEvent
             var files = e.dataTransfer && e.dataTransfer.files ? e.dataTransfer.files : null;
             if (files && files.length > 0) {
@@ -129,7 +129,7 @@ $.fn.extend({
             onUploaded: function(file, res) {},
             onFailed: function(file, evt) {}
         };
-        UI.extend(config, options);
+        SharkUI.extend(config, options);
         /*********初始化组件*************/
         var sharkComponent = {};
         initDom.call(this, sharkComponent, config);

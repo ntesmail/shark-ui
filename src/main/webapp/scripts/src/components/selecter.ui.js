@@ -3,7 +3,7 @@
  * @description selecter插件和dropdown插件
  */
 var $ = require('jquery');
-var UI = require('../common/core');
+var SharkUI = require('../common/core');
 var BaseComponent = require('../common/base');
 var Templates = require('../common/templates');
 var ListGroup = require('./listgroup.ui');
@@ -47,7 +47,7 @@ function initSelectionsEvents(sharkComponent, config) {
         selections.hide();
     });
     // 点击除了组件之外的地方，收起下拉列表
-    UI.addCloseListener(selections.attr('id'), [selecter, selections], function() {
+    SharkUI.addCloseListener(selections.attr('id'), [selecter, selections], function() {
         if (!selections.is(':hidden')) {
             selecter.removeClass('open');
             selections.hide();
@@ -73,7 +73,7 @@ function initEvents(sharkComponent, config) {
             selections.css({
                 width: selecter.outerWidth()
             });
-            var postion = UI.calcOffset(selecter, selections, 'bottom');
+            var postion = SharkUI.calcOffset(selecter, selections, 'bottom');
             selections.css(postion);
         } else {
             //隐藏待选列表
@@ -119,7 +119,7 @@ $.fn.extend({
             dom: '',
             onSelected: function() {}
         };
-        UI.extend(config, options);
+        SharkUI.extend(config, options);
         /*********初始化组件*************/
         var sharkComponent = {};
         initDom.call(this, sharkComponent, config);
@@ -142,7 +142,7 @@ $.fn.extend({
                 //设置新值
                 $.isEmptyObject(itemData) ? sharkComponent.data = {} : sharkComponent.data = itemData;
                 var valuelabel = sharkComponent.component.find('.value');
-                valuelabel.text(UI.isEmpty(itemData[config.displayKey]) ? '' : itemData[config.displayKey]);
+                valuelabel.text(SharkUI.isEmpty(itemData[config.displayKey]) ? '' : itemData[config.displayKey]);
                 //触发回调函数
                 if (docallback && typeof config.onSelected === 'function') {
                     config.onSelected.call(sharkComponent, itemData[config.actualKey], itemData);
@@ -154,7 +154,7 @@ $.fn.extend({
         };
         sharkComponent.destroy = function() {
             if (sharkComponent.selections) {
-                UI.removeCloseListener(sharkComponent.selections.attr('id'));
+                SharkUI.removeCloseListener(sharkComponent.selections.attr('id'));
                 sharkComponent.selections.destroy();
             }
             // 销毁component
