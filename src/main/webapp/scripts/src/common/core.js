@@ -2,11 +2,6 @@
  * @author sweetyx
  * 提供一些公共的核心方法
  */
-if (typeof $ === 'undefined' || typeof jQuery === 'undefined') {
-    throw new Error('Shark UI requires jQuery');
-}
-
-var $win = $(window);
 
 var registerCloseArray = [];
 var isCloseRegister = false;
@@ -199,7 +194,6 @@ var debounce = function(func, wait, immediate) {
 };
 
 var UI = {
-    $win: $win,
     addCloseListener: addCloseListener,
     removeCloseListener: removeCloseListener,
     preventAndStopEvent: preventAndStopEvent,

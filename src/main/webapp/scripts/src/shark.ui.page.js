@@ -1,3 +1,6 @@
+require('./common/core');
+require('./common/base.ui');
+require('./common/templates.ui');
 require('./components/autocomplete.ui');
 require('./components/dropdown.ui');
 require('./components/fileupload.ui');

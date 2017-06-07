@@ -1,1 +1,1 @@
-require('./src/main/webapp/js/shark.ui');
+require('./src/main/webapp/scripts/src/shark.ui.page');
