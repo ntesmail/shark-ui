@@ -4,6 +4,7 @@
  */
 var $ = require('jquery');
 var SharkUI = require('../common/core');
+var Event = require('../common/event');
 var BaseComponent = require('../common/base');
 var Templates = require('../common/templates');
 var ListGroup = require('./listgroup.ui');
@@ -47,7 +48,7 @@ function initSelectionsEvents(sharkComponent, config) {
         selections.hide();
     });
     // 点击除了组件之外的地方，收起下拉列表
-    SharkUI.addCloseListener(selections.attr('id'), [selecter, selections], function () {
+    Event.addCloseListener(selections.attr('id'), [selecter, selections], function () {
         if (!selections.is(':hidden')) {
             selecter.removeClass('open');
             selections.hide();
@@ -153,7 +154,7 @@ SharkUI.sharkSelecter = function (options, targetElement) {
     };
     sharkComponent.destroy = function () {
         if (sharkComponent.selections) {
-            SharkUI.removeCloseListener(sharkComponent.selections.attr('id'));
+            Event.removeCloseListener(sharkComponent.selections.attr('id'));
             sharkComponent.selections.destroy();
         }
         // 销毁component

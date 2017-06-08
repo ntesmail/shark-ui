@@ -1,5 +1,6 @@
 require('./common/base');
 var SharkUI = require('./common/core');
+require('./common/event');
 require('./common/templates');
 require('./components/autocomplete.ui');
 require('./components/dropdown.ui');

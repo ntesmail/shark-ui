@@ -4,6 +4,7 @@
  */
 var $ = require('jquery');
 var SharkUI = require('../common/core');
+var Event = require('../common/event');
 var BaseComponent = require('../common/base');
 var Templates = require('../common/templates');
 
@@ -22,7 +23,7 @@ function initComponent(sharkComponent, config) {
     sharkComponent.component.hide();
     sharkComponent.isPopoverInit = true;
     if (config.event === 'click' && config.close === 'bodyclick') {
-        SharkUI.addCloseListener(sharkComponent.component.attr('id'), [sharkComponent.origin, sharkComponent.component], function () {
+        Event.addCloseListener(sharkComponent.component.attr('id'), [sharkComponent.origin, sharkComponent.component], function () {
             if (sharkComponent.component.is(':visible')) {
                 sharkComponent.hide();
             }
@@ -160,7 +161,7 @@ SharkUI.sharkPopover = function (options, targetElement) {
     };
     sharkComponent.destroy = function () {
         if (sharkComponent.isPopoverInit) {
-            SharkUI.removeCloseListener(sharkComponent.component.attr('id'));
+            Event.removeCloseListener(sharkComponent.component.attr('id'));
             sharkComponent.component.remove();
         }
         if (sharkComponent.origin) {

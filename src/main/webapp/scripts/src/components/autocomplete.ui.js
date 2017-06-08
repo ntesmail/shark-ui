@@ -4,6 +4,7 @@
  */
 var $ = require('jquery');
 var SharkUI = require('../common/core');
+var Event = require('../common/event');
 var Templates = require('../common/templates');
 var BaseComponent = require('../common/base');
 var ListGroup = require('./listgroup.ui');
@@ -204,7 +205,7 @@ function initEvents(sharkComponent, config) {
         }
     });
     // 输入框失焦点消失
-    SharkUI.addCloseListener(selections.attr('id'), [autoComplete, selections], function () {
+    Event.addCloseListener(selections.attr('id'), [autoComplete, selections], function () {
         if (!selections.is(':hidden')) {
             selections.hide();
         }
@@ -235,7 +236,7 @@ SharkUI.sharkAutoComplete = function (options, targetElement) {
     // 销毁函数
     sharkComponent.destroy = function () {
         // 销毁listgroup
-        SharkUI.removeCloseListener(sharkComponent.selections.attr('id'));
+        Event.removeCloseListener(sharkComponent.selections.attr('id'));
         sharkComponent.selections.destroy();
         // 销毁component
         if (sharkComponent.createType === 'construct') {
