@@ -5,6 +5,7 @@
 var $ = require('jquery');
 var SharkUI = require('../common/core');
 var Event = require('../common/event');
+var DomHelper = require('../common/domhelper');
 var BaseComponent = require('../common/base');
 var Templates = require('../common/templates');
 var ListGroup = require('./listgroup.ui');
@@ -74,7 +75,7 @@ function initEvents(sharkComponent, config) {
             selections.css({
                 width: selecter.outerWidth()
             });
-            var postion = SharkUI.calcOffset(selecter, selections, 'bottom');
+            var postion = DomHelper.calcOffset(selecter, selections, 'bottom');
             selections.css(postion);
         } else {
             //隐藏待选列表

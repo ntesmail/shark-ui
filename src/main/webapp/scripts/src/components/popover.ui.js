@@ -5,6 +5,7 @@
 var $ = require('jquery');
 var SharkUI = require('../common/core');
 var Event = require('../common/event');
+var DomHelper = require('../common/domhelper');
 var BaseComponent = require('../common/base');
 var Templates = require('../common/templates');
 
@@ -68,7 +69,7 @@ var getPopoverPos = function (sharkComponent, direction) {
         width: arrow.outerWidth(),
         height: arrow.outerHeight()
     }
-    postion = SharkUI.calcOffset(origin, popover, direction, fix);
+    postion = DomHelper.calcOffset(origin, popover, direction, fix);
     if (direction !== postion.actualDirection) {
         return getPopoverPos(sharkComponent, postion.actualDirection);
     }

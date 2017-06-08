@@ -1,7 +1,3 @@
-require('./common/base');
-var SharkUI = require('./common/core');
-require('./common/event');
-require('./common/templates');
 require('./components/autocomplete.ui');
 require('./components/dropdown.ui');
 require('./components/fileupload.ui');
@@ -13,8 +9,8 @@ require('./components/tabs.ui');
 require('./components/toastr.ui');
 require('./components/tree.ui');
 
+var SharkUI = require('./common/core');
 if (typeof window !== 'undefined') {
     window.SharkUI = SharkUI;
 }
-
 module.exports = SharkUI;

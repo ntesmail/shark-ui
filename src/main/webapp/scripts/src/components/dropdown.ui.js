@@ -5,6 +5,7 @@
 var $ = require('jquery');
 var SharkUI = require('../common/core');
 var Event = require('../common/event');
+var DomHelper = require('../common/domhelper');
 var BaseComponent = require('../common/base');
 var Templates = require('../common/templates');
 var ListGroup = require('./listgroup.ui');
@@ -69,7 +70,7 @@ function initEvents(sharkComponent, config) {
             //展开待选列表
             dropdown.addClass('open');
             selections.show();
-            var postion = SharkUI.calcOffset(dropdown, selections, 'bottom');
+            var postion = DomHelper.calcOffset(dropdown, selections, 'bottom');
             selections.css(postion);
         } else {
             //收起待选列表

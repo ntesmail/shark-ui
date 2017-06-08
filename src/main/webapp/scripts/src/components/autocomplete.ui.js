@@ -5,6 +5,7 @@
 var $ = require('jquery');
 var SharkUI = require('../common/core');
 var Event = require('../common/event');
+var DomHelper = require('../common/domhelper');
 var Templates = require('../common/templates');
 var BaseComponent = require('../common/base');
 var ListGroup = require('./listgroup.ui');
@@ -20,7 +21,7 @@ function updateList(autoComplete, selections, config, list) {
     if (selections.is(':hidden')) {
         // 定位并显示
         var inputWidth = autoComplete.outerWidth();
-        var postion = SharkUI.calcOffset(autoComplete, selections, 'bottom');
+        var postion = DomHelper.calcOffset(autoComplete, selections, 'bottom');
         var style = SharkUI.extend({ width: inputWidth }, postion);
         selections.css(style);
         selections.show();
