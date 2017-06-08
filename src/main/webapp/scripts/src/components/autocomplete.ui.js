@@ -143,11 +143,13 @@ function initEvents(sharkComponent, config) {
     //防止按上下键时，输入框中的光标左右移动
     autoComplete.on('keydown.autocomplete', autoComplete, BaseComponent.filterComponentAction(sharkComponent, function (evt) {
         if ($.inArray(evt.keyCode, functionalKeyArray) > -1) {
-            SharkUI.preventAndStopEvent(evt);
+            evt.preventDefault();
+            evt.stopPropagation();
         }
     }));
     autoComplete.on('keyup.autocomplete', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
-        SharkUI.preventAndStopEvent(evt);
+        evt.preventDefault();
+        evt.stopPropagation();
         var keyCode = evt.keyCode;
         if ($.inArray(keyCode, functionalKeyArray) > -1) {
             functionKeyUse(sharkComponent, keyCode, config);
@@ -189,7 +191,8 @@ function initEvents(sharkComponent, config) {
     });
     // 点击事件
     selections.on('mousedown', function (evt) {
-        SharkUI.preventAndStopEvent(evt);
+        evt.preventDefault();
+        evt.stopPropagation();
         if (!selections.is(':hidden')) {
             var selectionsRow = $(evt.target);
             selectionsRow.siblings().removeClass('active');

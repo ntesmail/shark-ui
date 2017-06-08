@@ -89,13 +89,16 @@ function initEvents(sharkComponent, config) {
         input.trigger('click');
     }));
     if (config.dragable) {
-        uploader.on('dragover.fileupload', function (e) {
-            SharkUI.preventAndStopEvent(e); //一定要将dragover的默认事件取消掉，不然无法触发drop事件。如需拖拽页面里的元素，需要给其添加属性draggable="true"
+        uploader.on('dragover.fileupload', function (evt) {
+            //一定要将dragover的默认事件取消掉，不然无法触发drop事件。如需拖拽页面里的元素，需要给其添加属性draggable="true"
+            evt.preventDefault();
+            evt.stopPropagation();
         });
-        uploader.on('drop.fileupload', BaseComponent.filterComponentAction(sharkComponent, function (e) {
-            SharkUI.preventAndStopEvent(e);
-            e = e.originalEvent; //低版本jquery的事件没有dataTransfer属性，取浏览器原生事件originalEvent
-            var files = e.dataTransfer && e.dataTransfer.files ? e.dataTransfer.files : null;
+        uploader.on('drop.fileupload', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
+            evt.preventDefault();
+            evt.stopPropagation();
+            evt = evt.originalEvent; //低版本jquery的事件没有dataTransfer属性，取浏览器原生事件originalEvent
+            var files = evt.dataTransfer && evt.dataTransfer.files ? evt.dataTransfer.files : null;
             if (files && files.length > 0) {
                 sharkComponent.file = files[0];
                 if (typeof config.onSelected === 'function') {

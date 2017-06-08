@@ -10,6 +10,10 @@ var Templates = require('../common/templates');
 // selecter模板
 var templatePager = Templates.pager;
 var templatePagerFun = Templates.templateAoT(templatePager);
+
+function testNum(val) {
+    return /^[0-9]{0,}$/.test(val);
+};
 //初始化分页器外层ul的dom，内层的li不用模板生成（因为重新渲染分页器时，仍然需要提供renderPages方法重置分页）
 function initDom(sharkComponent, config, targetElement) {
     if (!targetElement) {
@@ -31,7 +35,7 @@ function initEvents(sharkComponent, config) {
     pager.on('input.pager propertychange.pager', '.form-control', function (evt) {
         var pageinput = $(this);
         var v = pageinput.val();
-        if (SharkUI.testNum(v)) {
+        if (testNum(v)) {
             lastvalue = v;
         } else {
             pageinput.val(lastvalue);
@@ -75,7 +79,7 @@ function initEvents(sharkComponent, config) {
         //点击跳转按钮
         else if (curEle.hasClass('btn')) {
             newPage = curEle.prev().val();
-            if (SharkUI.isEmpty(newPage) || !SharkUI.testNum(newPage) || newPage == pager.find('.active').children().text() || parseInt(newPage) > config.totalPages || parseInt(newPage) < config.startFrom) {
+            if (SharkUI.isEmpty(newPage) || !testNum(newPage) || newPage == pager.find('.active').children().text() || parseInt(newPage) > config.totalPages || parseInt(newPage) < config.startFrom) {
                 return;
             }
             curEle.prev().val('');

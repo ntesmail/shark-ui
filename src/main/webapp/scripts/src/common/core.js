@@ -58,10 +58,6 @@ var removeCloseListener = function (key) {
         $(document).off('mousedown.sharkcore', dispatchHandler);
     }
 };
-var preventAndStopEvent = function (evt) {
-    evt.preventDefault();
-    evt.stopPropagation();
-};
 var calcOffset = function (target, elem, direction, fixOption) {
     //根据绑定的目标元素和展示方向计算位置
     var fixWidth = fixOption ? (fixOption.width || 0) : 0;
@@ -122,9 +118,6 @@ var isEmpty = function (val) {
     } else {
         return false;
     }
-};
-var testNum = function (val) {
-    return /^[0-9]{0,}$/.test(val);
 };
 var throttle = function (func, wait, maxtime) {
     var timer = null;
@@ -193,12 +186,10 @@ var debounce = function (func, wait, immediate) {
 var SharkUI = {
     addCloseListener: addCloseListener,
     removeCloseListener: removeCloseListener,
-    preventAndStopEvent: preventAndStopEvent,
     calcOffset: calcOffset,
     extend: extend,
     createUUID: createUUID,
     isEmpty: isEmpty,
-    testNum: testNum,
     throttle: throttle,
     debounce: debounce,
     $: $
