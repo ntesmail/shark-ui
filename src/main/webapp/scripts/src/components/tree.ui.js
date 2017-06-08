@@ -14,7 +14,7 @@ var templateFun = Templates.templateAoT(template);
 var isCalced = false;
 //缓存icon的宽度
 var baseIconWidth = 16;
-var calcWidth = function() {
+var calcWidth = function () {
     if (isCalced) {
         return;
     }
@@ -97,7 +97,7 @@ function initNodesMap(nodes, nodesMap, parentNode) {
     }
 }
 //初始化树的第一层级dom
-function initDom(sharkComponent, config) {
+function initDom(sharkComponent, config, targetElement) {
     var templateData = {
         nodes: config.nodes,
         checkable: config.checkable,
@@ -109,8 +109,8 @@ function initDom(sharkComponent, config) {
     sharkComponent.createType = 'construct';
     sharkComponent.component = $(templateFun.apply(templateData));
     sharkComponent.component.addClass('shark-tree');
-    if (this !== $.fn) {
-        this.append(sharkComponent.component);
+    if (targetElement) {
+        targetElement.append(sharkComponent.component);
     }
     return sharkComponent
 }
@@ -120,7 +120,7 @@ function initEvents(sharkComponent, config) {
     /**
      * 点击节点的 展开/收起 按钮
      */
-    tree.on('click', '.tree-icon-right,.tree-icon-down', BaseComponent.filterComponentAction(tree, function(evt) {
+    tree.on('click', '.tree-icon-right,.tree-icon-down', BaseComponent.filterComponentAction(tree, function (evt) {
         var iconEle = $(this);
         if (iconEle.hasClass('tree-icon-right')) {
             unfoldNode(iconEle, config);
@@ -129,103 +129,102 @@ function initEvents(sharkComponent, config) {
         }
     }));
 }
-$.fn.extend({
-    sharkTree: function(options) {
-        calcWidth();
-        /*********默认参数配置*************/
-        var config = {
-            nodes: [],
-            nodesMap: {}, //无需用户手动配置
-            checkable: true, //是否可check
-            autolink: true, //check一个节点后，是否关联其父节点和子节点的选中状态（只有checkable为true时才生效）
-            selectable: false, //是否可select
-            onNodeChecked: function(node, isChecked) {},
-            onNodeSelected: function(node) {}
-        };
-        SharkUI.extend(config, options);
-        initNodesMap(config.nodes, config.nodesMap);
-        /*********初始化组件*************/
-        var sharkComponent = {};
-        initDom.call(this, sharkComponent, config);
-        var tree = sharkComponent.component;
-        BaseComponent.addComponentBaseFn(sharkComponent, config);
-        initEvents(sharkComponent, config);
-        //可check
-        if (config.checkable) {
-            makeCheckable(sharkComponent, config);
-        }
-        //可select
-        if (config.selectable) {
-            makeSelectable(sharkComponent, config);
-        }
-        /**********初始化***********************/
-        /**
-         * 按节点路径展开树
-         * @param  {[]} path   [节点路径,eg.[{node_id:100},{node_id:110},{node_id:111}] 或者 [100,110,111]]
-         */
-        sharkComponent.expandByPath = function(path) {
-            for (var i = 0; i < path.length; i++) {
-                var nodeId = path[i].node_id || path[i];
-                var groupEle = tree.find('.tree-group[tree-group-id="' + nodeId + '"]');
-                var iconEle = groupEle.children('.tree-icon-right');
-                if (iconEle.length > 0) {
-                    unfoldNode(iconEle, config);
-                }
-            }
-        };
-        /**
-         * 按节点展开树
-         * @param node   [节点id或者节点]
-         */
-        sharkComponent.expandByNode = function(node) {
-            var nodeId = node || node.node_id;
-            var tmpNode = config.nodesMap[nodeId];
-            var path = [tmpNode];
-            while (tmpNode.parentNode) {
-                var tmpNode = tmpNode.parentNode;
-                path.unshift(tmpNode);
-            }
-            sharkComponent.expandByPath(path);
-        };
-        /**
-         * 展开树的全部节点
-         */
-        sharkComponent.expandAll = (function() {
-            var expandAll = function(nodesArr) {
-                if (!$.isArray(nodesArr)) {
-                    return;
-                }
-                for (var i = 0; i < nodesArr.length; i++) {
-                    sharkComponent.expandByPath([nodesArr[i]]);
-                    expandAll(nodesArr[i].children);
-                }
-            };
-            return function() {
-                expandAll(config.nodes);
-            };
-        })();
-        /**
-         * 搜索树的节点
-         * @param  {[string]} keyword [搜索关键字]
-         * @return {[node]}         [节点数组]
-         */
-        sharkComponent.search = function(keyword) {
-            var result = [];
-            for (var p in config.nodesMap) {
-                if (config.nodesMap.hasOwnProperty(p) && !SharkUI.isEmpty(config.nodesMap[p].node_name) && config.nodesMap[p].node_name.indexOf(keyword) !== -1) {
-                    result.push(config.nodesMap[p]);
-                }
-            }
-            return result;
-        };
-        /**
-         * 销毁树
-         */
-        sharkComponent.destroy = function() {
-            sharkComponent.component.remove();
-            sharkComponent = null;
-        };
-        return sharkComponent;
+
+SharkUI.sharkTree = function (options, targetElement) {
+    calcWidth();
+    /*********默认参数配置*************/
+    var config = {
+        nodes: [],
+        nodesMap: {}, //无需用户手动配置
+        checkable: true, //是否可check
+        autolink: true, //check一个节点后，是否关联其父节点和子节点的选中状态（只有checkable为true时才生效）
+        selectable: false, //是否可select
+        onNodeChecked: function (node, isChecked) { },
+        onNodeSelected: function (node) { }
+    };
+    SharkUI.extend(config, options);
+    initNodesMap(config.nodes, config.nodesMap);
+    /*********初始化组件*************/
+    var sharkComponent = {};
+    initDom(sharkComponent, config, targetElement);
+    var tree = sharkComponent.component;
+    BaseComponent.addComponentBaseFn(sharkComponent, config);
+    initEvents(sharkComponent, config);
+    //可check
+    if (config.checkable) {
+        makeCheckable(sharkComponent, config);
     }
-});
+    //可select
+    if (config.selectable) {
+        makeSelectable(sharkComponent, config);
+    }
+    /**********初始化***********************/
+    /**
+     * 按节点路径展开树
+     * @param  {[]} path   [节点路径,eg.[{node_id:100},{node_id:110},{node_id:111}] 或者 [100,110,111]]
+     */
+    sharkComponent.expandByPath = function (path) {
+        for (var i = 0; i < path.length; i++) {
+            var nodeId = path[i].node_id || path[i];
+            var groupEle = tree.find('.tree-group[tree-group-id="' + nodeId + '"]');
+            var iconEle = groupEle.children('.tree-icon-right');
+            if (iconEle.length > 0) {
+                unfoldNode(iconEle, config);
+            }
+        }
+    };
+    /**
+     * 按节点展开树
+     * @param node   [节点id或者节点]
+     */
+    sharkComponent.expandByNode = function (node) {
+        var nodeId = node || node.node_id;
+        var tmpNode = config.nodesMap[nodeId];
+        var path = [tmpNode];
+        while (tmpNode.parentNode) {
+            var tmpNode = tmpNode.parentNode;
+            path.unshift(tmpNode);
+        }
+        sharkComponent.expandByPath(path);
+    };
+    /**
+     * 展开树的全部节点
+     */
+    sharkComponent.expandAll = (function () {
+        var expandAll = function (nodesArr) {
+            if (!$.isArray(nodesArr)) {
+                return;
+            }
+            for (var i = 0; i < nodesArr.length; i++) {
+                sharkComponent.expandByPath([nodesArr[i]]);
+                expandAll(nodesArr[i].children);
+            }
+        };
+        return function () {
+            expandAll(config.nodes);
+        };
+    })();
+    /**
+     * 搜索树的节点
+     * @param  {[string]} keyword [搜索关键字]
+     * @return {[node]}         [节点数组]
+     */
+    sharkComponent.search = function (keyword) {
+        var result = [];
+        for (var p in config.nodesMap) {
+            if (config.nodesMap.hasOwnProperty(p) && !SharkUI.isEmpty(config.nodesMap[p].node_name) && config.nodesMap[p].node_name.indexOf(keyword) !== -1) {
+                result.push(config.nodesMap[p]);
+            }
+        }
+        return result;
+    };
+    /**
+     * 销毁树
+     */
+    sharkComponent.destroy = function () {
+        sharkComponent.component.remove();
+        sharkComponent = null;
+    };
+    return sharkComponent;
+}
 

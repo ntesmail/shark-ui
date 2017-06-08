@@ -41,10 +41,10 @@ var treeData = [{
         node_name: 'tree组件'
     }]
 }];
-var mytree = $.fn.sharkTree({
+var mytree = SharkUI.sharkTree({
     nodes: treeData,
     checkable: true,
-    autolink: false,
+    autolink: true,
     selectable: false,
     onNodeChecked: function(node, isChecked) {
         console.log(node, isChecked);
