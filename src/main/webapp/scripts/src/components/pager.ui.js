@@ -11,8 +11,8 @@ var Templates = require('../common/templates');
 var templatePager = Templates.pager;
 var templatePagerFun = Templates.templateAoT(templatePager);
 //初始化分页器外层ul的dom，内层的li不用模板生成（因为重新渲染分页器时，仍然需要提供renderPages方法重置分页）
-function initDom(sharkComponent, config) {
-    if (this === $.fn) {
+function initDom(sharkComponent, config, targetElement) {
+    if (!targetElement) {
         sharkComponent.createType = 'construct';
         var fun = config.dom ? Templates.templateAoT(config.dom) : templatePagerFun;
         var html = fun.apply(config);
@@ -28,7 +28,7 @@ function initDom(sharkComponent, config) {
 function initEvents(sharkComponent, config) {
     var pager = sharkComponent.component;
     var lastvalue = '';
-    pager.on('input.pager propertychange.pager', '.form-control', function(evt) {
+    pager.on('input.pager propertychange.pager', '.form-control', function (evt) {
         var pageinput = $(this);
         var v = pageinput.val();
         if (SharkUI.testNum(v)) {
@@ -37,12 +37,12 @@ function initEvents(sharkComponent, config) {
             pageinput.val(lastvalue);
         }
     });
-    pager.on('keydown.pager', '.form-control', function(evt) {
+    pager.on('keydown.pager', '.form-control', function (evt) {
         if (evt.keyCode == 13) {
             pager.find('.btn').trigger('click');
         }
     });
-    pager.on('click.pager', '.page,.presegment,.nextsegment,.firstpage,.prevpage,.nextpage,.lastpage,.btn', BaseComponent.filterComponentAction(sharkComponent, function(evt) {
+    pager.on('click.pager', '.page,.presegment,.nextsegment,.firstpage,.prevpage,.nextpage,.lastpage,.btn', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
         var curEle = $(this);
         var newPage;
         if (curEle.hasClass('page')) {
@@ -170,49 +170,47 @@ function renderPages(sharkComponent, config) {
         pager.append($('<li class="gopage"><input class="form-control" type="text"/><a class="btn">' + config.hl['gopage'] + '</a></li>'));
     }
 };
-$.fn.extend({
-    sharkPager: function(options) {
-        /*********默认参数配置*************/
-        var config = {
-            totalPages: 1,
-            page: 1,
-            hl: {
-                firstpage: '首页',
-                prevpage: '上一页',
-                nextpage: '下一页',
-                lastpage: '尾页',
-                gopage: '跳转'
-            },
-            segmentSize: 5,
-            startFrom: 1,
-            gopage: false,
-            dom: '',
-            onPageChanged: function() {}
-        };
-        SharkUI.extend(config, options);
-        /*********初始化组件*************/
-        var sharkComponent = {};
-        initDom.call(this, sharkComponent, config);
-        BaseComponent.addComponentBaseFn(sharkComponent, config);
-        initEvents(sharkComponent, config);
+SharkUI.sharkPager = function (options, targetElement) {
+    /*********默认参数配置*************/
+    var config = {
+        totalPages: 1,
+        page: 1,
+        hl: {
+            firstpage: '首页',
+            prevpage: '上一页',
+            nextpage: '下一页',
+            lastpage: '尾页',
+            gopage: '跳转'
+        },
+        segmentSize: 5,
+        startFrom: 1,
+        gopage: false,
+        dom: '',
+        onPageChanged: function () { }
+    };
+    SharkUI.extend(config, options);
+    /*********初始化组件*************/
+    var sharkComponent = {};
+    initDom(sharkComponent, config, targetElement);
+    BaseComponent.addComponentBaseFn(sharkComponent, config);
+    initEvents(sharkComponent, config);
+    renderPages(sharkComponent, config);
+    /**********初始化***********************/
+    sharkComponent.setPage = function (page, totalPages) {
+        config.page = page;
+        if (!SharkUI.isEmpty(totalPages)) {
+            config.totalPages = totalPages;
+        }
         renderPages(sharkComponent, config);
-        /**********初始化***********************/
-        sharkComponent.setPage = function(page, totalPages) {
-            config.page = page;
-            if (!SharkUI.isEmpty(totalPages)) {
-                config.totalPages = totalPages;
-            }
-            renderPages(sharkComponent, config);
-        };
-        sharkComponent.destroy = function() {
-            // 销毁component
-            if (sharkComponent.createType === 'construct') {
-                sharkComponent.component.remove();
-            } else {
-                sharkComponent.component.off('input.pager propertychange.pager keydown.pager click.pager');
-            }
-            sharkComponent = null;
-        };
-        return sharkComponent;
-    }
-});
+    };
+    sharkComponent.destroy = function () {
+        // 销毁component
+        if (sharkComponent.createType === 'construct') {
+            sharkComponent.component.remove();
+        } else {
+            sharkComponent.component.off('input.pager propertychange.pager keydown.pager click.pager');
+        }
+        sharkComponent = null;
+    };
+    return sharkComponent;
+};
