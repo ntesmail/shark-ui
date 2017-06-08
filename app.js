@@ -3,13 +3,12 @@ var fs = require('fs');
 var express = require('express');
 var argv = require('yargs').argv;
 var request = require('sync-request');
-
-var config = require('./shark-deploy-conf.js');
+var config = require('./shark-automation-config.js');
 var showdown = require('showdown'),
     converter = new showdown.Converter();
 
 var app = express();
-var webappDir = 'dist/';
+var webappDir = 'build/';
 
 app.engine('.html', require('ejs').__express);
 // 默认后缀
@@ -38,7 +37,7 @@ app.use(config.contextPath + config.ajaxPrefix, function (req, res) {
         res.status(404).send('file not exist !');
     }
 });
-var port = argv.port || config.port;
+var port = argv.port || config.browserPort;
 app.listen(port, function (err) {
     if (err) {
         return console.log(err);
