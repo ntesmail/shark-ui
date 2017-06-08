@@ -8,16 +8,19 @@
         我是内容
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-success js-ok">确定</button>
+        <button type="button" class="btn btn-success">确定</button>
     </div>
 </script>
 <script type="text/javascript">
-var mymodal = $.fn.sharkModal({
+var mymodal = SharkUI.sharkModal({
     size: 'lg',
     // backdrop:'static',
     content: $('#modal-content').text()
 });
-mymodal.component.find('.js-ok').on('click', function() {
+mymodal.component.find('.close').on('click', function() {
+    mymodal.hide();
+});
+mymodal.component.find('.btn-success').on('click', function() {
     console.log('todo...');
     mymodal.hide();
 });

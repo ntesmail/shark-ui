@@ -43,7 +43,7 @@ function uploadByNative(file, url, params) {
     }
     xhr.open('POST', url);
     xhr.send(data);
-    return defer;
+    return defer.promise();
 }
 //初始化文件上传的dom
 function initDom(sharkComponent, config, targetElement) {
