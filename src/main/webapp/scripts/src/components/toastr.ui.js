@@ -54,34 +54,32 @@ function destroyToastrs(id) {
 function showToastr(sharkComponent, config) {
     var toastr = sharkComponent.component;
     toastr.show();
-    sharkComponent.toastrTimer = setTimeout(function() {
+    sharkComponent.toastrTimer = setTimeout(function () {
         destroyToastrs(sharkComponent.toastrId);
     }, config.duration);
 }
-$.fn.extend({
-    sharkToastr: function(options) {
-        /*********默认参数配置*************/
-        var config = {
-            content: '', // 提示内容
-            type: 'success', // 提示类型
-            duration: 2000 // 停留时间
-        };
-        SharkUI.extend(config, options);
-        if (!container) {
-            // 如果父容器不存在，则创建父容器
-            initContainer();
-        }
-        /*********初始化组件*************/
-        var sharkComponent = {};
-        initDom.call(this, sharkComponent, config);
-        BaseComponent.addComponentBaseFn(sharkComponent, config);
-        if (!$.fn.sharkToastr.multiply) {
-            // 如果不允许展示多个提示，则先清空
-            destroyToastrs();
-        }
-        toastrArr.push(sharkComponent);
-        container.prepend(sharkComponent.component);
-        showToastr(sharkComponent, config);
+SharkUI.sharkToastr = function (options) {
+    /*********默认参数配置*************/
+    var config = {
+        content: '', // 提示内容
+        type: 'success', // 提示类型
+        duration: 2000 // 停留时间
+    };
+    SharkUI.extend(config, options);
+    if (!container) {
+        // 如果父容器不存在，则创建父容器
+        initContainer();
     }
-});
-$.fn.sharkToastr.multiply = true;
+    /*********初始化组件*************/
+    var sharkComponent = {};
+    initDom(sharkComponent, config);
+    BaseComponent.addComponentBaseFn(sharkComponent, config);
+    if (!SharkUI.sharkToastr.multiply) {
+        // 如果不允许展示多个提示，则先清空
+        destroyToastrs();
+    }
+    toastrArr.push(sharkComponent);
+    container.prepend(sharkComponent.component);
+    showToastr(sharkComponent, config);
+}
+SharkUI.sharkToastr.multiply = true;
