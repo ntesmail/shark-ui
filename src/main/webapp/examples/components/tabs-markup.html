@@ -1,24 +1,25 @@
 <div id="tabsContainer">
 </div>
 <script type="text/javascript">
-var mytabs = $.fn.sharkTabs({
-    tabs: [{
-        title: '前端组',
-        pane: '<span style="color:red;">都是小哥</span>'
-    }, {
-        title: '视觉组',
-        pane: '<span style="color:green;">都是大姐</span>'
-    }, {
-        title: '运营组',
-        pane: '<span style="color:yellow;">都是妹纸</span>'
-    }, {
-        title: '市场组',
-        pane: '<span style="color:blue;">都是阿姨</span>'
-    }],
-    onTabSwitch: function(index) {
-        console.log(index);
-    }
-});
-$('#tabsContainer').append(mytabs.component);
-mytabs.switchTo(3);
+    var mytabs = SharkUI.sharkTabs({
+        tabs: [{
+            title: '前端组',
+            pane: '<span style="color:red;">都是小哥</span>'
+        }, {
+            title: '视觉组',
+            pane: '<span style="color:green;">都是大姐</span>'
+        }, {
+            title: '运营组',
+            pane: '<span style="color:yellow;">都是妹纸</span>'
+        }, {
+            title: '市场组',
+            pane: '<span style="color:blue;">都是阿姨</span>'
+        }],
+        onTabSwitch: function (index) {
+            console.log(index);
+        }
+    });
+    $('#tabsContainer').append(mytabs.component);
+    mytabs.switchTo(3);
+
 </script>
