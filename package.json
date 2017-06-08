@@ -24,7 +24,7 @@
     "expose-loader": "^0.7.3",
     "express": "^4.13.3",
     "gulp-babel": "^6.1.2",
-    "shark-automation": "^2.1.0",
+    "shark-automation": "^2.1.2",
     "showdown": "^1.6.0",
     "sync-request": "^4.1.0",
     "webpack": "^2.6.1",

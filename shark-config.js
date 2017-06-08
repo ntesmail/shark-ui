@@ -53,20 +53,4 @@ shark.appConfig = function (app) {
         //向页面模板传递参数，可以传递字符串和对象，注意格式
         res.render('index', { converter: converter, headContent: headContent, footContent: footContent });
     });
-    //ajax mock
-    app.use(baseconfig.contextPath + baseconfig.ajaxPrefix, function (req, res) {
-        var data = path.join(baseconfig.rootPath, baseconfig.mock, baseconfig.ajaxPrefix, req.path);
-        if (fs.existsSync(data)) {
-            if (req.path.indexOf('upload')) {
-                res.set('Content-Type', 'text/html');
-            }
-            else {
-                res.set('Content-Type', 'application/json');
-            }
-            res.status(200).send(fs.readFileSync(data)).end();
-        } else {
-            res.status(404).send('file not exist !').end();
-        }
-    });
-
 }
