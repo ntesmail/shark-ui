@@ -12,8 +12,8 @@ var ListGroup = require('./listgroup.ui');
 var templateSelecter = Templates.selecter;
 var templateSelecterFun = Templates.templateAoT(templateSelecter);
 // 初始化selecter的dom
-function initDom(sharkComponent, config) {
-    if (this === $.fn) {
+function initDom(sharkComponent, config, targetElement) {
+    if (!targetElement) {
         sharkComponent.createType = 'construct';
         var fun = config.dom ? Templates.templateAoT(config.dom) : templateSelecterFun;
         var html = fun.apply(config);
@@ -37,7 +37,7 @@ function initSelectionsDom(sharkComponent, config) {
 function initSelectionsEvents(sharkComponent, config) {
     var selecter = sharkComponent.component;
     var selections = sharkComponent.selections;
-    selections.on('click', '.list-group-item', function(evt) {
+    selections.on('click', '.list-group-item', function (evt) {
         var item = $(this);
         //设置值
         var value = item.data('value');
@@ -47,7 +47,7 @@ function initSelectionsEvents(sharkComponent, config) {
         selections.hide();
     });
     // 点击除了组件之外的地方，收起下拉列表
-    SharkUI.addCloseListener(selections.attr('id'), [selecter, selections], function() {
+    SharkUI.addCloseListener(selections.attr('id'), [selecter, selections], function () {
         if (!selections.is(':hidden')) {
             selecter.removeClass('open');
             selections.hide();
@@ -57,7 +57,7 @@ function initSelectionsEvents(sharkComponent, config) {
 // 初始化事件
 function initEvents(sharkComponent, config) {
     var selecter = sharkComponent.component;
-    selecter.on('click.selecter', '.selecter', BaseComponent.filterComponentAction(sharkComponent, function(evt) {
+    selecter.on('click.selecter', '.selecter', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
         if (!sharkComponent.selections) {
             // 如果还没有初始化过selections，在这里先初始化
             initSelectionsDom(sharkComponent, config);
@@ -108,63 +108,61 @@ function renderGroupList(sharkComponent, config) {
     }
 }
 
-$.fn.extend({
-    sharkSelecter: function(options) {
-        /*********默认参数配置*************/
-        var config = {
-            activeStyle: null, // point | nike
-            data: null,
-            actualKey: 'value',
-            displayKey: 'name',
-            dom: '',
-            onSelected: function() {}
-        };
-        SharkUI.extend(config, options);
-        /*********初始化组件*************/
-        var sharkComponent = {};
-        initDom.call(this, sharkComponent, config);
-        BaseComponent.addComponentBaseFn(sharkComponent, config);
-        initEvents(sharkComponent, config);
-        sharkComponent.data = {};
-        sharkComponent.setValue = function(v, docallback) {
-            var itemData = {};
-            var oldData = sharkComponent.data;
-            //允许值为空字符串
-            if (typeof v !== 'undefined' && v !== null) {
-                for (var i = 0; i < config.data.length; i++) {
-                    if (v === config.data[i][config.actualKey]) {
-                        itemData = config.data[i];
-                        break;
-                    }
+SharkUI.sharkSelecter = function (options, targetElement) {
+    /*********默认参数配置*************/
+    var config = {
+        activeStyle: null, // point | nike
+        data: null,
+        actualKey: 'value',
+        displayKey: 'name',
+        dom: '',
+        onSelected: function () { }
+    };
+    SharkUI.extend(config, options);
+    /*********初始化组件*************/
+    var sharkComponent = {};
+    initDom(sharkComponent, config, targetElement);
+    BaseComponent.addComponentBaseFn(sharkComponent, config);
+    initEvents(sharkComponent, config);
+    sharkComponent.data = {};
+    sharkComponent.setValue = function (v, docallback) {
+        var itemData = {};
+        var oldData = sharkComponent.data;
+        //允许值为空字符串
+        if (typeof v !== 'undefined' && v !== null) {
+            for (var i = 0; i < config.data.length; i++) {
+                if (v === config.data[i][config.actualKey]) {
+                    itemData = config.data[i];
+                    break;
                 }
             }
-            if (oldData[config.actualKey] != itemData[config.actualKey]) {
-                //设置新值
-                $.isEmptyObject(itemData) ? sharkComponent.data = {} : sharkComponent.data = itemData;
-                var valuelabel = sharkComponent.component.find('.value');
-                valuelabel.text(SharkUI.isEmpty(itemData[config.displayKey]) ? '' : itemData[config.displayKey]);
-                //触发回调函数
-                if (docallback && typeof config.onSelected === 'function') {
-                    config.onSelected.call(sharkComponent, itemData[config.actualKey], itemData);
-                }
+        }
+        if (oldData[config.actualKey] != itemData[config.actualKey]) {
+            //设置新值
+            $.isEmptyObject(itemData) ? sharkComponent.data = {} : sharkComponent.data = itemData;
+            var valuelabel = sharkComponent.component.find('.value');
+            valuelabel.text(SharkUI.isEmpty(itemData[config.displayKey]) ? '' : itemData[config.displayKey]);
+            //触发回调函数
+            if (docallback && typeof config.onSelected === 'function') {
+                config.onSelected.call(sharkComponent, itemData[config.actualKey], itemData);
             }
-        };
-        sharkComponent.getValue = function() {
-            return sharkComponent.data[config.actualKey];
-        };
-        sharkComponent.destroy = function() {
-            if (sharkComponent.selections) {
-                SharkUI.removeCloseListener(sharkComponent.selections.attr('id'));
-                sharkComponent.selections.destroy();
-            }
-            // 销毁component
-            if (sharkComponent.createType === 'construct') {
-                sharkComponent.component.remove();
-            } else {
-                sharkComponent.component.off('click.selecter');
-            }
-            sharkComponent = null;
-        };
-        return sharkComponent;
-    }
-});
+        }
+    };
+    sharkComponent.getValue = function () {
+        return sharkComponent.data[config.actualKey];
+    };
+    sharkComponent.destroy = function () {
+        if (sharkComponent.selections) {
+            SharkUI.removeCloseListener(sharkComponent.selections.attr('id'));
+            sharkComponent.selections.destroy();
+        }
+        // 销毁component
+        if (sharkComponent.createType === 'construct') {
+            sharkComponent.component.remove();
+        } else {
+            sharkComponent.component.off('click.selecter');
+        }
+        sharkComponent = null;
+    };
+    return sharkComponent;
+}
