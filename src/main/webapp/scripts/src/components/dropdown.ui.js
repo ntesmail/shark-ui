@@ -67,11 +67,11 @@ function initEvents(sharkComponent, config) {
         }
         var selections = sharkComponent.selections;
         if (selections.is(':hidden')) {
+            var postion = DomHelper.calcOffset(dropdown, selections, 'bottom');
+            selections.css(postion);
             //展开待选列表
             dropdown.addClass('open');
             selections.show();
-            var postion = DomHelper.calcOffset(dropdown, selections, 'bottom');
-            selections.css(postion);
         } else {
             //收起待选列表
             dropdown.removeClass('open');

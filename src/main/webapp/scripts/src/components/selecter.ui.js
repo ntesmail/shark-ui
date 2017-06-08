@@ -68,6 +68,8 @@ function initEvents(sharkComponent, config) {
         var selections = sharkComponent.selections;
         if (selections.is(':hidden')) {
             renderGroupList(sharkComponent, config);
+            var postion = DomHelper.calcOffset(selecter, selections, 'bottom');
+            selections.css(postion);
             //显示待选列表
             selecter.addClass('open');
             selections.show();
@@ -75,8 +77,6 @@ function initEvents(sharkComponent, config) {
             selections.css({
                 width: selecter.outerWidth()
             });
-            var postion = DomHelper.calcOffset(selecter, selections, 'bottom');
-            selections.css(postion);
         } else {
             //隐藏待选列表
             selecter.removeClass('open');
