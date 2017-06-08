@@ -4,8 +4,8 @@ var express = require('express');
 var argv = require('yargs').argv;
 var request = require('sync-request');
 var config = require('./shark-automation-config.js');
-var showdown = require('showdown'),
-    converter = new showdown.Converter();
+var showdown = require('showdown');
+var converter = new showdown.Converter();
 
 var app = express();
 var webappDir = 'build/';
