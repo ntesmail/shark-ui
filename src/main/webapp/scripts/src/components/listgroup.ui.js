@@ -2,9 +2,9 @@
  * @author sweetyx
  * @description 列表组
  */
-var $ = require('jquery');
-var SharkUI = require('../common/core');
-var Templates = require('../common/templates');
+import $ from 'jquery';
+import { SharkUI } from '../common/core';
+import { Templates } from '../common/templates';
 var template = Templates.listgroup;
 var templateFun = Templates.templateAoT(template);
 
@@ -12,7 +12,7 @@ var templateFun = Templates.templateAoT(template);
 function render(id) {
     var ul = $(templateFun.apply());
     ul.attr('id', id || SharkUI.createUUID());
-    ul.destroy = function() {
+    ul.destroy = function () {
         ul.remove();
     };
     return ul;
@@ -20,7 +20,7 @@ function render(id) {
 //更新列表组
 function update(ul, data, actualKey, displayKey) {
     ul.empty();
-    $.each(data, function(i, item) {
+    $.each(data, function (i, item) {
         var li = $('<li class="list-group-item" value="' + item[actualKey] + '">' + item[displayKey] + '</li>');
         li.data(item);
         ul.append(li);
@@ -32,4 +32,4 @@ var ListGroup = {
     render: render,
     update: update
 };
-module.exports = ListGroup;
+export { ListGroup };

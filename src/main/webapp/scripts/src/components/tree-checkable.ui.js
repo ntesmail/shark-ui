@@ -2,11 +2,11 @@
  * @author sweetyx
  * @description 树插件的扩展，可check树
  */
-var $ = require('jquery');
-var SharkUI = require('../common/core');
-var BaseComponent = require('../common/base');
+import $ from 'jquery';
+import { SharkUI } from '../common/core';
+import { BaseComponent } from '../common/base';
 
-function makeCheckable(sharkComponent, config) {
+export function makeCheckable(sharkComponent, config) {
     var tree = sharkComponent.component;
     tree.addClass('tree-checkable');
     //获取Checked的节点
@@ -196,4 +196,3 @@ function makeCheckable(sharkComponent, config) {
         reverseCheckNode(checkEle, config.autolink, config.onNodeChecked);
     }));
 }
-module.exports = makeCheckable;

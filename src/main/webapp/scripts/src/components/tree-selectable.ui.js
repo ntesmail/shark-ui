@@ -2,11 +2,11 @@
  * @author sweetyx
  * @description 树插件的扩展，可select树
  */
-var $ = require('jquery');
-var SharkUI = require('../common/core');
-var BaseComponent = require('../common/base');
+import $ from 'jquery';
+import { SharkUI } from '../common/core';
+import { BaseComponent } from '../common/base';
 
-function makeSelectable(sharkComponent, config) {
+export function makeSelectable(sharkComponent, config) {
     var tree = sharkComponent.component;
     tree.addClass('tree-selectable');
     //获取selected的节点
@@ -60,4 +60,3 @@ function makeSelectable(sharkComponent, config) {
         selectNode(nameEle, config.onNodeSelected);
     }));
 }
-module.exports = makeSelectable;

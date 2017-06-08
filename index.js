@@ -1,1 +1,1 @@
-require('./src/main/webapp/scripts/src/shark.ui.page');
+export * from './src/main/webapp/scripts/src/shark-ui.page';

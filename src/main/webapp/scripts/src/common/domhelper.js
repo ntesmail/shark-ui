@@ -46,4 +46,4 @@ var calcOffset = function (target, elem, direction, fixOption) {
 var DomHelper = {
     calcOffset: calcOffset
 };
-module.exports = DomHelper
+export { DomHelper };

@@ -2,13 +2,14 @@
  * @author sweetyx
  * @description 树插件
  */
-var $ = require('jquery');
-var SharkUI = require('../common/core');
-var BaseComponent = require('../common/base');
-var Templates = require('../common/templates');
-var makeCheckable = require('./tree-checkable.ui');
-var makeSelectable = require('./tree-selectable.ui');
-
+import $ from 'jquery';
+import { SharkUI } from '../common/core';
+import { Event } from '../common/event';
+import { DomHelper } from '../common/domhelper';
+import { Templates } from '../common/templates';
+import { BaseComponent } from '../common/base';
+import { makeCheckable } from './tree-checkable.ui';
+import { makeSelectable } from './tree-selectable.ui';
 var template = Templates.tree;
 var templateFun = Templates.templateAoT(template);
 var isCalced = false;

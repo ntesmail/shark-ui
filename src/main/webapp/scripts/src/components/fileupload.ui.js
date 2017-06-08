@@ -2,11 +2,11 @@
  * @author sweetyx
  * @description 文件上传插件
  */
-var $ = require('jquery');
-var SharkUI = require('../common/core');
-var Templates = require('../common/templates');
-var BaseComponent = require('../common/base');
-var makeIE9Able = require('./fileupload-ie9.ui');
+import $ from 'jquery';
+import { SharkUI } from '../common/core';
+import { Templates } from '../common/templates';
+import { BaseComponent } from '../common/base';
+import { makeIE9Able } from './fileupload-ie9.ui';
 // selecter模板
 var templateFileupload = Templates.fileupload;
 var templateFileuploadFun = Templates.templateAoT(templateFileupload);

@@ -3,7 +3,7 @@
  * 提供一些公共的核心方法
  */
 
-var $ = require('jquery');
+import $ from 'jquery';
 var createUUID = (function () {
     var index = 0;
     return function () {
@@ -96,4 +96,4 @@ var SharkUI = {
     debounce: debounce,
     $: $
 };
-module.exports = SharkUI
+export { SharkUI };

@@ -23,6 +23,7 @@
     "ejs": "^2.5.2",
     "expose-loader": "^0.7.3",
     "express": "^4.13.3",
+    "fs-extra": "^3.0.1",
     "gulp-babel": "^6.1.2",
     "rimraf": "^2.6.1",
     "shark-automation": "^2.1.2",

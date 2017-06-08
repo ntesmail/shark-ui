@@ -2,11 +2,10 @@
  * @author lingqiao
  * @description tabs插件
  */
-var $ = require('jquery');
-var SharkUI = require('../common/core');
-var BaseComponent = require('../common/base');
-var Templates = require('../common/templates');
-
+import $ from 'jquery';
+import { SharkUI } from '../common/core';
+import { Templates } from '../common/templates';
+import { BaseComponent } from '../common/base';
 var template = Templates.tabs;
 var templateFun = Templates.templateAoT(template);
 // 初始化tabs的dom

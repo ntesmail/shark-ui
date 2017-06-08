@@ -2,13 +2,13 @@
  * @author asteryk
  * @description 自动补全插件
  */
-var $ = require('jquery');
-var SharkUI = require('../common/core');
-var Event = require('../common/event');
-var DomHelper = require('../common/domhelper');
-var Templates = require('../common/templates');
-var BaseComponent = require('../common/base');
-var ListGroup = require('./listgroup.ui');
+import $ from 'jquery';
+import { SharkUI } from '../common/core';
+import { Event } from '../common/event';
+import { DomHelper } from '../common/domhelper';
+import { Templates } from '../common/templates';
+import { BaseComponent } from '../common/base';
+import { ListGroup } from './listgroup.ui';
 // selecter模板
 var templateAutocomplete = Templates.autocomplete;
 var templateAutocompleteFun = Templates.templateAoT(templateAutocomplete);

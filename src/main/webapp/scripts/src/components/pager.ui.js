@@ -2,10 +2,10 @@
  * @author sweetyx
  * @description 分页插件
  */
-var $ = require('jquery');
-var SharkUI = require('../common/core');
-var BaseComponent = require('../common/base');
-var Templates = require('../common/templates');
+import $ from 'jquery';
+import { SharkUI } from '../common/core';
+import { Templates } from '../common/templates';
+import { BaseComponent } from '../common/base';
 
 // selecter模板
 var templatePager = Templates.pager;

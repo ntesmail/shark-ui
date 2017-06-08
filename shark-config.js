@@ -7,17 +7,18 @@ const webpack = require('webpack');
 shark.baseconfig = baseconfig;
 
 shark.webpack = {
-    entry: 'filename',
-    config: {
-        module: {
-            rules: [{
-                test: require.resolve('jquery'),
-                use: [{
-                    loader: 'expose-loader?$'
-                }]
-            }]
-        }
-    }
+    entry: 'filename'
+    //webpack配置
+    // ,config: {
+    //     module: {
+    //         rules: [{
+    //             test: require.resolve('jquery'),
+    //             use: [{
+    //                 loader: 'expose-loader?$'
+    //             }]
+    //         }]
+    //     }
+    // }
 };
 
 shark.plugins = {
@@ -33,11 +34,19 @@ shark.plugins = {
             merge: 'append'
         }
     }]
+    // 不压缩js
+    // , min: [{
+    //     name: 'min-js',//如果name和内置的task一致，则会用此配置扩展该内置task。不然无需提供 
+    //     plugins: {
+    //         list: [],//gulp插件列表。 
+    //         merge: 'replace'
+    //     }
+    // }]
 };
 
 shark.appConfig = function (app) {
-    var showdown = require('showdown'),
-        converter = new showdown.Converter();
+    var showdown = require('showdown');
+    var converter = new showdown.Converter();
 
     app.engine('.html', require('ejs').__express);
     // 后缀

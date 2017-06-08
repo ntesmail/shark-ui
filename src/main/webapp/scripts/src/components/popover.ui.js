@@ -2,13 +2,12 @@
  * @author sweetyx
  * @description 提示框插件
  */
-var $ = require('jquery');
-var SharkUI = require('../common/core');
-var Event = require('../common/event');
-var DomHelper = require('../common/domhelper');
-var BaseComponent = require('../common/base');
-var Templates = require('../common/templates');
-
+import $ from 'jquery';
+import { SharkUI } from '../common/core';
+import { Event } from '../common/event';
+import { DomHelper } from '../common/domhelper';
+import { Templates } from '../common/templates';
+import { BaseComponent } from '../common/base';
 var template = Templates.popover;
 var templateFun = Templates.templateAoT(template);
 //初始化popover的dom

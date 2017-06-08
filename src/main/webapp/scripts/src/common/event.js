@@ -3,11 +3,9 @@
  * 通用事件处理
  */
 
-var $ = require('jquery');
-
+import $ from 'jquery';
 var registerCloseArray = [];
 var isCloseRegister = false;
-
 function dispatchHandler(evt) {
     for (var i = 0; i < registerCloseArray.length; i++) {
         var key = registerCloseArray[i].key;
@@ -63,4 +61,4 @@ var Event = {
     addCloseListener: addCloseListener,
     removeCloseListener: removeCloseListener
 };
-module.exports = Event
+export { Event };

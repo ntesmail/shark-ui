@@ -2,9 +2,9 @@
  * @author sweetyx
  * @description 文件上传插件的扩展，兼容ie9以下浏览器
  */
-var $ = require('jquery');
-var SharkUI = require('../common/core');
-var BaseComponent = require('../common/base');
+import $ from 'jquery';
+import { SharkUI } from '../common/core';
+import { BaseComponent } from '../common/base';
 
 var blankSrc = /^https/i.test(window.location.href || '') ? 'javascript:void(0);' : 'about:blank';
 //创建input
@@ -35,7 +35,7 @@ function createIframe(iframeId) {
     return iframe;
 }
 
-function makeIE9Able(sharkComponent, config) {
+export function makeIE9Able(sharkComponent, config) {
     //初始化form和input
     var inputId = SharkUI.createUUID();
     var formId = SharkUI.createUUID();
@@ -152,4 +152,3 @@ function makeIE9Able(sharkComponent, config) {
         sharkComponent = null;
     };
 }
-module.exports = makeIE9Able;

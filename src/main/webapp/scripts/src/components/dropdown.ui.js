@@ -1,14 +1,14 @@
 /**
- * @author sweetyx & lingqiao
+ * @author lingqiao
  * @description selecter插件和dropdown插件
  */
-var $ = require('jquery');
-var SharkUI = require('../common/core');
-var Event = require('../common/event');
-var DomHelper = require('../common/domhelper');
-var BaseComponent = require('../common/base');
-var Templates = require('../common/templates');
-var ListGroup = require('./listgroup.ui');
+import $ from 'jquery';
+import { SharkUI } from '../common/core';
+import { Event } from '../common/event';
+import { DomHelper } from '../common/domhelper';
+import { Templates } from '../common/templates';
+import { BaseComponent } from '../common/base';
+import { ListGroup } from './listgroup.ui';
 // dropdown模板
 var templateDropdown = Templates.dropdown;
 var templateDropdownFun = Templates.templateAoT(templateDropdown);
