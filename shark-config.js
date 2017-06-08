@@ -57,9 +57,15 @@ shark.appConfig = function (app) {
     app.use(baseconfig.contextPath + baseconfig.ajaxPrefix, function (req, res) {
         var data = path.join(baseconfig.rootPath, baseconfig.mock, baseconfig.ajaxPrefix, req.path);
         if (fs.existsSync(data)) {
-            res.send(fs.readFileSync(data));
+            if (req.path.indexOf('upload')) {
+                res.set('Content-Type', 'text/html');
+            }
+            else {
+                res.set('Content-Type', 'application/json');
+            }
+            res.status(200).send(fs.readFileSync(data)).end();
         } else {
-            res.status(404).send('file not exist !');
+            res.status(404).send('file not exist !').end();
         }
     });
 

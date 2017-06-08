@@ -13,12 +13,13 @@
     cursor: pointer;
 }
 </style>
-<div id="fileuploadContainer"></div>
+<div id="fileuploadContainer">
+</div>
 <p>文件名: <span style="color:red;" id="file-name"></span></p>
 <p>上传进度: <span style="color:red;" id="file-progress"></span></p>
 <button class="btn btn-primary" id="file-upload">开始上传</button>
 <script type="text/javascript">
-var myfileupload = $.fn.sharkFileupload({
+var myfileupload = SharkUI.sharkFileupload({
     dom: '<div class="fileupload">选择文件</div>',
     autoupload: false,
     url: '',
@@ -32,6 +33,7 @@ var myfileupload = $.fn.sharkFileupload({
     },
     onUploaded: function(file, res) {
         console.log(res);
+        alert('上传成功！');
     },
     onFailed: function(file, error) {
         console.log(error);

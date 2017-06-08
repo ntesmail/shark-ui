@@ -49,17 +49,20 @@ function makeIE9Able(sharkComponent, config) {
         input.attr('accept', config.accept);
     }
     //初始化样式
-    if (sharkComponent.component.css('position') === 'static') {
+    var pos = sharkComponent.component.css('position');
+    if (!pos || pos === 'static') {
         sharkComponent.component.css({
             position: 'relative'
         });
     }
     form.css({
         position: 'absolute',
-        left: 0,
+        right: 0,
         top: 0,
         width: sharkComponent.component.outerWidth(),
         height: sharkComponent.component.outerHeight(),
+        minWidth: '100%',
+        minHeight: '100%',
         overflow: 'hidden'
     });
     input.css({
@@ -71,7 +74,9 @@ function makeIE9Able(sharkComponent, config) {
         fontSize: '100px',
         cursor: 'pointer',
         width: '1000px',
-        height: '1000px'
+        height: '1000px',
+        minWidth: '100%',
+        minHeight: '100%'
     });
     //监听事件
     input.on('change', BaseComponent.filterComponentAction(sharkComponent.component, function (e) {
