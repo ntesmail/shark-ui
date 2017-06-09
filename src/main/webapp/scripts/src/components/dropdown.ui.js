@@ -22,7 +22,7 @@ function initDom(sharkComponent, config, targetElement) {
         sharkComponent.component = $(html);
     } else {
         sharkComponent.createType = 'normal';
-        sharkComponent.component = targetElement;
+        sharkComponent.component = $(targetElement);
     }
     sharkComponent.component.addClass('shark-dropdown');
     return sharkComponent;

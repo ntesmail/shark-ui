@@ -30,7 +30,7 @@ function addComponentBaseFn(sharkComponent, config) {
         }
     };
     sharkComponent.appendTo = function (target) {
-        sharkComponent.component.appendTo(target);
+        sharkComponent.component.appendTo($(target));
     };
     return sharkComponent;
 }
