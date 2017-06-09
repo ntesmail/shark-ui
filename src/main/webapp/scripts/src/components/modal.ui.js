@@ -22,22 +22,6 @@ function initDom(sharkComponent, config) {
     return sharkComponent;
 }
 
-// 初始化事件
-function initEvents(sharkComponent, config) {
-    var modal = sharkComponent.component;
-    modal.on('click.modal', '.js-ok,.js-cancel', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
-        var curEle = $(this);
-        if (curEle.hasClass('js-ok')) {
-            config.defer && config.defer.resolve();
-        }
-        if (curEle.hasClass('js-cancel')) {
-            config.defer && config.defer.reject();
-        }
-        sharkComponent.hide();
-    }));
-}
-
-
 SharkUI.sharkModal = function (options) {
     /*********默认参数配置*************/
     var config = {
@@ -56,45 +40,61 @@ SharkUI.sharkModal = function (options) {
     var backdropEle;
     body.append(sharkComponent.component);
     BaseComponent.addComponentBaseFn(sharkComponent, config);
-    if (config.backdrop !== 'static') {
-        sharkComponent.component.on('click', function (evt) {
-            if (evt.target === evt.currentTarget) {
-                sharkComponent.hide();
-            }
-        });
-    }
-    initEvents(sharkComponent, config);
     sharkComponent.show = function () {
+        var defer = $.Deferred();
         backdropEle = $('<div class="modal-backdrop ' + config.animate + ' in"></div>');
         body.append(backdropEle);
         body.addClass('modal-open');
         sharkComponent.component.show();
         sharkComponent.component.scrollTop(0); //触发重绘
         sharkComponent.component.addClass('in');
+        sharkComponent.defer = defer;
         if (typeof config.onShow === 'function') {
             config.onShow.call(sharkComponent);
         }
+        return defer.promise();
     };
     sharkComponent.hide = function () {
         backdropEle.remove();
         body.removeClass('modal-open');
         sharkComponent.component.hide();
         sharkComponent.component.removeClass('in');
-        if (typeof config.onHide === 'function') {
-            config.onHide.call(sharkComponent);
-        }
-    };
-    sharkComponent.destroy = function () {
         if (backdropEle) {
             backdropEle.remove();
         }
         sharkComponent.component.remove();
+        if (typeof config.onHide === 'function') {
+            config.onHide.call(sharkComponent);
+        }
         sharkComponent = null;
     };
+    sharkComponent.addResolveTarget = function (target) {
+        sharkComponent.component.on('click.modal', target, sharkComponent, function (evt) {
+            sharkComponent.defer.resolve(evt);
+            sharkComponent.hide();
+        });
+        return sharkComponent;
+    };
+    sharkComponent.addRejectTarget = function (target) {
+        sharkComponent.component.on('click.modal', target, sharkComponent, function (evt) {
+            sharkComponent.defer.reject(evt);
+            sharkComponent.hide();
+        });
+        return sharkComponent;
+    };
+    if (config.backdrop !== 'static') {
+        sharkComponent.component.on('click', function (evt) {
+            if (evt.target === evt.currentTarget) {
+                sharkComponent.defer.reject(evt);
+                sharkComponent.hide();
+            }
+        });
+    }
+    sharkComponent.addResolveTarget('.js-ok');
+    sharkComponent.addRejectTarget('.js-cancel');
     return sharkComponent;
 };
 SharkUI.sharkConfirm = function (options) {
-    var defer = $.Deferred();
     /*********默认参数配置*************/
     var config = {
         animate: 'fade',
@@ -109,7 +109,6 @@ SharkUI.sharkConfirm = function (options) {
     SharkUI.extend(config, options);
     /*********初始化组件*************/
     config.backdrop = 'static';
-    config.defer = defer;
     var templateData = {
         title: config.title,
         content: config.content,
@@ -118,11 +117,9 @@ SharkUI.sharkConfirm = function (options) {
     };
     config.content = templateConfirmFun.apply(templateData);
     var sharkComponent = SharkUI.sharkModal(config);
-    sharkComponent.show();
-    return defer.promise();
+    return sharkComponent.show();
 };
 SharkUI.sharkAlert = function (options) {
-    var defer = $.Deferred();
     /*********默认参数配置*************/
     var config = {
         animate: 'fade',
@@ -136,7 +133,6 @@ SharkUI.sharkAlert = function (options) {
     SharkUI.extend(config, options);
     /*********初始化组件*************/
     config.backdrop = 'static';
-    config.defer = defer;
     var templateData = {
         title: config.title,
         content: config.content,
@@ -144,6 +140,5 @@ SharkUI.sharkAlert = function (options) {
     };
     config.content = templateConfirmFun.apply(templateData);
     var sharkComponent = SharkUI.sharkModal(config);
-    sharkComponent.show();
-    return defer.promise();
+    return sharkComponent.show();
 }

@@ -1,30 +1,34 @@
 <button id="modalBtn" class="btn btn-primary">modal</button>
 <script type="text/template" id="modal-content">
     <div class="modal-header">
-        <button class="close">x</button>
+        <button class="close js-cancel">x</button>
         <h4 class="modal-title">我是标题</h4>
     </div>
     <div class="modal-body">
-        我是内容
+        <input type="text" value="我是内容" />
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-success">确定</button>
+        <button type="button" class="btn btn-success js-ok">确定</button>
     </div>
 </script>
 <script type="text/javascript">
-var mymodal = SharkUI.sharkModal({
-    size: 'lg',
-    // backdrop:'static',
-    content: document.getElementById('modal-content').innerText
-});
-mymodal.component.find('.close').on('click', function() {
-    mymodal.hide();
-});
-mymodal.component.find('.btn-success').on('click', function() {
-    console.log('todo...');
-    mymodal.hide();
-});
 document.getElementById('modalBtn').addEventListener('click',function(){
-    mymodal.show();
+    SharkUI.sharkModal({
+        size: 'lg',
+        // backdrop:'static',
+        content: document.getElementById('modal-content').innerText,
+        onShow: function () { 
+            console.log('show modal');
+        },
+        onHide: function () { 
+            console.log('hide modal');
+        }
+    })
+    .show()
+    .then(function(evt){
+        console.log(evt.target);
+    },function(evt){
+        console.log(evt.target);
+    });
 });
 </script>
