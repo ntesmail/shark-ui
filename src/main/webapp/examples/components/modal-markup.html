@@ -8,7 +8,7 @@
         <input type="text" value="我是内容" />
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-success js-ok">确定</button>
+        <button type="button" class="btn btn-success">确定</button>
     </div>
 </script>
 <script type="text/javascript">
@@ -24,6 +24,8 @@ document.getElementById('modalBtn').addEventListener('click',function(){
             console.log('hide modal');
         }
     })
+    .addResolveTarget('.btn-success')
+    .addRejectTarget('.close')
     .show()
     .then(function(evt){
         console.log(evt.target);
