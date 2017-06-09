@@ -132,7 +132,7 @@ SharkUI.sharkPopover = function (options, targetElement) {
     /*********初始化组件*************/
     var sharkComponent = {};
     sharkComponent.linkTo = function (target) {
-        sharkComponent.origin = target;
+        sharkComponent.origin = $(target);
         if (config.preInit) {
             initComponent(sharkComponent, config);
         }
@@ -169,10 +169,11 @@ SharkUI.sharkPopover = function (options, targetElement) {
         }
         sharkComponent = null;
     };
-    if (targetElement) {
-        sharkComponent.linkTo(targetElement);
-    }
     BaseComponent.addComponentBaseFn(sharkComponent, config);
+    sharkComponent.appendTo = sharkComponent.linkTo;//重置popover的appendTo方法
+    if (targetElement) {
+        sharkComponent.appendTo(targetElement);
+    }
     return sharkComponent;
 };
 SharkUI.sharkTooltip = function (options, targetElement) {

@@ -8,6 +8,9 @@
  * @param {component} 组件对象
  * @param {object} 配置项
  */
+
+import $ from 'jquery';
+import { SharkUI } from './core';
 function addComponentBaseFn(sharkComponent, config) {
     sharkComponent.getConfig = function () {
         return config;
@@ -25,6 +28,9 @@ function addComponentBaseFn(sharkComponent, config) {
         if (typeof config.onEnable === 'function') {
             config.onEnable.call(sharkComponent);
         }
+    };
+    sharkComponent.appendTo = function (target) {
+        sharkComponent.component.appendTo(target);
     };
     return sharkComponent;
 }

@@ -53,15 +53,15 @@ var mytree = SharkUI.sharkTree({
 
     }
 });
-$('#treeContainer').append(mytree.component);
+mytree.appendTo('#treeContainer');
 mytree.expandAll();
-$('#checkAllBtn').click(function() {
+document.getElementById('checkAllBtn').addEventListener('click',function(){
     mytree.checkAll();
 });
-$('#reverseCheckBtn').click(function() {
+document.getElementById('reverseCheckBtn').addEventListener('click',function(){
     mytree.reverseCheck();
 });
-$('#checkNoBtn').click(function() {
+document.getElementById('checkNoBtn').addEventListener('click',function(){
     mytree.checkNo();
 });
 </script>

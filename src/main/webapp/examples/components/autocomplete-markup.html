@@ -6,36 +6,36 @@ var myautocomplete = SharkUI.sharkAutoComplete({
     debounceTime: 0, //防抖间隔
     displayKey: 'name', //对应返回数据中的展示字段
     filterData: function(value) {
-        var defer = $.Deferred();
-        if (!value) {
-            defer.resolve([]);
-        } else {
-            defer.resolve([{
-                name: value + '@163.com'
-            }, {
-                name: value + '@163.vip.com'
-            }, {
-                name: value + '@126.com'
-            }, {
-                name: value + '@126.vip.com'
-            }, {
-                name: value + '@qq.com'
-            }, {
-                name: value + '@qq.vip.com'
-            }, {
-                name: value + '@sina.com'
-            }, {
-                name: value + '@gmail.com'
-            }, {
-                name: value + '@yahoo.com'
-            }]);
-        }
-        return defer.promise();
+        return new Promise((resolve,reject)=>{
+            if (!value) {
+                resolve([]);
+            } else {
+                resolve([{
+                    name: value + '@163.com'
+                }, {
+                    name: value + '@163.vip.com'
+                }, {
+                    name: value + '@126.com'
+                }, {
+                    name: value + '@126.vip.com'
+                }, {
+                    name: value + '@qq.com'
+                }, {
+                    name: value + '@qq.vip.com'
+                }, {
+                    name: value + '@sina.com'
+                }, {
+                    name: value + '@gmail.com'
+                }, {
+                    name: value + '@yahoo.com'
+                }]);
+            }
+        });
     },
     onSelected: function(res) {
         console.log(res);
     }
 });
 myautocomplete.component.addClass('form-control');
-$('#autocompleteContainer').append(myautocomplete.component);
+myautocomplete.appendTo('#autocompleteContainer');
 </script>

@@ -15,7 +15,7 @@
 var mymodal = SharkUI.sharkModal({
     size: 'lg',
     // backdrop:'static',
-    content: $('#modal-content').text()
+    content: document.getElementById('modal-content').innerText
 });
 mymodal.component.find('.close').on('click', function() {
     mymodal.hide();
@@ -24,7 +24,7 @@ mymodal.component.find('.btn-success').on('click', function() {
     console.log('todo...');
     mymodal.hide();
 });
-$('#modalBtn').on('click', function() {
+document.getElementById('modalBtn').addEventListener('click',function(){
     mymodal.show();
 });
 </script>

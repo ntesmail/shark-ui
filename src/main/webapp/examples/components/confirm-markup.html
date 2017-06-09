@@ -1,6 +1,6 @@
 <button id="confirmBtn" class="btn btn-primary">confirm</button>
 <script type="text/javascript">
-$('#confirmBtn').on('click', function() {
+document.getElementById('confirmBtn').addEventListener('click',function(){
     SharkUI.sharkConfirm({
         title: '提示',
         content: '<span style="color:#ff0000;">确定删除吗？</span>',

@@ -1,18 +1,18 @@
 <button class="btn btn-primary" id="toastrBtn1">提示成功</button>
 <button class="btn btn-danger" id="toastrBtn2">提示失败</button>
 <script type="text/javascript">
-$('#toastrBtn1').click(function() {
+document.getElementById('toastrBtn1').addEventListener('click',function(){
     SharkUI.sharkToastr({
         type: 'success',
         content: '保存成功',
         duration: 2000
     });
-})
-$('#toastrBtn2').click(function() {
+});
+document.getElementById('toastrBtn2').addEventListener('click',function(){
     SharkUI.sharkToastr({
         type: 'error',
         content: '保存失败',
         duration: 2000
     });
-})
+});
 </script>

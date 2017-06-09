@@ -19,6 +19,6 @@ var myselecter = SharkUI.sharkSelecter({
         console.log(value, item);
     }
 });
-$('#selecterContainer').append(myselecter.component);
+myselecter.appendTo('#selecterContainer');
 myselecter.setValue(1001);
 </script>

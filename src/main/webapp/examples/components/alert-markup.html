@@ -1,6 +1,6 @@
 <button id="alertBtn" class="btn btn-primary">alert</button>
 <script type="text/javascript">
-$('#alertBtn').on('click', function() {
+document.getElementById('alertBtn').addEventListener('click',function(){
     SharkUI.sharkAlert({
         title: '提示',
         content: '已删除',
