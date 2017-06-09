@@ -10,7 +10,7 @@
   "author": "sweetyx",
   "license": "MIT",
   "scripts": {
-    "server": "./node_modules/.bin/shark server",
+    "server": "shark server",
     "build": "rimraf build && shark build online"
   },
   "homepage": "http://shark.mail.netease.com/shark-ui/index.html",
