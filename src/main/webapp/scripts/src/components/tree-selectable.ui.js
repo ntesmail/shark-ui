@@ -2,7 +2,7 @@
  * @author sweetyx
  * @description 树插件的扩展，可select树
  */
-import $ from 'jquery';
+import $ from '@ntesmail/shark-easydom'
 import { SharkUI } from '../common/core';
 import { BaseComponent } from '../common/base';
 

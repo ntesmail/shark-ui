@@ -82,7 +82,7 @@ function foldNode(element) {
  * @param  {[type]} parentNode [父节点]
  */
 function initNodesMap(nodes, nodesMap, parentNode) {
-    if (!$.isArray(nodes))
+    if (!SharkUI.isArray(nodes))
         return;
     for (var i = 0; i < nodes.length; i++) {
         nodes[i].parentNode = parentNode || null;
@@ -193,7 +193,7 @@ SharkUI.sharkTree = function (options, targetElement) {
      */
     sharkComponent.expandAll = (function () {
         var expandAll = function (nodesArr) {
-            if (!$.isArray(nodesArr)) {
+            if (!SharkUI.isArray(nodesArr)) {
                 return;
             }
             for (var i = 0; i < nodesArr.length; i++) {

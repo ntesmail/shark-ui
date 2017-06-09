@@ -25,6 +25,9 @@ var isEmpty = function (val) {
         return false;
     }
 };
+var isArray = function (val) {
+    return val instanceof Array;
+};
 var throttle = function (func, wait, maxtime) {
     var timer = null;
     var args;
@@ -92,6 +95,7 @@ var SharkUI = {
     extend: extend,
     createUUID: createUUID,
     isEmpty: isEmpty,
+    isArray: isArray,
     throttle: throttle,
     debounce: debounce,
     $: $

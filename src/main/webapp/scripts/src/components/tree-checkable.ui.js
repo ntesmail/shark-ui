@@ -33,7 +33,7 @@ export function makeCheckable(sharkComponent, config) {
     }
     //获取所有子节点
     function getAllChildren(nodeList, node) {
-        if (!$.isArray(node.children))
+        if (!SharkUI.isArray(node.children))
             return;
         for (var i = 0; i < node.children.length; i++) {
             nodeList.push(node.children[i]);

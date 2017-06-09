@@ -16,6 +16,7 @@
   "homepage": "http://shark.mail.netease.com/shark-ui/index.html",
   "dependencies": {
     "@ntesmail/shark-css": "^1.2.6",
+    "@ntesmail/shark-easydom": "^1.0.1",
     "jquery": "^3.2.1"
   },
   "devDependencies": {
@@ -29,7 +30,6 @@
     "shark-automation": "^2.1.2",
     "showdown": "^1.6.0",
     "sync-request": "^4.1.0",
-    "webpack": "^2.6.1",
     "yargs": "^5.0.0"
   },
   "repository": {

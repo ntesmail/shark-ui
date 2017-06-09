@@ -2,23 +2,11 @@ const baseconfig = require('./shark-automation-config.js');
 const path = require('path');
 const fs = require('fs');
 const request = require('sync-request');
-const webpack = require('webpack');
 
 shark.baseconfig = baseconfig;
 
 shark.webpack = {
     entry: 'filename'
-    //webpack配置
-    // ,config: {
-    //     module: {
-    //         rules: [{
-    //             test: require.resolve('jquery'),
-    //             use: [{
-    //                 loader: 'expose-loader?$'
-    //             }]
-    //         }]
-    //     }
-    // }
 };
 
 shark.plugins = {
