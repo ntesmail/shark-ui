@@ -16,20 +16,21 @@ shark.plugins = {
             list: [{
                 use: 'gulp-babel',//插件名 
                 option: {
-                    presets: ['babel-preset-es2015'].map(require.resolve)
+                    presets: ['babel-preset-es2015'].map(require.resolve),
+                    compact: false
                 }//插件的option参数 
             }],//gulp插件列表。 
             merge: 'append'
         }
     }]
     // 不压缩js
-    // , min: [{
-    //     name: 'min-js',//如果name和内置的task一致，则会用此配置扩展该内置task。不然无需提供 
-    //     plugins: {
-    //         list: [],//gulp插件列表。 
-    //         merge: 'replace'
-    //     }
-    // }]
+    , min: [{
+        name: 'min-js',//如果name和内置的task一致，则会用此配置扩展该内置task。不然无需提供 
+        plugins: {
+            list: [],//gulp插件列表。 
+            merge: 'replace'
+        }
+    }]
 };
 
 shark.appConfig = function (app) {
