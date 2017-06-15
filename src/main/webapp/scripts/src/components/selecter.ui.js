@@ -47,14 +47,14 @@ function initSelectionsEvents(sharkComponent, config) {
         //收起待选列表
         selecter.removeClass('open');
         selections.hide();
-        selecter.trigger('blur');
+        selecter.trigger('focusout');
     });
     // 点击除了组件之外的地方，收起下拉列表
     Event.addCloseListener(selections.attr('id'), [selecter, selections], function () {
         if (!selections.is(':hidden')) {
             selecter.removeClass('open');
             selections.hide();
-            selecter.trigger('blur');
+            selecter.trigger('focusout');
         }
     });
 }
@@ -83,7 +83,7 @@ function initEvents(sharkComponent, config) {
             //隐藏待选列表
             selecter.removeClass('open');
             selections.hide();
-            selecter.trigger('blur');
+            selecter.trigger('focusout');
         }
     }));
 }
