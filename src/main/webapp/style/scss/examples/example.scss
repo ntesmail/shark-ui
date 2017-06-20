@@ -1,2 +1,6 @@
 // @import '@ntesmail/shark-css/src/main/webapp/style/scss/examples/example-no-bs';
 @import '@ntesmail/shark-css/src/main/webapp/style/scss/examples/example';
+.shark-ui-icon {
+    background-image: url(/style/img/shark-ui.png) no-repeat;
+    background-size: 100% 100%;
+}

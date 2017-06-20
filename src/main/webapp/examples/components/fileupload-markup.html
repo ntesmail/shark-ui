@@ -13,34 +13,37 @@
     cursor: pointer;
 }
 </style>
-<div id="fileuploadContainer"></div>
+<div id="fileuploadContainer">
+</div>
 <p>文件名: <span style="color:red;" id="file-name"></span></p>
 <p>上传进度: <span style="color:red;" id="file-progress"></span></p>
 <button class="btn btn-primary" id="file-upload">开始上传</button>
 <script type="text/javascript">
-var myfileupload = $.fn.sharkFileupload({
+var myfileupload = SharkUI.sharkFileupload({
     dom: '<div class="fileupload">选择文件</div>',
     autoupload: false,
     url: '',
     accept: '',
     dragable: true,
     onSelected: function(file) {
-        $('#file-name').text(file.name);
+        document.getElementById('file-name').innerText = file.name;
     },
     onUploading: function(file, percent) {
-        $('#file-progress').text(percent);
+        document.getElementById('file-progress').innerText = percent;
     },
     onUploaded: function(file, res) {
         console.log(res);
+        alert('上传成功！');
     },
     onFailed: function(file, error) {
         console.log(error);
     }
 });
-$('#fileuploadContainer').append(myfileupload.component);
-$('#file-upload').on('click', function() {
+myfileupload.appendTo('#fileuploadContainer');
+
+document.getElementById('file-upload').addEventListener('click',function(){
     myfileupload.upload('/shark-ui/xhr/file/upload.do', {
         id: 12345
     });
-});
+}); 
 </script>

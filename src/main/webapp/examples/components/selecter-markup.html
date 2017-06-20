@@ -1,7 +1,7 @@
 <div id="selecterContainer">
 </div>
 <script type="text/javascript">
-var myselecter = $.fn.sharkSelecter({
+var myselecter = SharkUI.sharkSelecter({
     actualKey: 'value', //对应data中的value
     displayKey: 'name', //对应data中的name
     data: [{
@@ -19,6 +19,6 @@ var myselecter = $.fn.sharkSelecter({
         console.log(value, item);
     }
 });
-$('#selecterContainer').append(myselecter.component);
+myselecter.appendTo('#selecterContainer');
 myselecter.setValue(1001);
 </script>

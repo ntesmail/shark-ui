@@ -1,6 +1,6 @@
 <div id="pagerContainer"></div>
 <script type="text/javascript">
-var mypager = $.fn.sharkPager({
+var mypager = SharkUI.sharkPager({
     page: 1,
     totalPages: 100,
     hl: {
@@ -17,5 +17,5 @@ var mypager = $.fn.sharkPager({
         console.log('跳转到第：' + p + '页');
     }
 });
-$('#pagerContainer').append(mypager.component);
+mypager.appendTo('#pagerContainer');
 </script>
