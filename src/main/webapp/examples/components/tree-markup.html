@@ -5,9 +5,6 @@
     <button id="reverseCheckBtn" class="btn btn-primary">反选</button>
     <button id="checkNoBtn" class="btn btn-primary">不选</button>
 </div>
-<div>
-    <button id="buildBtn" class="btn btn-primary">开始构建</button>
-</div>
 <script type="text/javascript">
 var treeData = [{
     node_id: 'all',
@@ -44,10 +41,10 @@ var treeData = [{
         node_name: 'tree组件'
     }]
 }];
-var mytree = $.fn.sharkTree({
+var mytree = SharkUI.sharkTree({
     nodes: treeData,
     checkable: true,
-    autolink: false,
+    autolink: true,
     selectable: false,
     onNodeChecked: function(node, isChecked) {
         console.log(node, isChecked);
@@ -56,25 +53,15 @@ var mytree = $.fn.sharkTree({
 
     }
 });
-$('#treeContainer').append(mytree.component);
+mytree.appendTo('#treeContainer');
 mytree.expandAll();
-$('#checkAllBtn').click(function() {
+document.getElementById('checkAllBtn').addEventListener('click',function(){
     mytree.checkAll();
 });
-$('#reverseCheckBtn').click(function() {
+document.getElementById('reverseCheckBtn').addEventListener('click',function(){
     mytree.reverseCheck();
 });
-$('#checkNoBtn').click(function() {
+document.getElementById('checkNoBtn').addEventListener('click',function(){
     mytree.checkNo();
-});
-$('#buildBtn').on('click', function() {
-    var nodes = mytree.getCheckedNodes();
-    var modules = [];
-    for (var i = 0; i < nodes.length; i++) {
-        if (nodes[i].node_id !== 'all') {
-            modules.push(nodes[i].node_id);
-        }
-    };
-    window.open('/shark-ui/custom/build/modules/shark.ui.js?modules=' + modules.join(','));
 });
 </script>

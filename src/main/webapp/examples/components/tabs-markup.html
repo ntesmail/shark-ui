@@ -1,7 +1,7 @@
 <div id="tabsContainer">
 </div>
 <script type="text/javascript">
-var mytabs = $.fn.sharkTabs({
+var mytabs = SharkUI.sharkTabs({
     tabs: [{
         title: '前端组',
         pane: '<span style="color:red;">都是小哥</span>'
@@ -15,10 +15,10 @@ var mytabs = $.fn.sharkTabs({
         title: '市场组',
         pane: '<span style="color:blue;">都是阿姨</span>'
     }],
-    onTabSwitch: function(index) {
+    onTabSwitch: function (index) {
         console.log(index);
     }
 });
-$('#tabsContainer').append(mytabs.component);
+mytabs.appendTo('#tabsContainer');
 mytabs.switchTo(3);
 </script>
