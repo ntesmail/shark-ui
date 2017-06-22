@@ -142,7 +142,7 @@ SharkUI.sharkSelecter = function (options, targetElement) {
                 }
             }
         }
-        if (oldData[config.actualKey] != itemData[config.actualKey]) {
+        if (oldData[config.actualKey] !== itemData[config.actualKey]) {
             //设置新值
             $.isEmptyObject(itemData) ? sharkComponent.data = {} : sharkComponent.data = itemData;
             var valuelabel = sharkComponent.component.find('.value');

@@ -12342,7 +12342,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						}
 					}
 				}
-				if (oldData[config.actualKey] != itemData[config.actualKey]) {
+				if (oldData[config.actualKey] !== itemData[config.actualKey]) {
 					//设置新值
 					__WEBPACK_IMPORTED_MODULE_0_jquery___default.a.isEmptyObject(itemData) ? sharkComponent.data = {} : sharkComponent.data = itemData;
 					var valuelabel = sharkComponent.component.find('.value');
