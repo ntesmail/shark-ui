@@ -1,0 +1,55 @@
+<div id="multiSelecterContainer">
+</div>
+<script type="text/javascript">
+var multiselecter = SharkUI.sharkMultiSelecter({
+    actualKey: 'value', //对应data中的value
+    displayKey: 'name', //对应data中的name
+    data: [
+        {
+            name: '请选择',
+            value: ''
+        },
+        {
+            name: '哈哈1',
+            value: 1,
+            children: [
+                {
+                    name: '哈哈1-1',
+                    value: 11,
+                    children: [
+                        {
+                            name: '哈哈1-1-1',
+                            value: 111
+                        },
+                        {
+                            name: '哈哈1-1-2',
+                            value: 112
+                        }
+                    ]
+                },
+                {
+                    name: '哈哈1-2',
+                    value: 12,
+                    children: [
+                        {
+                            name: '哈哈1-2-1',
+                            value: 121
+                        },
+                        {
+                            name: '哈哈1-2-2',
+                            value: 122
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    activeStyle: 'point',
+    onSelected: function(value, item) {
+        console.log(value, item);
+    }
+});
+
+multiselecter.component.appendTo('#multiSelecterContainer');
+multiselecter.setValue(121);
+</script>
