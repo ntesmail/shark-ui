@@ -13,7 +13,7 @@ import { ListGroup } from './listgroup.ui';
 // selecter模板
 var templateSelecter = Templates.selecter;
 var templateSelecterFun = Templates.templateAoT(templateSelecter);
-// multiselections模板
+// multiselections容器模板
 var templateMultiselections = Templates.multiselections;
 var templateMultiselectionsFun = Templates.templateAoT(templateMultiselections);
 
@@ -29,20 +29,34 @@ function initDom(sharkComponent, config, targetElement) {
         sharkComponent.component = $(targetElement);
     }
     sharkComponent.component.addClass('shark-multiselecter');
-    return sharkComponent;
 }
 
-// 创建一个存放多级下拉菜单的容器
-function initContainerDom(sharkComponent, config) {
+// 创建一个存放多级下拉菜单的容器dom
+function createContainerDom(sharkComponent, config) {
     return $(templateMultiselectionsFun.apply(config));
 }
 
-// 创建下拉菜单
-function initSelectionsDom(sharkComponent, config) {
+// 创建下拉菜单dom
+function createSelectionsDom(sharkComponent, config) {
     var selections = ListGroup.render();
     selections.addClass('shark-multiselecter-list-group');
     ListGroup.update(selections, config.data, config.actualKey, config.displayKey);
     return selections;
+}
+
+// 初始化下拉菜单
+function initSelections(sharkComponent, config) {
+    // 如果还没有添加容器，在这里添加
+    var container = createContainerDom(sharkComponent, config);
+    // 在容器中添加一级菜单
+    // 一级菜单
+    var selections = createSelectionsDom(sharkComponent, config);
+    container.append(selections);
+    // 将容器及一级菜单存放在组件对象上
+    sharkComponent.container = container;
+    sharkComponent.topSelections = selections;
+    // 在body中添加容器
+    $(document.body).append(container);
 }
 
 // 移除下拉菜单及其子菜单（如果是一级下拉菜单，只是隐藏，不移除）
@@ -70,51 +84,42 @@ function removeSelectionsAndChildren(sharkComponent, selections) {
 // 初始化事件
 function initEvents(sharkComponent, config) {
     var selecter = sharkComponent.component;
-    selecter.on('click.selecter', '.selecter', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
+    selecter.on('click.multiselecter', '.selecter', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
         if (!sharkComponent.container) {
-            // 如果还没有添加容器，在这里添加
-            var container = initContainerDom(sharkComponent, config);
-            // 在容器中添加一级菜单
-            // 一级菜单
-            var selections = initSelectionsDom(sharkComponent, config);
-            container.append(selections);
-            // 将容器及一级菜单存放在组件对象上
-            sharkComponent.container = container;
-            sharkComponent.topSelections = selections;
-
-            $(document.body).append(container);
+            // 初始化下拉菜单
+            initSelections(sharkComponent, config);
+            // 初始化下拉菜单事件
             initSelectionsEvents(sharkComponent, config);
         }
-        // 一级菜单
-        var selections = sharkComponent.topSelections;
-        if (selections.is(':hidden')) {
-            renderGroupList(sharkComponent, config);
-            var postion = DomHelper.calcOffset(selecter, selections, 'bottom');
-            selections.css(postion);
-            //显示待选列表
-            selecter.addClass('open');
-            selections.show();
-            //设置待选列表样式
-            selections.css({
+        // 如果一级菜单是隐藏的，将它显示出来
+        var topSelections = sharkComponent.topSelections;
+        if (topSelections.is(':hidden')) {
+            // 渲染一级菜单
+            renderTopSelections(sharkComponent, config);
+            // 计算一级下拉菜单相对于组件的位置
+            var postion = DomHelper.calcOffset(selecter, topSelections, 'bottom');
+            // 一级菜单的位置
+            topSelections.css(postion);
+            // 一级菜单样式宽度与组件保持一致
+            topSelections.css({
                 width: selecter.outerWidth()
             });
-        } else {
-            //隐藏待选列表
-            selecter.removeClass('open');
-            selections.hide();
-            selecter.trigger('focusout');
+            //显示一级菜单
+            topSelections.show();
+            // 组件状态为打开
+            selecter.addClass('open');
         }
     }));
 }
 
-// 初始化下拉列表事件
+// 初始化下拉菜单事件
 function initSelectionsEvents(sharkComponent, config) {
     var selecter = sharkComponent.component;
     var topSelections = sharkComponent.topSelections;
     var container = sharkComponent.container;
 
-    // 鼠标移入菜单中的item
-    container.on('mouseenter', '.list-group-item', function (evt) {
+    // 鼠标移入菜单中的待选项
+    container.on('mouseenter', '.list-group-item', function () {
         var item = $(this);
         var data = item.data();
         var parentUl = item.parent('.shark-multiselecter-list-group');
@@ -125,7 +130,7 @@ function initSelectionsEvents(sharkComponent, config) {
                 actualKey: 'value',
                 displayKey: 'name'
             };
-            var selections = initSelectionsDom(sharkComponent, conf);
+            var selections = createSelectionsDom(sharkComponent, conf);
             parentUl.selections = selections;
             container.append(selections);
             parentUl.data('selections', selections);
@@ -135,16 +140,19 @@ function initSelectionsEvents(sharkComponent, config) {
         }
     });
 
+    // 鼠标移出下拉菜单区域
     container.on('mouseout', '.shark-multiselecter-list-group', function (evt) {
         var item = $(this);
         var toElm = $(evt.toElement);
         if (!toElm.is('.shark-multiselecter-list-group') && !toElm.parents('.shark-multiselecter-list-group').length) {
             //收起待选列表
             removeSelectionsAndChildren(sharkComponent, topSelections);
+            selecter.trigger('focusout');
         }
     });
 
-    container.on('click', '.list-group-item', function (evt) {
+    // 点击待选项
+    container.on('click', '.list-group-item', function () {
         var item = $(this);
         //设置值
         var value = item.data('value');
@@ -155,15 +163,19 @@ function initSelectionsEvents(sharkComponent, config) {
     });
 }
 
-// 渲染下拉列表
-function renderGroupList(sharkComponent, config) {
-    var selecter = sharkComponent.component;
-    var selections = sharkComponent.topSelections;
+// 渲染一级菜单
+function renderTopSelections(sharkComponent, config) {
+    // 一级菜单
+    var topSelections = sharkComponent.topSelections;
+    // 当前选中值
     var value = sharkComponent.data[config.actualKey];
+    // 当前选中项
     var activeLi;
     //允许值为空字符串
     if (typeof value !== 'undefined' && value !== null) {
-        activeLi = selections.find('.list-group-item[value="' + value + '"]');
+        // 查找一级菜单中是否有选中项
+        activeLi = topSelections.find('.list-group-item[value="' + value + '"]');
+        // 如果有，则移除其兄弟节点的选中状态，并给他加上选中状态
         if (activeLi.length > 0) {
             activeLi.siblings().removeClass('active');
             activeLi.addClass('active');
@@ -173,10 +185,11 @@ function renderGroupList(sharkComponent, config) {
             }
         }
     }
+    // 如果没有，所有选项都移除选中状态
     if (!activeLi || activeLi.length == 0) {
-        selections.children().removeClass('active');
+        topSelections.children().removeClass('active');
         if (config.activeStyle) {
-            selections.children().removeClass(config.activeStyle);
+            topSelections.children().removeClass(config.activeStyle);
         }
     }
 }
@@ -243,7 +256,7 @@ SharkUI.sharkMultiSelecter = function (options, targetElement) {
         if (sharkComponent.createType === 'construct') {
             sharkComponent.component.remove();
         } else {
-            sharkComponent.component.off('click.selecter');
+            sharkComponent.component.off('click.multiselecter');
         }
         sharkComponent = null;
     };
