@@ -37,7 +37,7 @@ function createContainerDom(sharkComponent, config) {
 }
 
 // 创建下拉菜单dom
-function createSelectionsDom(sharkComponent, config) {
+function createSelectionsDom(config) {
     var selections = ListGroup.render();
     selections.addClass('shark-multiselecter-list-group');
     ListGroup.update(selections, config.data, config.actualKey, config.displayKey);
@@ -50,7 +50,7 @@ function initSelections(sharkComponent, config) {
     var container = createContainerDom(sharkComponent, config);
     // 在容器中添加一级菜单
     // 一级菜单
-    var selections = createSelectionsDom(sharkComponent, config);
+    var selections = createSelectionsDom(config);
     container.append(selections);
     // 将容器及一级菜单存放在组件对象上
     sharkComponent.container = container;
@@ -67,10 +67,10 @@ function removeSelectionsAndChildren(sharkComponent, selections) {
         // 一级菜单
         var topSelections = sharkComponent.topSelections;
         // 子菜单
-        var children = selections.data('selections');
-        if (children) {
+        var childSelections = selections.data('childSelections');
+        if (childSelections) {
             // 递归移除
-            removeSelectionsAndChildren(sharkComponent, children);
+            removeSelectionsAndChildren(sharkComponent, childSelections);
         }
         selections.selection = null;
         if (selections === topSelections) {
@@ -120,32 +120,49 @@ function initSelectionsEvents(sharkComponent, config) {
 
     // 鼠标移入菜单中的待选项
     container.on('mouseenter', '.list-group-item', function () {
+        // 目标元素
         var item = $(this);
-        var data = item.data();
-        var parentUl = item.parent('.shark-multiselecter-list-group');
-        removeSelectionsAndChildren(sharkComponent, parentUl.data('selections'));
-        if (data.children) {
+        // 目标元素的子菜单的数据
+        var childrenData = item.data().children;
+        // 目标元素所属的菜单
+        var selections = item.parent('.shark-multiselecter-list-group');
+        // 当前菜单的子菜单
+        var childSelections = selections.data('childSelections');
+        // 如果当前菜单存在子菜单，则递归移除当前菜单的孩子菜单
+        if (childSelections) {
+            // 递归移除当前菜单的孩子菜单
+            removeSelectionsAndChildren(sharkComponent, childSelections);
+        }
+        // 如果目标元素存在子菜单的数据，则创建子菜单
+        if (childrenData) {
             var conf = {
-                data: data.children,
-                actualKey: 'value',
-                displayKey: 'name'
+                data: childrenData,
+                actualKey: config.actualKey,
+                displayKey: config.displayKey
             };
-            var selections = createSelectionsDom(sharkComponent, conf);
-            parentUl.selections = selections;
-            container.append(selections);
-            parentUl.data('selections', selections);
-            var postion = DomHelper.calcOffset(item, selections, 'right');
-            selections.css(postion);
-            selections.show();
+            // 创建子菜单
+            childSelections = createSelectionsDom(conf);
+            // 在容器中添加子菜单
+            container.append(childSelections);
+            // 在当前菜单上存储子菜单
+            selections.data('childSelections', childSelections);
+            // 计算子菜单相对于目标元素的位置
+            var postion = DomHelper.calcOffset(item, childSelections, 'right');
+            childSelections.css(postion);
+            // 将子菜单显示出来
+            childSelections.show();
         }
     });
 
     // 鼠标移出下拉菜单区域
     container.on('mouseout', '.shark-multiselecter-list-group', function (evt) {
+        // 目标菜单
         var item = $(this);
+        // 移入区域
         var toElm = $(evt.toElement);
+        // 如果鼠标移出下拉菜单区域
         if (!toElm.is('.shark-multiselecter-list-group') && !toElm.parents('.shark-multiselecter-list-group').length) {
-            //收起待选列表
+            // 收起所有下拉菜单
             removeSelectionsAndChildren(sharkComponent, topSelections);
             selecter.trigger('focusout');
         }
@@ -153,11 +170,12 @@ function initSelectionsEvents(sharkComponent, config) {
 
     // 点击待选项
     container.on('click', '.list-group-item', function () {
+        // 目标元素
         var item = $(this);
-        //设置值
+        // 设置值
         var value = item.data('value');
         sharkComponent.setValue(value, true);
-        //收起待选列表
+        // 收起所有下拉菜单
         removeSelectionsAndChildren(sharkComponent, topSelections);
         selecter.trigger('focusout');
     });
