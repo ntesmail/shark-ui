@@ -109,6 +109,9 @@ var modal = `
     </div>
 </div>
 `;
+var multiselections = `
+    <div class="shark-selections-container"></div>
+`;
 var confirm = `
 <div class="modal-header">
     <button type="button" class="btn btn-link pull-right js-cancel">
@@ -171,6 +174,7 @@ var Templates = {
     fileupload: fileupload,
     listgroup: listgroup,
     modal: modal,
+    multiselections: multiselections,
     confirm: confirm,
     pager: pager,
     popover: popover,
