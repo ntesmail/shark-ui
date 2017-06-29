@@ -4,12 +4,12 @@
 <script type="text/javascript">
 var mypopover = SharkUI.sharkPopover({
     event: 'click',
-    bodyClickClose: false,
-    originEventClose: false,
+    bodyClickClose: true,
+    originEventClose: true,
     direction: 'right',
     title: '枫桥夜泊',
     preInit: false,
-    noevents: false,//禁用popover本身事件，这里通过主动调用popover的show和hide方法
+    noevents: true,//禁用popover本身事件，这里通过主动调用popover的show和hide方法
     content: '<div>月落乌啼霜满天，</div>\
                 <div>江枫渔火对愁眠。</div>\
                 <div>姑苏城外寒山寺，</div>\
