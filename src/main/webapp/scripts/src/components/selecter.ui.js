@@ -50,13 +50,17 @@ function initSelectionsEvents(sharkComponent, config) {
         selecter.trigger('focusout');
     });
     // 点击除了组件之外的地方，收起下拉列表
-    Event.addCloseListener(selections.attr('id'), [selecter, selections], function () {
-        if (!selections.is(':hidden')) {
-            selecter.removeClass('open');
-            selections.hide();
-            selecter.trigger('focusout');
+    Event.addCloseListener(
+        selections.attr('id'), 
+        [selecter, selections], 
+        BaseComponent.filterComponentAction(sharkComponent, function () {
+            if (!selections.is(':hidden')) {
+                selecter.removeClass('open');
+                selections.hide();
+                selecter.trigger('focusout');
+            }
         }
-    });
+    ));
 }
 // 初始化事件
 function initEvents(sharkComponent, config) {

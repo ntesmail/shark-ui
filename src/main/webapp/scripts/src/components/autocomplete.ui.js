@@ -206,11 +206,15 @@ function initEvents(sharkComponent, config) {
         }
     });
     // 输入框失焦点消失
-    Event.addCloseListener(selections.attr('id'), [autoComplete, selections], function () {
-        if (!selections.is(':hidden')) {
-            selections.hide();
+    Event.addCloseListener(
+        selections.attr('id'), 
+        [autoComplete, selections], 
+        BaseComponent.filterComponentAction(sharkComponent, function () {
+            if (!selections.is(':hidden')) {
+                selections.hide();
+            }
         }
-    });
+    ));
 }
 
 SharkUI.sharkAutoComplete = function (options, targetElement) {

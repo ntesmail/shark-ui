@@ -42,7 +42,7 @@ function addComponentBaseFn(sharkComponent, config) {
  */
 function filterComponentAction(sharkComponent, fn) {
     return function (evt) {
-        if (sharkComponent.disabled === true || (sharkComponent.component && sharkComponent.component.hasClass('disabled'))) {
+        if (sharkComponent.getConfig().noevents === true || sharkComponent.disabled === true || (sharkComponent.component && sharkComponent.component.hasClass('disabled'))) {
             return;
         }
         fn.apply(this, arguments);
