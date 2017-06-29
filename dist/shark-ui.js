@@ -10247,13 +10247,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			sharkComponent.component.addClass('shark-' + config.type);
 			__WEBPACK_IMPORTED_MODULE_0_jquery___default()(document.body).append(sharkComponent.component);
 			sharkComponent.component.hide();
+			sharkComponent.isOpen = false;
 			sharkComponent.isPopoverInit = true;
-			if (config.event === 'click' && config.close === 'bodyclick') {
-				__WEBPACK_IMPORTED_MODULE_2__common_event__["a" /* Event */].addCloseListener(sharkComponent.component.attr('id'), [sharkComponent.origin, sharkComponent.component], function () {
+			if (config.event === 'click' && config.bodyClickClose === true) {
+				__WEBPACK_IMPORTED_MODULE_2__common_event__["a" /* Event */].addCloseListener(sharkComponent.component.attr('id'), [sharkComponent.origin, sharkComponent.component], __WEBPACK_IMPORTED_MODULE_5__common_base__["a" /* BaseComponent */].filterComponentAction(sharkComponent, function () {
 					if (sharkComponent.component.is(':visible')) {
 						sharkComponent.hide();
 					}
-				});
+				}));
 			}
 		}
 		//初始化事件
@@ -10261,20 +10262,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var origin = sharkComponent.origin;
 			if (config.event === 'click') {
 				origin.on('click.popover', __WEBPACK_IMPORTED_MODULE_5__common_base__["a" /* BaseComponent */].filterComponentAction(sharkComponent, function (evt) {
-					if (!sharkComponent.isPopoverInit) {
-						initComponent(sharkComponent, config);
-					}
-					if (sharkComponent.component.is(':hidden')) {
-						sharkComponent.show();
+					if (sharkComponent.isOpen) {
+						if (config.originEventClose) {
+							sharkComponent.hide();
+						}
 					} else {
-						sharkComponent.hide();
+						sharkComponent.show();
 					}
 				}));
 			} else if (config.event === 'mouseover') {
 				origin.on('mouseover.popover', __WEBPACK_IMPORTED_MODULE_5__common_base__["a" /* BaseComponent */].filterComponentAction(sharkComponent, function (evt) {
-					if (!sharkComponent.isPopoverInit) {
-						initComponent(sharkComponent, config);
-					}
 					sharkComponent.show();
 				}));
 				origin.on('mouseout.popover', __WEBPACK_IMPORTED_MODULE_5__common_base__["a" /* BaseComponent */].filterComponentAction(sharkComponent, function (evt) {
@@ -10344,17 +10341,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			/*********默认参数配置*************/
 			var config = {
 				event: 'click',
-				close: 'bodyclick',
+				bodyClickClose: true,
+				originEventClose: true,
 				direction: 'right',
 				title: '',
 				content: '',
 				preInit: false, //是否把popover组件预先生成并添加到body
 				reRenderOnShow: false,
+				noevents: false,
+				type: 'popover',
 				onShow: function onShow() {},
 				onHide: function onHide() {}
 			};
 			__WEBPACK_IMPORTED_MODULE_1__common_core__["a" /* SharkUI */].extend(config, options);
-			options.type = 'popover';
 			/*********初始化组件*************/
 			var sharkComponent = {};
 			sharkComponent.linkTo = function (target) {
@@ -10369,20 +10368,38 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				fixPopover(sharkComponent, postion);
 			};
 			sharkComponent.show = function () {
+				if (sharkComponent.isOpen) {
+					return;
+				}
+				if (!sharkComponent.isPopoverInit) {
+					initComponent(sharkComponent, config);
+				}
 				if (config.reRenderOnShow) {
 					sharkComponent.component.find('.popover-title').html(config.title);
 					sharkComponent.component.find('.popover-content').html(config.content);
 				}
 				sharkComponent.component.show();
 				sharkComponent.adjustPostion();
+				sharkComponent.isOpen = true;
 				if (typeof config.onShow === 'function') {
 					config.onShow.call(sharkComponent);
 				}
 			};
 			sharkComponent.hide = function () {
+				if (!sharkComponent.isOpen) {
+					return;
+				}
 				sharkComponent.component.hide();
+				sharkComponent.isOpen = false;
 				if (typeof config.onHide === 'function') {
 					config.onHide.call(sharkComponent);
+				}
+			};
+			sharkComponent.toggle = function () {
+				if (sharkComponent.isOpen) {
+					sharkComponent.hide();
+				} else {
+					sharkComponent.show();
 				}
 			};
 			sharkComponent.destroy = function () {
@@ -10825,12 +10842,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				selections.hide();
 			});
 			// 点击除了组件之外的地方，收起下拉列表
-			__WEBPACK_IMPORTED_MODULE_2__common_event__["a" /* Event */].addCloseListener(selections.attr('id'), [dropdown, selections], function () {
+			__WEBPACK_IMPORTED_MODULE_2__common_event__["a" /* Event */].addCloseListener(selections.attr('id'), [dropdown, selections], __WEBPACK_IMPORTED_MODULE_5__common_base__["a" /* BaseComponent */].filterComponentAction(sharkComponent, function () {
 				if (!selections.is(':hidden')) {
 					dropdown.removeClass('open');
 					selections.hide();
 				}
-			});
+			}));
 		}
 		// 初始化事件
 		function initEvents(sharkComponent, config) {
@@ -11424,11 +11441,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 			});
 			// 输入框失焦点消失
-			__WEBPACK_IMPORTED_MODULE_2__common_event__["a" /* Event */].addCloseListener(selections.attr('id'), [autoComplete, selections], function () {
+			__WEBPACK_IMPORTED_MODULE_2__common_event__["a" /* Event */].addCloseListener(selections.attr('id'), [autoComplete, selections], __WEBPACK_IMPORTED_MODULE_5__common_base__["a" /* BaseComponent */].filterComponentAction(sharkComponent, function () {
 				if (!selections.is(':hidden')) {
 					selections.hide();
 				}
-			});
+			}));
 		}
 
 		__WEBPACK_IMPORTED_MODULE_1__common_core__["a" /* SharkUI */].sharkAutoComplete = function (options, targetElement) {
@@ -12250,13 +12267,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				selecter.trigger('focusout');
 			});
 			// 点击除了组件之外的地方，收起下拉列表
-			__WEBPACK_IMPORTED_MODULE_2__common_event__["a" /* Event */].addCloseListener(selections.attr('id'), [selecter, selections], function () {
+			__WEBPACK_IMPORTED_MODULE_2__common_event__["a" /* Event */].addCloseListener(selections.attr('id'), [selecter, selections], __WEBPACK_IMPORTED_MODULE_5__common_base__["a" /* BaseComponent */].filterComponentAction(sharkComponent, function () {
 				if (!selections.is(':hidden')) {
 					selecter.removeClass('open');
 					selections.hide();
 					selecter.trigger('focusout');
 				}
-			});
+			}));
 		}
 		// 初始化事件
 		function initEvents(sharkComponent, config) {
@@ -12428,7 +12445,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
    */
 		function filterComponentAction(sharkComponent, fn) {
 			return function (evt) {
-				if (sharkComponent.disabled === true || sharkComponent.component && sharkComponent.component.hasClass('disabled')) {
+				if (sharkComponent.getConfig().noevents === true || sharkComponent.disabled === true || sharkComponent.component && sharkComponent.component.hasClass('disabled')) {
 					return;
 				}
 				fn.apply(this, arguments);
