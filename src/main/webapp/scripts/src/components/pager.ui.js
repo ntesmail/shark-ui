@@ -87,8 +87,12 @@ function initEvents(sharkComponent, config) {
         }
         var startFrom = config.startFrom;
         newPage = newPage - (1 - startFrom);
-        sharkComponent.setPage(newPage);
-        if (typeof config.onPageChanged === 'function') {
+        var preventDefault = false;
+        if (typeof config.onPageWillChange === 'function') {
+            preventDefault = config.onPageWillChange.call(sharkComponent, newPage, evt) === false ? true : false;
+        }
+        if (preventDefault === false && typeof config.onPageChanged === 'function') {
+            sharkComponent.setPage(newPage);
             config.onPageChanged.call(sharkComponent, newPage);
         }
     }));

@@ -15,10 +15,15 @@ var mytabs = SharkUI.sharkTabs({
         title: '市场组',
         pane: '<span style="color:blue;">都是阿姨</span>'
     }],
-    onTabSwitch: function (index) {
+    onTabWillSwitch:function(index){
+        if(index===3){
+            alert('不能查看市场组！');
+            return false;
+        }
+    },
+    onTabSwitched: function (index) {
         console.log(index);
     }
 });
 mytabs.appendTo('#tabsContainer');
-mytabs.switchTo(3);
 </script>
