@@ -191,8 +191,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 											}
 				var startFrom = config.startFrom;
 				newPage = newPage - (1 - startFrom);
-				sharkComponent.setPage(newPage);
-				if (typeof config.onPageChanged === 'function') {
+				var preventDefault = false;
+				if (typeof config.onPageWillChange === 'function') {
+					preventDefault = config.onPageWillChange.call(sharkComponent, newPage, evt) === false ? true : false;
+				}
+				if (preventDefault === false && typeof config.onPageChanged === 'function') {
+					sharkComponent.setPage(newPage);
 					config.onPageChanged.call(sharkComponent, newPage);
 				}
 			}));
@@ -11557,13 +11561,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// 初始化事件
 		function initEvents(sharkComponent, config) {
 			var tabs = sharkComponent.component;
-			tabs.on('click.tabs', '.nav-tabs li', __WEBPACK_IMPORTED_MODULE_3__common_base__["a" /* BaseComponent */].filterComponentAction(sharkComponent, function (e) {
+			tabs.on('click.tabs', '.nav-tabs li', __WEBPACK_IMPORTED_MODULE_3__common_base__["a" /* BaseComponent */].filterComponentAction(sharkComponent, function (evt) {
 				var index = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this).index();
-				switchTo(sharkComponent, index, config.onTabSwitch);
+				var preventDefault = false;
+				if (typeof config.onTabWillSwitch === 'function') {
+					preventDefault = config.onTabWillSwitch.call(sharkComponent, index, evt) === false ? true : false;
+				}
+				if (preventDefault === false) {
+					sharkComponent.switchTo(index, config.onTabSwitched);
+				}
+				// var index = $(this).index();
+				// sharkComponent.switchTo(index, config.onTabSwitched);
 			}));
 		}
 		// 切换到某个tab
-		function switchTo(sharkComponent, index, cb) {
+		function doSwitch(sharkComponent, index, cb) {
 			var tabs = sharkComponent.component;
 			var menu = tabs.find('.nav-tabs');
 			var tabpane = tabs.find('.tab-pane');
@@ -11579,34 +11591,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				cb.call(sharkComponent, index);
 			}
 		}
-		// 开始自动切换
-		function startAutoSwitch(sharkComponent, config) {
-			var tabs = sharkComponent.component;
-			doAutoSwitch(sharkComponent, config);
-			tabs.on('mouseover.tabs', function () {
-				clearInterval(sharkComponent.autoSwitchTimer);
-				sharkComponent.autoSwitchTimer = null;
-			});
-			tabs.on('mouseout.tabs', function () {
-				doAutoSwitch(sharkComponent, config);
-			});
-		}
-		// 执行自动切换
-		function doAutoSwitch(sharkComponent, config) {
-			var tabs = sharkComponent.component;
-			var menu = tabs.find('.nav-tabs');
-			sharkComponent.autoSwitchTimer = setInterval(function () {
-				var index = menu.find('li.active').index() + 1;
-				switchTo(sharkComponent, index, config.onTabSwitch);
-			}, config.auto);
-		}
-		// 结束自动切换
-		function stopAutoSwitch(sharkComponent) {
-			var tabs = sharkComponent.component;
-			clearInterval(sharkComponent.autoSwitchTimer);
-			sharkComponent.autoSwitchTimer = null;
-			tabs.off('mouseover.tabs').off('mouseout.tabs');
-		}
 
 		__WEBPACK_IMPORTED_MODULE_1__common_core__["a" /* SharkUI */].sharkTabs = function (options, targetElement) {
 			/*********默认参数配置*************/
@@ -11614,7 +11598,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				tabs: [],
 				initTab: 0,
 				dom: '',
-				onTabSwitch: function onTabSwitch() {}
+				onTabWillSwitch: function onTabWillSwitch() {},
+				onTabSwitched: function onTabSwitched() {}
 			};
 			__WEBPACK_IMPORTED_MODULE_1__common_core__["a" /* SharkUI */].extend(config, options);
 			/*********初始化组件*************/
@@ -11622,34 +11607,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			initDom(sharkComponent, config, targetElement);
 			__WEBPACK_IMPORTED_MODULE_3__common_base__["a" /* BaseComponent */].addComponentBaseFn(sharkComponent, config);
 			initEvents(sharkComponent, config);
-			switchTo(sharkComponent, config.initTab);
 			//切换至某个tab
 			sharkComponent.switchTo = function (index, cb) {
 				var callback;
 				if (cb === true) {
-					callback = config.onTabSwitch;
+					callback = config.onTabSwitched;
 				} else if (typeof cb === 'function') {
 					callback = cb;
 				} else {
 					callback = false;
 				}
-				switchTo(sharkComponent, index, callback);
+				doSwitch(sharkComponent, index, callback);
 			};
-			//开启自动切换
-			sharkComponent.startAutoSwitch = function (auto) {
-				if (/^[1-9]{1,}[0-9]*$/.test(auto)) {
-					//正整数
-					config.auto = auto;
-					startAutoSwitch(sharkComponent, config);
-				}
-			};
-			//关闭自动切换
-			sharkComponent.stopAutoSwitch = function () {
-				stopAutoSwitch(sharkComponent);
-			};
+			sharkComponent.switchTo(config.initTab);
 			//销毁
 			sharkComponent.destroy = function () {
-				stopAutoSwitch(sharkComponent);
 				if (sharkComponent.createType === 'construct') {
 					sharkComponent.component.remove();
 				} else {
