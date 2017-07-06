@@ -10562,7 +10562,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			/**
     * 点击节点的 展开/收起 按钮
     */
-			tree.on('click', '.tree-icon-right,.tree-icon-down', __WEBPACK_IMPORTED_MODULE_5__common_base__["a" /* BaseComponent */].filterComponentAction(tree, function (evt) {
+			tree.on('click', '.tree-icon-right,.tree-icon-down', __WEBPACK_IMPORTED_MODULE_5__common_base__["a" /* BaseComponent */].filterComponentAction(sharkComponent, function (evt) {
 				var iconEle = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this);
 				if (iconEle.hasClass('tree-icon-right')) {
 					unfoldNode(iconEle, config);
@@ -10976,7 +10976,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 			};
 			//树的点击事件
-			tree.on('click', '.tree-node-name', __WEBPACK_IMPORTED_MODULE_2__common_base__["a" /* BaseComponent */].filterComponentAction(tree, function (evt) {
+			tree.on('click', '.tree-node-name', __WEBPACK_IMPORTED_MODULE_2__common_base__["a" /* BaseComponent */].filterComponentAction(sharkComponent, function (evt) {
 				var nameEle = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this);
 				selectNode(nameEle, config.onNodeSelected);
 			}));
@@ -12172,7 +12172,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 			};
 			//点击复选框
-			tree.on('click', '.tree-icon-check-empty,.tree-icon-check-minus,.tree-icon-check', __WEBPACK_IMPORTED_MODULE_2__common_base__["a" /* BaseComponent */].filterComponentAction(tree, function (evt) {
+			tree.on('click', '.tree-icon-check-empty,.tree-icon-check-minus,.tree-icon-check', __WEBPACK_IMPORTED_MODULE_2__common_base__["a" /* BaseComponent */].filterComponentAction(sharkComponent, function (evt) {
 				var checkEle = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(this);
 				reverseCheckNode(checkEle, config.autolink, config.onNodeChecked);
 			}));
