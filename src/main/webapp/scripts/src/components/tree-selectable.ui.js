@@ -36,7 +36,7 @@ export function makeSelectable(sharkComponent, config) {
      * 获取selected的节点
      * @return {[nodes]}
      */
-    sharkComponent.getSelectedNode = function() {
+    sharkComponent.getSelectedNode = function () {
         return getSelectedNode();
     };
     /**
@@ -46,7 +46,7 @@ export function makeSelectable(sharkComponent, config) {
      * @param  {Function} callback        [回调函数]
      * @return {[tree]}                   [tree]
      */
-    sharkComponent.selectNode = function(node) {
+    sharkComponent.selectNode = function (node) {
         var nodeId = node.node_id || node;
         var groupEle = tree.find('.tree-group[tree-group-id="' + nodeId + '"]');
         if (groupEle.length > 0) {
@@ -55,7 +55,7 @@ export function makeSelectable(sharkComponent, config) {
         }
     };
     //树的点击事件
-    tree.on('click', '.tree-node-name', BaseComponent.filterComponentAction(tree, function(evt) {
+    tree.on('click', '.tree-node-name', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
         var nameEle = $(this);
         selectNode(nameEle, config.onNodeSelected);
     }));
