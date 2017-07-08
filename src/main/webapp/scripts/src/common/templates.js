@@ -2,8 +2,8 @@
  * @author sweetyx
  * 组件基础模板
  */
-var autocomplete = `
-    <input class="shark-autocomplete" type="text" />
+var input = `
+    <input type="text" />
 `;
 var fileupload = `
     <button class="shark-fileupload">上传文件</button>
@@ -135,6 +135,10 @@ var toastr = `
 </div>
 `;
 
+var calendar = `
+
+`;
+
 function tempAdd(line, isJs) {
     if (/^\s*$/.test(line)) {
         return '';
@@ -170,7 +174,7 @@ function template2html(template, data) {
 }
 
 var Templates = {
-    autocomplete: autocomplete,
+    input: input,
     fileupload: fileupload,
     listgroup: listgroup,
     modal: modal,

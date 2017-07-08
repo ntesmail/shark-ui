@@ -9,9 +9,9 @@ import { DomHelper } from '../common/domhelper';
 import { Templates } from '../common/templates';
 import { BaseComponent } from '../common/base';
 import { ListGroup } from './listgroup.ui';
-// selecter模板
-var templateAutocomplete = Templates.autocomplete;
-var templateAutocompleteFun = Templates.templateAoT(templateAutocomplete);
+// input模板
+var templateInput = Templates.input;
+var templateInputFun = Templates.templateAoT(templateInput);
 
 //键盘上功能键键值数组
 var functionalKeyArray = [40, 38, 13, 27];
@@ -115,7 +115,7 @@ function setValue(sharkComponent, item, config) {
 function initDom(sharkComponent, config, targetElement) {
     if (!targetElement) {
         sharkComponent.createType = 'construct';
-        var fun = config.dom ? Templates.templateAoT(config.dom) : templateAutocompleteFun;
+        var fun = config.dom ? Templates.templateAoT(config.dom) : templateInputFun;
         var html = fun.apply(config);
         sharkComponent.component = $(html);
     } else {
