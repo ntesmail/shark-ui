@@ -49,12 +49,16 @@ function initSelectionsEvents(sharkComponent, config) {
         selections.hide();
     });
     // 点击除了组件之外的地方，收起下拉列表
-    Event.addCloseListener(selections.attr('id'), [dropdown, selections], function () {
-        if (!selections.is(':hidden')) {
-            dropdown.removeClass('open');
-            selections.hide();
+    Event.addCloseListener(
+        selections.attr('id'), 
+        [dropdown, selections], 
+        BaseComponent.filterComponentAction(sharkComponent, function () {
+            if (!selections.is(':hidden')) {
+                dropdown.removeClass('open');
+                selections.hide();
+            }
         }
-    });
+    ));
 }
 // 初始化事件
 function initEvents(sharkComponent, config) {

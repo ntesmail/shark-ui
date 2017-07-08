@@ -1,11 +1,15 @@
-<button id="popoverBtn" class="btn btn-primary">点击查看效果</button>
+<button id="openPopo" class="btn btn-primary">open</button>
+<button id="closePopo" class="btn btn-primary">close</button>
+<button id="popoverBtn" class="btn btn-primary">点击open和close来查看《枫桥夜泊》</button>
 <script type="text/javascript">
 var mypopover = SharkUI.sharkPopover({
     event: 'click',
-    close: 'bodyclick',
+    bodyClickClose: true,
+    originEventClose: true,
     direction: 'right',
     title: '枫桥夜泊',
     preInit: false,
+    noevents: true,//禁用popover本身事件，这里通过主动调用popover的show和hide方法
     content: '<div>月落乌啼霜满天，</div>\
                 <div>江枫渔火对愁眠。</div>\
                 <div>姑苏城外寒山寺，</div>\
@@ -17,5 +21,11 @@ var mypopover = SharkUI.sharkPopover({
         console.log('隐藏了mypopover');
     }
 });
-mypopover.appendTo('#popoverBtn');
+mypopover.appendTo(document.getElementById('popoverBtn'));
+document.getElementById('openPopo').onclick=function(){
+    mypopover.show();
+}
+document.getElementById('closePopo').onclick=function(){
+    mypopover.hide();
+}
 </script>

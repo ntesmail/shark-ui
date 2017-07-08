@@ -121,7 +121,7 @@ function initEvents(sharkComponent, config) {
     /**
      * 点击节点的 展开/收起 按钮
      */
-    tree.on('click', '.tree-icon-right,.tree-icon-down', BaseComponent.filterComponentAction(tree, function (evt) {
+    tree.on('click', '.tree-icon-right,.tree-icon-down', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
         var iconEle = $(this);
         if (iconEle.hasClass('tree-icon-right')) {
             unfoldNode(iconEle, config);

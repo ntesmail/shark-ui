@@ -21,13 +21,18 @@ function initComponent(sharkComponent, config) {
     sharkComponent.component.addClass('shark-' + config.type);
     $(document.body).append(sharkComponent.component);
     sharkComponent.component.hide();
+    sharkComponent.isOpen = false;
     sharkComponent.isPopoverInit = true;
-    if (config.event === 'click' && config.close === 'bodyclick') {
-        Event.addCloseListener(sharkComponent.component.attr('id'), [sharkComponent.origin, sharkComponent.component], function () {
-            if (sharkComponent.component.is(':visible')) {
-                sharkComponent.hide();
+    if (config.event === 'click' && config.bodyClickClose === true) {
+        Event.addCloseListener(
+            sharkComponent.component.attr('id'),
+            [sharkComponent.origin, sharkComponent.component],
+            BaseComponent.filterComponentAction(sharkComponent, function () {
+                if (sharkComponent.component.is(':visible')) {
+                    sharkComponent.hide();
+                }
             }
-        });
+            ));
     }
 }
 //初始化事件
@@ -35,20 +40,16 @@ function initEvents(sharkComponent, config) {
     var origin = sharkComponent.origin;
     if (config.event === 'click') {
         origin.on('click.popover', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
-            if (!sharkComponent.isPopoverInit) {
-                initComponent(sharkComponent, config);
-            }
-            if (sharkComponent.component.is(':hidden')) {
-                sharkComponent.show();
+            if (sharkComponent.isOpen) {
+                if (config.originEventClose) {
+                    sharkComponent.hide();
+                }
             } else {
-                sharkComponent.hide();
+                sharkComponent.show();
             }
         }));
     } else if (config.event === 'mouseover') {
         origin.on('mouseover.popover', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
-            if (!sharkComponent.isPopoverInit) {
-                initComponent(sharkComponent, config);
-            }
             sharkComponent.show();
         }));
         origin.on('mouseout.popover', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
@@ -118,17 +119,19 @@ SharkUI.sharkPopover = function (options, targetElement) {
     /*********默认参数配置*************/
     var config = {
         event: 'click',
-        close: 'bodyclick',
+        bodyClickClose: true,
+        originEventClose: true,
         direction: 'right',
         title: '',
         content: '',
         preInit: false,//是否把popover组件预先生成并添加到body
         reRenderOnShow: false,
+        noevents: false,
+        type: 'popover',
         onShow: function () { },
         onHide: function () { }
     };
     SharkUI.extend(config, options);
-    options.type = 'popover';
     /*********初始化组件*************/
     var sharkComponent = {};
     sharkComponent.linkTo = function (target) {
@@ -143,20 +146,38 @@ SharkUI.sharkPopover = function (options, targetElement) {
         fixPopover(sharkComponent, postion);
     };
     sharkComponent.show = function () {
+        if (sharkComponent.isOpen) {
+            return;
+        }
+        if (!sharkComponent.isPopoverInit) {
+            initComponent(sharkComponent, config);
+        }
         if (config.reRenderOnShow) {
             sharkComponent.component.find('.popover-title').html(config.title);
             sharkComponent.component.find('.popover-content').html(config.content);
         }
         sharkComponent.component.show();
         sharkComponent.adjustPostion();
+        sharkComponent.isOpen = true;
         if (typeof config.onShow === 'function') {
             config.onShow.call(sharkComponent);
         }
     };
     sharkComponent.hide = function () {
+        if (!sharkComponent.isOpen) {
+            return;
+        }
         sharkComponent.component.hide();
+        sharkComponent.isOpen = false;
         if (typeof config.onHide === 'function') {
             config.onHide.call(sharkComponent);
+        }
+    };
+    sharkComponent.toggle = function () {
+        if (sharkComponent.isOpen) {
+            sharkComponent.hide();
+        } else {
+            sharkComponent.show();
         }
     };
     sharkComponent.destroy = function () {
@@ -181,4 +202,4 @@ SharkUI.sharkTooltip = function (options, targetElement) {
     options.type = 'tooltip';
     var sharkComponent = SharkUI.sharkPopover(options, targetElement);
     return sharkComponent;
-}
+};

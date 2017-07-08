@@ -129,32 +129,32 @@ export function makeCheckable(sharkComponent, config) {
      * 获取所有选中的节点
      * @return {[nodes]}
      */
-    sharkComponent.getCheckedNodes = function() {
+    sharkComponent.getCheckedNodes = function () {
         return getCheckedNodes();
     };
     /**
      * 全选
      */
-    sharkComponent.checkAll = function() {
+    sharkComponent.checkAll = function () {
         checkAll(true);
     };
     /**
      * 反选
      */
-    sharkComponent.reverseCheck = function() {
+    sharkComponent.reverseCheck = function () {
         reverseCheckAll();
     };
     /**
      * 全不选
      */
-    sharkComponent.checkNo = function() {
+    sharkComponent.checkNo = function () {
         checkAll(false);
     };
     /**
      * check节点
      * @param  {node}   node            [节点对象或节点id]
      */
-    sharkComponent.reverseCheckNode = function(node) {
+    sharkComponent.reverseCheckNode = function (node) {
         var nodeId = node.node_id || node;
         var groupEle = tree.find('.tree-group[tree-group-id="' + nodeId + '"]');
         if (groupEle.length > 0) {
@@ -166,7 +166,7 @@ export function makeCheckable(sharkComponent, config) {
      * 强制check节点
      * @param  {node}   node            [节点对象或节点id]
      */
-    sharkComponent.checkNode = function(node) {
+    sharkComponent.checkNode = function (node) {
         var nodeId = node.node_id || node;
         var groupEle = tree.find('.tree-group[tree-group-id="' + nodeId + '"]');
         if (groupEle.length > 0) {
@@ -180,7 +180,7 @@ export function makeCheckable(sharkComponent, config) {
      * 强制取消check节点
      * @param  {node}   node            [节点对象或节点id]
      */
-    sharkComponent.unCheckNode = function(node) {
+    sharkComponent.unCheckNode = function (node) {
         var nodeId = node.node_id || node;
         var groupEle = tree.find('.tree-group[tree-group-id="' + nodeId + '"]');
         if (groupEle.length > 0) {
@@ -191,7 +191,7 @@ export function makeCheckable(sharkComponent, config) {
         }
     };
     //点击复选框
-    tree.on('click', '.tree-icon-check-empty,.tree-icon-check-minus,.tree-icon-check', BaseComponent.filterComponentAction(tree, function(evt) {
+    tree.on('click', '.tree-icon-check-empty,.tree-icon-check-minus,.tree-icon-check', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
         var checkEle = $(this);
         reverseCheckNode(checkEle, config.autolink, config.onNodeChecked);
     }));

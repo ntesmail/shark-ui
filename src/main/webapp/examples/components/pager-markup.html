@@ -13,6 +13,15 @@ var mypager = SharkUI.sharkPager({
     segmentSize: 5,
     startFrom: 1,
     gopage: true,
+    onPageWillChange: function(p) {
+        if(p===5){
+            alert('禁止跳转到第5页');
+            return false;
+        }
+        else{
+            return true;
+        }
+    },
     onPageChanged: function(p) {
         console.log('跳转到第：' + p + '页');
     }
