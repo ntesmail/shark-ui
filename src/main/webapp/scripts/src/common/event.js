@@ -23,7 +23,7 @@ function dispatchHandler(evt) {
                 }
             }
             if (isClickNoHideArea === false && typeof registerCloseArray[i].cb === 'function') {
-                registerCloseArray[i].cb.call(evt);
+                registerCloseArray[i].cb.call(this, evt);
             }
         }
     }

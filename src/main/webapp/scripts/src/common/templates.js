@@ -136,7 +136,60 @@ var toastr = `
 `;
 
 var calendar = `
-
+    <div class="shark-calendar">
+        <div class="calendar-year-month">
+            <a class="calendar-prev-year">←←</a>
+            <a class="calendar-prev-month">←</a>
+            <input class="calendar-current-month" readonly="readonly" type="text" />
+            <input class="calendar-current-year" readonly="readonly" type="text" />
+            <a class="calendar-next-month">→</a>
+            <a class="calendar-next-year">→→</a>
+        </div>
+        <div class="calendar-day">
+            <div class="calendar-weekdays">
+                <span class="calendar-weekday">Sun</span>
+                <span class="calendar-weekday">Mon</span>
+                <span class="calendar-weekday">Tue</span>
+                <span class="calendar-weekday">Wed</span>
+                <span class="calendar-weekday">Thu</span>
+                <span class="calendar-weekday">Fri</span>
+                <span class="calendar-weekday">Sat</span>
+            </div>
+            <div class="calendar-days">
+                <span class="calendar-day">Sun</span>
+                <span class="calendar-day">Sun</span>
+                <span class="calendar-day">Sun</span>
+                <span class="calendar-day">Sun</span>
+                <span class="calendar-day">Sun</span>
+                <span class="calendar-day">Sun</span>
+                <span class="calendar-day">Sun</span>
+                <span class="calendar-day">Sun</span>
+                <span class="calendar-day">Sun</span>
+                <span class="calendar-day">Sun</span>
+                <span class="calendar-day">Sun</span>
+                <span class="calendar-day">Sun</span>
+                <span class="calendar-day">Sun</span>
+                <span class="calendar-day">Sun</span>
+            </div>
+        </div>
+        <div class="calendar-time">
+            <div class="calendar-hour">
+                <input class="calendar-current-hour" readonly="readonly" type="text" />
+                <span class="calendar-prev-hour">↑</span>
+                <span class="calendar-next-hour">↓</span>
+            </div>
+            <div class="calendar-minute">
+                <input class="calendar-current-minute" readonly="readonly" type="text" />
+                <span class="calendar-prev-minute">↑</span>
+                <span class="calendar-next-minute">↓</span>
+            </div>
+            <div class="calendar-second">
+                <input class="calendar-current-second" readonly="readonly" type="text" />
+                <span class="calendar-prev-second">↑</span>
+                <span class="calendar-next-second">↓</span>
+            </div>
+        </div>
+    </div>
 `;
 
 function tempAdd(line, isJs) {
@@ -174,6 +227,7 @@ function template2html(template, data) {
 }
 
 var Templates = {
+    calendar: calendar,
     input: input,
     fileupload: fileupload,
     listgroup: listgroup,
