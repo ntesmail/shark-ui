@@ -12,36 +12,46 @@ var patch = {
     PROPS: 2
 }
 
-function diff(oldNode, newNode) {
+// 得到两棵数据树的差异
+function diff(oldTopNode, newTopNode) {
     var index = 0;
     var patches = {};
-    dfsWalk(oldNode, newNode, index, patches);
+    compareNode(oldTopNode, newTopNode, index, patches);
     return patches;
 }
 
-function dfsWalk(oldNode, newNode, index, patches) {
+// 对比两个相同位置的节点之间的差异
+function compareNode(oldNode, newNode, index, patches) {
     var currentPatch = [];
-    if (newNode === null) { //被删除
-        //当reorder的时候就会被抹去,所以不用做任何事情
-    } else {
+    if (newNode) {
         var propsPatches = diffProps(oldNode, newNode);
         if (propsPatches) {
             currentPatch.push({ type: patch.PROPS, props: propsPatches })
         }
-        diffChildren(
+        compareChildren(
             oldNode.children || [],
             newNode.children || [],
             index,
             patches,
             currentPatch
-        )
+        );
     }
     if (currentPatch.length) {
-        patches[index] = currentPatch
+        patches[index] = currentPatch;
     }
 }
 
-function diffChildren(oldChildren, newChildren, index, patches, currentPatch) {
+// 重新render
+function render(sharkComponent, newTreeData) {
+    var topNode = { children: newTreeData };
+    getNodeCount(topNode);
+    var patches = diff(sharkComponent.topNode, topNode);
+    patchs(sharkComponent.component, patches);
+    sharkComponent.topNode = topNode;
+}
+
+// 对比子节点的差异
+function compareChildren(oldChildren, newChildren, index, patches, currentPatch) {
     var diffs = listDiff(oldChildren, newChildren);
     newChildren = diffs.children;
     if (diffs.moves.length) {
@@ -53,7 +63,7 @@ function diffChildren(oldChildren, newChildren, index, patches, currentPatch) {
     oldChildren && oldChildren.forEach(function (child, i) {
         var newChild = newChildren[i]
         currentNodeIndex = (leftNode && leftNode.count) ? currentNodeIndex + leftNode.count + 1 : currentNodeIndex + 1;
-        dfsWalk(child, newChild, currentNodeIndex, patches);
+        compareNode(child, newChild, currentNodeIndex, patches);
         leftNode = child;
     });
 }
@@ -65,7 +75,6 @@ function listDiff(oldList, newList) {
     var children = [];
     var i = 0;
     var item, itemKey;
-
     for (var i = 0; i < oldList.length; i++) {
         item = oldList[i];
         itemKey = item.node_id;
@@ -84,7 +93,6 @@ function listDiff(oldList, newList) {
             i--;
         }
     }
-
     var j = 0;
     for (var i = 0; i < newList.length; i++) {
         item = newList[i];
@@ -112,26 +120,23 @@ function listDiff(oldList, newList) {
             insert(i, item);
         }
     }
-
     function remove(index) {
         var move = { index: index, type: 0 };
         moves.push(move);
     }
-
     function insert(index) {
         var move = { index: index, item: item, type: 1 };
         moves.push(move);
     }
-
     function removeSimulate(index) {
         simulateList.splice(index, 1);
     }
-
     return {
         moves: moves,
         children: children
     }
 }
+
 
 function diffProps(oldNode, newNode) {
     var count = 0;
@@ -150,7 +155,6 @@ function diffProps(oldNode, newNode) {
             propsPatches.checked = newNode.checked;
         }
     }
-
     if (count === 0) {
         return null;
     }
@@ -355,6 +359,7 @@ function reorderChildren(node, moves) {
     }
 }
 
+// 初始化事件
 function initEvents(sharkComponent, config) {
     sharkComponent.component.on('click', 'li', function (e) {
         var li = $(e.currentTarget);
@@ -362,6 +367,7 @@ function initEvents(sharkComponent, config) {
         sharkComponent.newTopNode = $.extend(true, {}, sharkComponent.topNode);
         // 修改新的数据树的选中状态
         changeChecked(sharkComponent, sharkComponent.newTopNode, id);
+        // 得到两棵数据树的差异
         var patches = diff(sharkComponent.topNode, sharkComponent.newTopNode);
         patchs(sharkComponent.component, patches);
         sharkComponent.topNode = sharkComponent.newTopNode;
@@ -379,5 +385,8 @@ SharkUI.sharkDTree = function (options, targetElement) {
     initDom(sharkComponent, config, targetElement);
     BaseComponent.addComponentBaseFn(sharkComponent, config);
     initEvents(sharkComponent, config);
+    sharkComponent.render = function (nodes) {
+        render(sharkComponent, nodes);
+    };
     return sharkComponent;
 }

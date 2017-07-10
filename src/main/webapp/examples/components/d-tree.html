@@ -9,6 +9,9 @@
             children: [{
                 node_id: 'autocomplete1',
                 node_name: 'autocomplete组件1'
+            },{
+                node_id: 'autocomplete2',
+                node_name: 'autocomplete组件2'
             }]
         }, {
             node_id: 'dropdown',
@@ -39,8 +42,43 @@
             node_name: 'tree组件'
         }]
     }];
+
+    var newTreeData = [{
+        node_id: '3',
+        node_name: '3',
+        checked: false
+    }, {
+        node_id: '4',
+        node_name: '4',
+        checked: true
+    }, {
+        node_id: '1',
+        node_name: '45',
+        children: [{
+            node_id: '44',
+            node_name: '444',
+            checked: false
+        }, {
+            node_id: '555',
+            node_name: '555',
+            checked: false
+        }, {
+            node_id: '666',
+            node_name: '666',
+            checked: false
+        }, {
+            node_id: '777',
+            node_name: '777',
+            checked: false
+        }]
+    }];
+
     var mytree = SharkUI.sharkDTree({
         nodes: treeData
     });
+
+    console.log(mytree);
+
+    mytree.render(newTreeData);
     mytree.appendTo('#dTreeContainer');
 </script>
