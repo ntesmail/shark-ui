@@ -57,43 +57,41 @@ function listDiff(oldList, newList) {
     var newKeyIndex = changeArrToKeyIndex(newList);
     var moves = [];
     var children = [];
-    var i = 0;
-    var item, itemKey;
-    for (var i = 0; i < oldList.length; i++) {
-        item = oldList[i];
-        itemKey = item.node_id;
+    // 首先新老对比,检查相对于新集,老集是否有元素被删除
+    oldList.forEach(function (item) {
+        var itemKey = item.node_id;
         if (!newKeyIndex.hasOwnProperty(itemKey)) {
             children.push(null);
         } else {
             var newItemIndex = newKeyIndex[itemKey];
             children.push(newList[newItemIndex]);
         }
-    }
-    var simulateList = children.slice(0);
-    for (var i = 0; i < simulateList.length; i++) {
-        if (simulateList[i] === null) {
+    });
+    // 临时数组
+    var tempList = children.slice(0);
+    for (var i = 0; i < tempList.length; i++) {
+        if (tempList[i] === null) {
             remove(i);
-            removeSimulate(i);
+            tempList.splice(i, 1);
             i--;
         }
     }
     var j = 0;
-    for (var i = 0; i < newList.length; i++) {
-        item = newList[i];
-        itemKey = item.node_id;
-        var simulateItem = simulateList[j];
-        var simulateItemKey = simulateItem && simulateItem.node_id;
-        if (simulateItem) {
-            if (itemKey === simulateItemKey) {
+    newList.forEach(function (item, i) {
+        var itemKey = item.node_id;
+        var tempItem = tempList[j];
+        var tempItemKey = tempItem && tempItem.node_id;
+        if (tempItem) {
+            if (itemKey === tempItemKey) {
                 j++;
             } else {
                 if (!oldKeyIndex.hasOwnProperty(itemKey)) {
                     insert(i, item);
                 } else {
-                    var nextItemKey = simulateList[j + 1].node_id;
+                    var nextItemKey = tempList[j + 1].node_id;
                     if (nextItemKey === itemKey) {
                         remove(i);
-                        removeSimulate(j);
+                        tempList.splice(j, 1);
                         j++;
                     } else {
                         insert(i, item);
@@ -103,17 +101,14 @@ function listDiff(oldList, newList) {
         } else {
             insert(i, item);
         }
-    }
+    });
     function remove(index) {
         var move = { index: index, type: 0 };
         moves.push(move);
     }
-    function insert(index) {
+    function insert(index, item) {
         var move = { index: index, item: item, type: 1 };
         moves.push(move);
-    }
-    function removeSimulate(index) {
-        simulateList.splice(index, 1);
     }
     return {
         moves: moves,
@@ -143,10 +138,6 @@ function diffProps(oldNode, newNode) {
     var count = 0;
     var propsPatches = {};
     if (oldNode && newNode) {
-        if (oldNode.node_id !== newNode.node_id) {
-            count++;
-            propsPatches.node_id = newNode.node_id;
-        }
         if (oldNode.node_name !== newNode.node_name) {
             count++;
             propsPatches.node_name = newNode.node_name;
@@ -166,9 +157,8 @@ function patchs(node, walker, patches) {
     var currentPatches = patches[walker.index];
     var aLi = node.children('ul').children('li');
     for (var i = 0; i < aLi.length; i++) {
-        var child = $(aLi[i]);
         walker.index++;
-        patchs(child, walker, patches);
+        patchs($(aLi[i]), walker, patches);
     }
     if (currentPatches) {
         applyPatches(node, currentPatches);
