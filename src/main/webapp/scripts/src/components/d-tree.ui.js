@@ -295,10 +295,11 @@ function initDom(sharkComponent, targetElement) {
 
 // 修改子集的选中状态
 function changeChildren(children, checked) {
-    for (var i = 0; i < children.length; i++) {
-        children[i].checked = checked;
-        changeChildren(children[i].children || [], checked);
-    }
+    children.forEach(function (child) {
+        child.checked = checked;
+        var iChildren = child.children;
+        iChildren && changeChildren(iChildren, checked);
+    });
 }
 
 // 修改父集的选中状态
