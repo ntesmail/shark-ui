@@ -59,6 +59,7 @@ function compareChildren(oldChildren, newChildren, index, patches, currentPatch)
     });
 }
 
+// 数组对比
 function listDiff(oldList, newList) {
     var oldKeyIndex = changeArrToKeyIndex(oldList);
     var newKeyIndex = changeArrToKeyIndex(newList);
@@ -162,29 +163,13 @@ function changeArrToKeyIndex(list) {
     return keyIndex;
 }
 
-
-// 为每个节点加上count属性
-function getNodeCount(node) {
-    var children = node.children || [];
-    node.count = 0;
-    children.forEach(function (child, i) {
-        getNodeCount(child);
-        child.parent = node.node_id;
-        node.count += child.count + 1;
-    });
-}
-
-function patchs(sharkComponent, patches) {
-    aaa(sharkComponent.component, 0, patches);
-}
-
-function aaa(node, index, patches) {
+function patchs(node, index, patches) {
     var currentPatches = patches[index];
     var aLi = node.children('ul').children('li');
     for (var i = 0; i < aLi.length; i++) {
         var child = $(aLi[i]);
         index++;
-        aaa(child, index, patches);
+        patchs(child, index, patches);
     }
     if (currentPatches) {
         applyPatches(node, currentPatches);
@@ -226,6 +211,7 @@ function setProps(node, props) {
     }
 }
 
+// 重新排序子节点
 function reOrderChildren(node, moves) {
     for (var i = 0; i < moves.length; i++) {
         var ul = $(node).children('ul');
@@ -247,22 +233,33 @@ function reOrderChildren(node, moves) {
     }
 }
 
+// 处理节点，为每个节点加上count属性和父节点id
+function handleNode(node) {
+    var children = node.children || [];
+    node.count = 0;
+    children.forEach(function (child) {
+        handleNode(child);
+        child.parentId = node.node_id;
+        node.count += child.count + 1;
+    });
+}
+
 // 获取数据根节点
 function getTopNode(nodes) {
     var topNode = { children: nodes };
-    // 为每个节点加上count属性
-    getNodeCount(topNode);
+    // 处理节点，为每个节点加上count属性和父节点id
+    handleNode(topNode);
     return topNode;
 }
 
 // 获取node的dom节点
 function getNodeDom(node) {
-    var oLi = $('<li></li>');
-    oLi.attr('id', node.node_id);
     var checkbox = $('<input type="checkbox" />');
     checkbox.prop('checked', node.checked);
-    var oSpan = $('<span></span>');
+    var oSpan = $('<span class="tree-node-name"></span>');
     oSpan.html(node.node_name);
+    var oLi = $('<li></li>');
+    oLi.data('id', node.node_id);
     oLi.append(checkbox);
     oLi.append(oSpan);
     if (node && node.children) {
@@ -275,21 +272,25 @@ function getNodeDom(node) {
 // 获取ul的dom节点
 function getUlDom(nodes) {
     var oUl = $('<ul></ul>');
-    for (var i = 0; i < nodes.length; i++) {
-        var oLi = getNodeDom(nodes[i]);
+    nodes.forEach(function (node) {
+        var oLi = getNodeDom(node);
         oUl.append(oLi);
-    }
+    });
     return oUl;
 }
 
-// 根据根数据节点初始化树组件的dom结构
-function initDom(sharkComponent, config, targetElement) {
-    sharkComponent.component = $('<div class="shark-d-tree"></div>');
-    var oUl = getUlDom(sharkComponent.topNode.children || []);
-    sharkComponent.component.append(oUl);
-    if (targetElement) {
-        targetElement.append(sharkComponent.component);
+// 根据根数据根节点，初始化树组件的dom结构
+function initDom(sharkComponent, targetElement) {
+    var component = $('<div class="shark-d-tree"></div>');
+    var children = sharkComponent.topNode.children;
+    if (children) {
+        var oUl = getUlDom(children);
+        component.append(oUl);
     }
+    if (targetElement) {
+        targetElement.append(component);
+    }
+    sharkComponent.component = component;
 }
 
 // 修改子集的选中状态
@@ -311,8 +312,8 @@ function changeParent(sharkComponent, node, id) {
             }
         }
         node.checked = checked;
-        if (node.parent) {
-            changeParent(sharkComponent, sharkComponent.newTopNode, node.parent);
+        if (node.parentId) {
+            changeParent(sharkComponent, sharkComponent.newTopNode, node.parentId);
         }
         return true;
     } else {
@@ -333,7 +334,7 @@ function changeChecked(sharkComponent, node, id) {
         node.checked = !node.checked;
         checked = node.checked;
         changeChildren(children, checked);
-        changeParent(sharkComponent, sharkComponent.newTopNode, node.parent);
+        changeParent(sharkComponent, sharkComponent.newTopNode, node.parentId);
         return true;
     } else {
         for (var i = 0; i < children.length; i++) {
@@ -345,20 +346,18 @@ function changeChecked(sharkComponent, node, id) {
     }
 }
 
-
-
 // 初始化事件
-function initEvents(sharkComponent, config) {
+function initEvents(sharkComponent) {
     sharkComponent.component.on('click', 'li', function (e) {
         var li = $(e.currentTarget);
-        var id = li.attr('id');
+        var id = li.data('id');
         sharkComponent.newTopNode = {};
         SharkUI.extend(sharkComponent.newTopNode, sharkComponent.topNode);
         // 修改新的数据树的选中状态
         changeChecked(sharkComponent, sharkComponent.newTopNode, id);
         // 得到两棵数据树的差异
         var patches = diff(sharkComponent.topNode, sharkComponent.newTopNode);
-        patchs(sharkComponent, patches);
+        patchs(sharkComponent.component, 0, patches);
         sharkComponent.topNode = sharkComponent.newTopNode;
         e.stopPropagation();
     });
@@ -366,10 +365,9 @@ function initEvents(sharkComponent, config) {
 
 // 重新render
 function render(sharkComponent, newTreeData) {
-    var topNode = { children: newTreeData };
-    getNodeCount(topNode);
+    var topNode = getTopNode(newTreeData);
     var patches = diff(sharkComponent.topNode, topNode);
-    patchs(sharkComponent, patches);
+    patchs(sharkComponent.component, 0, patches);
     sharkComponent.topNode = topNode;
 }
 
@@ -383,11 +381,11 @@ SharkUI.sharkDTree = function (options, targetElement) {
     // 获取数据根节点
     sharkComponent.topNode = getTopNode(config.nodes);
     // 初始化dom节点
-    initDom(sharkComponent, config, targetElement);
+    initDom(sharkComponent, targetElement);
     // 添加基础方法
     BaseComponent.addComponentBaseFn(sharkComponent, config);
     // 初始化事件
-    initEvents(sharkComponent, config);
+    initEvents(sharkComponent);
     // 在组件对象上添加render方法
     sharkComponent.render = function (nodes) {
         render(sharkComponent, nodes);
