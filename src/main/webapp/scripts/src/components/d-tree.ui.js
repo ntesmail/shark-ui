@@ -15,6 +15,7 @@ var patch = {
 function diff(oldTopNode, newTopNode) {
     var index = 0;
     var patches = {};
+    // 比较新老根元素节点
     compareNode(oldTopNode, newTopNode, index, patches);
     return patches;
 }
@@ -161,6 +162,7 @@ function changeArrToKeyIndex(list) {
     return keyIndex;
 }
 
+
 // 为每个节点加上count属性
 function getNodeCount(node) {
     var children = node.children || [];
@@ -172,39 +174,115 @@ function getNodeCount(node) {
     });
 }
 
+function patchs(sharkComponent, patches) {
+    aaa(sharkComponent.component, 0, patches);
+}
+
+function aaa(node, index, patches) {
+    var currentPatches = patches[index];
+    var aLi = node.children('ul').children('li');
+    for (var i = 0; i < aLi.length; i++) {
+        var child = $(aLi[i]);
+        index++;
+        aaa(child, index, patches);
+    }
+    if (currentPatches) {
+        applyPatches(node, currentPatches);
+    }
+}
+
+function applyPatches(node, currentPatches) {
+    for (var i = 0; i < currentPatches.length; i++) {
+        var currentPatch = currentPatches[i];
+        switch (currentPatch.type) {
+            case patch.REORDER:
+                reOrderChildren(node, currentPatch.moves);
+                break;
+            case patch.PROPS:
+                setProps(node, currentPatch.props);
+                break;
+        }
+    }
+}
+
+function setProps(node, props) {
+    var oSpan = node.children('span');
+    var oCheckbox = node.children('input:checkbox');
+    if (oCheckbox.length) {
+        for (var key in props) {
+            switch (key) {
+                case "node_name":
+                    oSpan.text(props[key]);
+                    break;
+                case "checked":
+                    if (!props[key]) {
+                        oCheckbox.prop('checked', false);
+                    } else {
+                        oCheckbox.prop('checked', true);
+                    }
+                    break;
+            }
+        }
+    }
+}
+
+function reOrderChildren(node, moves) {
+    for (var i = 0; i < moves.length; i++) {
+        var ul = $(node).children('ul');
+        var staticNodeList = $(node).children('ul').children('li');
+        var move = moves[i];
+        var index = move.index;
+        if (move.type === 0) {
+            var li = staticNodeList.eq(index);
+            li.remove();
+        } else if (move.type === 1) {
+            var item = move.item;
+            var li = getNodeDom(item);
+            if (index) {
+                staticNodeList.eq(index - 1).after(li);
+            } else {
+                ul.prepend(li);
+            }
+        }
+    }
+}
+
 // 获取数据根节点
 function getTopNode(nodes) {
     var topNode = { children: nodes };
+    // 为每个节点加上count属性
     getNodeCount(topNode);
     return topNode;
 }
 
+// 获取node的dom节点
 function getNodeDom(node) {
-    var li = $('<li></li>');
-    li.attr('id', node.node_id);
+    var oLi = $('<li></li>');
+    oLi.attr('id', node.node_id);
     var checkbox = $('<input type="checkbox" />');
     checkbox.prop('checked', node.checked);
-    var span = $('<span></span>');
-    span.html(node.node_name);
-    li.append(checkbox);
-    li.append(span);
+    var oSpan = $('<span></span>');
+    oSpan.html(node.node_name);
+    oLi.append(checkbox);
+    oLi.append(oSpan);
     if (node && node.children) {
-        var cUl = getUlDom(node.children);
-        li.append(cUl);
+        var oUl = getUlDom(node.children);
+        oLi.append(oUl);
     }
-    return li;
+    return oLi;
 }
 
+// 获取ul的dom节点
 function getUlDom(nodes) {
-    var ul = $('<ul></ul>');
+    var oUl = $('<ul></ul>');
     for (var i = 0; i < nodes.length; i++) {
-        var li = getNodeDom(nodes[i]);
-        ul.append(li);
+        var oLi = getNodeDom(nodes[i]);
+        oUl.append(oLi);
     }
-    return ul;
+    return oUl;
 }
 
-// 初始化树
+// 根据根数据节点初始化树组件的dom结构
 function initDom(sharkComponent, config, targetElement) {
     sharkComponent.component = $('<div class="shark-d-tree"></div>');
     var oUl = getUlDom(sharkComponent.topNode.children || []);
@@ -267,92 +345,20 @@ function changeChecked(sharkComponent, node, id) {
     }
 }
 
-function patchs(node, patches) {
-    var walker = { index: 0 };
-    aaa(node, walker, patches);
-}
 
-function aaa(node, walker, patches) {
-    var currentPatches = patches[walker.index];
-    var node = $(node);
-    var aLi = node.children('ul').children('li');
-    for (var i = 0; i < aLi.length; i++) {
-        var child = aLi[i];
-        walker.index++;
-        aaa(child, walker, patches);
-    }
-    if (currentPatches) {
-        applyPatches(node, currentPatches);
-    }
-}
-
-function applyPatches(node, currentPatches) {
-    for (var i = 0; i < currentPatches.length; i++) {
-        var currentPatch = currentPatches[i];
-        switch (currentPatch.type) {
-            case patch.REORDER:
-                reOrderChildren(node, currentPatch.moves);
-                break;
-            case patch.PROPS:
-                setProps(node, currentPatch.props);
-                break;
-        }
-    }
-}
-
-function setProps(node, props) {
-    var span = node.children('span');
-    var checkbox = node.children('input');
-    if (checkbox.length) {
-        for (var key in props) {
-            switch (key) {
-                case "node_name":
-                    span.text(props[key]);
-                    break;
-                case "checked":
-                    if (!props[key]) {
-                        checkbox.prop('checked', false);
-                    } else {
-                        checkbox.prop('checked', true);
-                    }
-                    break;
-            }
-        }
-    }
-}
-
-function reOrderChildren(node, moves) {
-    for (var i = 0; i < moves.length; i++) {
-        var ul = $(node).children('ul');
-        var staticNodeList = $(node).children('ul').children('li');
-        var move = moves[i];
-        var index = move.index;
-        if (move.type === 0) {
-            var li = staticNodeList.eq(index);
-            li.remove();
-        } else if (move.type === 1) {
-            var item = move.item;
-            var li = getNodeDom(item);
-            if (index) {
-                staticNodeList.eq(index - 1).after(li);
-            } else {
-                ul.prepend(li);
-            }
-        }
-    }
-}
 
 // 初始化事件
 function initEvents(sharkComponent, config) {
     sharkComponent.component.on('click', 'li', function (e) {
         var li = $(e.currentTarget);
         var id = li.attr('id');
-        sharkComponent.newTopNode = $.extend(true, {}, sharkComponent.topNode);
+        sharkComponent.newTopNode = {};
+        SharkUI.extend(sharkComponent.newTopNode, sharkComponent.topNode);
         // 修改新的数据树的选中状态
         changeChecked(sharkComponent, sharkComponent.newTopNode, id);
         // 得到两棵数据树的差异
         var patches = diff(sharkComponent.topNode, sharkComponent.newTopNode);
-        patchs(sharkComponent.component, patches);
+        patchs(sharkComponent, patches);
         sharkComponent.topNode = sharkComponent.newTopNode;
         e.stopPropagation();
     });
@@ -363,7 +369,7 @@ function render(sharkComponent, newTreeData) {
     var topNode = { children: newTreeData };
     getNodeCount(topNode);
     var patches = diff(sharkComponent.topNode, topNode);
-    patchs(sharkComponent.component, patches);
+    patchs(sharkComponent, patches);
     sharkComponent.topNode = topNode;
 }
 
@@ -372,11 +378,17 @@ SharkUI.sharkDTree = function (options, targetElement) {
         nodes: []
     };
     SharkUI.extend(config, options);
+    // 组件对象
     var sharkComponent = {};
+    // 获取数据根节点
     sharkComponent.topNode = getTopNode(config.nodes);
+    // 初始化dom节点
     initDom(sharkComponent, config, targetElement);
+    // 添加基础方法
     BaseComponent.addComponentBaseFn(sharkComponent, config);
+    // 初始化事件
     initEvents(sharkComponent, config);
+    // 在组件对象上添加render方法
     sharkComponent.render = function (nodes) {
         render(sharkComponent, nodes);
     };
