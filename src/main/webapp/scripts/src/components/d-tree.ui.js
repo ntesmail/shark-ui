@@ -51,7 +51,7 @@ function compareChildren(oldChildren, newChildren, index, patches, currentPatch)
     var leftNode = null;
     var currentNodeIndex = index;
     oldChildren && oldChildren.forEach(function (child, i) {
-        var newChild = newChildren[i]
+        var newChild = newChildren[i];
         currentNodeIndex = (leftNode && leftNode.count) ? currentNodeIndex + leftNode.count + 1 : currentNodeIndex + 1;
         compareNode(child, newChild, currentNodeIndex, patches);
         leftNode = child;
@@ -71,7 +71,7 @@ function listDiff(oldList, newList) {
         if (!newKeyIndex.hasOwnProperty(itemKey)) {
             children.push(null);
         } else {
-            var newItemIndex = newKeyIndex[itemKey]
+            var newItemIndex = newKeyIndex[itemKey];
             children.push(newList[newItemIndex]);
         }
     }
@@ -100,7 +100,7 @@ function listDiff(oldList, newList) {
                     if (nextItemKey === itemKey) {
                         remove(i);
                         removeSimulate(j);
-                        j++
+                        j++;
                     } else {
                         insert(i, item);
                     }
@@ -124,7 +124,7 @@ function listDiff(oldList, newList) {
     return {
         moves: moves,
         children: children
-    }
+    };
 }
 
 function diffProps(oldNode, newNode) {
@@ -179,22 +179,26 @@ function getTopNode(nodes) {
     return topNode;
 }
 
+function getNodeDom(node) {
+    var li = $('<li></li>');
+    li.attr('id', node.node_id);
+    var checkbox = $('<input type="checkbox" />');
+    checkbox.prop('checked', node.checked);
+    var span = $('<span></span>');
+    span.html(node.node_name);
+    li.append(checkbox);
+    li.append(span);
+    if (node && node.children) {
+        var cUl = getUlDom(node.children);
+        li.append(cUl);
+    }
+    return li;
+}
+
 function getUlDom(nodes) {
     var ul = $('<ul></ul>');
     for (var i = 0; i < nodes.length; i++) {
-        var node = nodes[i];
-        var li = $('<li></li>');
-        li.attr('id', node.node_id);
-        var checkbox = $('<input type="checkbox" />');
-        checkbox.prop('checked', node.checked);
-        var span = $('<span></span>');
-        span.html(node.node_name);
-        li.append(checkbox);
-        li.append(span);
-        if (node && node.children) {
-            var cUl = getUlDom(node.children);
-            li.append(cUl);
-        }
+        var li = getNodeDom(nodes[i]);
         ul.append(li);
     }
     return ul;
@@ -202,7 +206,7 @@ function getUlDom(nodes) {
 
 // 初始化树
 function initDom(sharkComponent, config, targetElement) {
-    sharkComponent.component = $('<div></div>');
+    sharkComponent.component = $('<div class="shark-d-tree"></div>');
     var oUl = getUlDom(sharkComponent.topNode.children || []);
     sharkComponent.component.append(oUl);
     if (targetElement) {
@@ -232,7 +236,6 @@ function changeParent(sharkComponent, node, id) {
         if (node.parent) {
             changeParent(sharkComponent, sharkComponent.newTopNode, node.parent);
         }
-
         return true;
     } else {
         for (var i = 0; i < children.length; i++) {
@@ -329,20 +332,7 @@ function reOrderChildren(node, moves) {
             li.remove();
         } else if (move.type === 1) {
             var item = move.item;
-            var li = $('<li>');
-            li.attr('id', item.node_id);
-            var checkbox = $('<input type="checkbox" />');
-            checkbox.prop('checked', item.checked);
-            checkbox.attr('readonly', 'readonly');
-            var span = $('<span>');
-            span.html(item.node_name);
-            li.append(checkbox);
-            li.append(span);
-
-            if (item.children) {
-                var ul = getUlDom(item.children);
-                li.append(ul);
-            }
+            var li = getNodeDom(item);
             if (index) {
                 staticNodeList.eq(index - 1).after(li);
             } else {
