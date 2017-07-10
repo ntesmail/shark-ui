@@ -221,11 +221,12 @@ function initDom(sharkComponent, config, targetElement) {
 function changeChildren(children, checked) {
     for (var i = 0; i < children.length; i++) {
         children[i].checked = checked;
+        changeChildren(children[i].children || [], checked);
     }
 }
 
 // 修改父集的选中状态
-function changeParent(node, id) {
+function changeParent(sharkComponent, node, id) {
     var children = node.children || [];
     if (node.node_id === id) {
         var checked = true;
@@ -235,10 +236,14 @@ function changeParent(node, id) {
             }
         }
         node.checked = checked;
+        if (node.parent) {
+            changeParent(sharkComponent, sharkComponent.newTopNode, node.parent);
+        }
+
         return true;
     } else {
         for (var i = 0; i < children.length; i++) {
-            var flag = changeParent(children[i], id);
+            var flag = changeParent(sharkComponent, children[i], id);
             if (flag) {
                 return true;
             }
@@ -254,7 +259,7 @@ function changeChecked(sharkComponent, node, id) {
         node.checked = !node.checked;
         checked = node.checked;
         changeChildren(children, checked);
-        changeParent(sharkComponent.newTopNode, node.parent);
+        changeParent(sharkComponent, sharkComponent.newTopNode, node.parent);
         return true;
     } else {
         for (var i = 0; i < children.length; i++) {
