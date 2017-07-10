@@ -15,13 +15,28 @@ function parseToHTML(str) {
     return tmpDiv.children;
 }
 
+function initEvents(element) {
+
+}
+
 //创建列表组
-function Calendar() {
+function Calendar(options) {
+    this.config = Object.assign({}, {
+        format: 'yyyy-MM-dd',
+        defaultDate: Date.now(),
+        maxDate: null,
+        minDate: null,
+        onChange: function () { },
+        onShow: function () { },
+        onHide: function () { }
+    }, options);
+    this.currentData = [];
     var elements = parseToHTML(templateFun.apply());
     this.nativeElement = elements[0];
     this.nativeElement.setAttribute('id', SharkUI.createUUID());
     document.body.appendChild(this.nativeElement);
     this.element = $(this.nativeElement);
+    initEvents(this.element);
 }
 
 Calendar.prototype.show = function () {
