@@ -302,7 +302,7 @@ function changeChildren(children, checked) {
 }
 
 // 修改父集的选中状态
-function changeParent(sharkComponent, node, id) {
+function changeParent(newTopNode, node, id) {
     var children = node.children || [];
     if (node.node_id === id) {
         var checked = true;
@@ -313,12 +313,12 @@ function changeParent(sharkComponent, node, id) {
         }
         node.checked = checked;
         if (node.parentId) {
-            changeParent(sharkComponent, sharkComponent.newTopNode, node.parentId);
+            changeParent(newTopNode, newTopNode, node.parentId);
         }
         return true;
     } else {
         for (var i = 0; i < children.length; i++) {
-            var flag = changeParent(sharkComponent, children[i], id);
+            var flag = changeParent(newTopNode, children[i], id);
             if (flag) {
                 return true;
             }
@@ -327,18 +327,18 @@ function changeParent(sharkComponent, node, id) {
 }
 
 // 修改数据树的选中状态
-function changeChecked(sharkComponent, node, id) {
+function changeChecked(newTopNode, node, id) {
     var children = node.children || [];
     var checked = null;
     if (node.node_id === id) {
         node.checked = !node.checked;
         checked = node.checked;
         changeChildren(children, checked);
-        changeParent(sharkComponent, sharkComponent.newTopNode, node.parentId);
+        changeParent(newTopNode, newTopNode, node.parentId);
         return true;
     } else {
         for (var i = 0; i < children.length; i++) {
-            var flag = changeChecked(sharkComponent, children[i], id);
+            var flag = changeChecked(newTopNode, children[i], id);
             if (flag) {
                 return true;
             }
@@ -351,14 +351,14 @@ function initEvents(sharkComponent) {
     sharkComponent.component.on('click', 'li', function (e) {
         var li = $(e.currentTarget);
         var id = li.data('id');
-        sharkComponent.newTopNode = {};
-        SharkUI.extend(sharkComponent.newTopNode, sharkComponent.topNode);
+        var newTopNode = {};
+        SharkUI.extend(newTopNode, sharkComponent.topNode);
         // 修改新的数据树的选中状态
-        changeChecked(sharkComponent, sharkComponent.newTopNode, id);
+        changeChecked(newTopNode, newTopNode, id);
         // 得到两棵数据树的差异
-        var patches = diff(sharkComponent.topNode, sharkComponent.newTopNode);
+        var patches = diff(sharkComponent.topNode, newTopNode);
         patchs(sharkComponent.component, { index: 0 }, patches);
-        sharkComponent.topNode = sharkComponent.newTopNode;
+        sharkComponent.topNode = newTopNode;
         e.stopPropagation();
     });
 }
