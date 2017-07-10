@@ -137,7 +137,7 @@ var toastr = `
 
 var calendar = `
     <div class="shark-calendar">
-        <div class="calendar-year-month">
+        <div class="calendar-montharea">
             <a class="calendar-prev-year"></a>
             <a class="calendar-prev-month"></a>
             <input class="calendar-current-month" readonly="readonly" type="text" />
@@ -145,8 +145,8 @@ var calendar = `
             <a class="calendar-next-year"></a>
             <a class="calendar-next-month"></a>
         </div>
-        <div class="calendar-day">
-            <div class="calendar-weekdays">
+        <div class="calendar-dayarea">
+            <div class="calendar-weekday-wrap">
                 <span class="calendar-weekday">Sun</span>
                 <span class="calendar-weekday">Mon</span>
                 <span class="calendar-weekday">Tue</span>
@@ -155,7 +155,7 @@ var calendar = `
                 <span class="calendar-weekday">Fri</span>
                 <span class="calendar-weekday">Sat</span>
             </div>
-            <div class="calendar-days">
+            <div class="calendar-day-wrap">
                 <span class="calendar-day">Sun</span>
                 <span class="calendar-day">Sun</span>
                 <span class="calendar-day">Sun</span>

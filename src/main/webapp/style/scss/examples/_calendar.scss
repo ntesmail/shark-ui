@@ -9,7 +9,7 @@
     z-index: 999999;
     width: ((40+4)*7+2) + px;
     box-sizing: border-box;
-    .calendar-year-month {
+    .calendar-montharea {
         padding: 5px 0;
         text-align: center;
         .calendar-prev-year,
@@ -46,13 +46,14 @@
             display: inline-block;
             background-color: #efefef;
             width: 50px;
+            text-align: center;
             border: none;
             outline: none;
         }
     }
-    .calendar-day {
-        .calendar-days::after,
-        .calendar-weekdays::after {
+    .calendar-dayarea {
+        .calendar-day-wrap::after,
+        .calendar-weekday-wrap::after {
             content: '';
             display: block;
             clear: both;
@@ -70,7 +71,7 @@
             line-height: 40px;
             border-radius: 100%;
             border: 1px solid transparent;
-            margin: 2px;
+            margin: 1px;
         }
         .calendar-weekday {
             font-weight: bold;
@@ -86,5 +87,14 @@
         .calendar-selected {
             background-color: #00cbff;
         }
+        .flatpickr-nextmonthday,
+        .flatpickr-nextmonthday {
+            color: #acacac;
+        }
+    }
+    .calendar-disabled,
+    .calendar-disabled.calendar-day {
+        cursor: not-allowed;
+        color: #acacac;
     }
 }

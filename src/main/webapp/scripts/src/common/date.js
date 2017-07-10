@@ -31,17 +31,18 @@ Date.prototype.addDay = function (count) {
 Date.prototype.addMonth = function (count) {
     var date = this;
     var dtArr = [date.getFullYear(), date.getMonth() + 1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds()];
-    var y = Math.floor(count / 12);
+    var y = Math.floor(Math.abs(count) / 12);
     var m = count % 12;
-    dtArr[0] = dtArr[0] + y;
     dtArr[1] = dtArr[1] + m;
     if (count > 0) {
+        dtArr[0] = dtArr[0] + y;
         if (dtArr[1] > 12) {
             dtArr[1] = dtArr[1] - 12;
             dtArr[0] = dtArr[0] + 1;
         }
     }
     else {
+        dtArr[0] = dtArr[0] - y;
         if (dtArr[1] < 1) {
             dtArr[1] = dtArr[1] + 12;
             dtArr[0] = dtArr[0] - 1;
