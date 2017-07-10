@@ -41,22 +41,14 @@ function compareNode(oldNode, newNode, index, patches) {
     }
 }
 
-// 对比同一父节点下子节点的差异
-function compareChildren(oldChildren, newChildren, index, patches, currentPatch) {
-    var diffs = listDiff(oldChildren, newChildren);
-    newChildren = diffs.children;
-    if (diffs.moves.length) {
-        var reorderPatch = { type: patch.REORDER, moves: diffs.moves };
-        currentPatch.push(reorderPatch);
-    }
-    var leftNode = null;
-    var currentNodeIndex = index;
-    oldChildren && oldChildren.forEach(function (child, i) {
-        var newChild = newChildren[i];
-        currentNodeIndex = (leftNode && leftNode.count) ? currentNodeIndex + leftNode.count + 1 : currentNodeIndex + 1;
-        compareNode(child, newChild, currentNodeIndex, patches);
-        leftNode = child;
+// 将数组转成 key : index 形式的字符串
+function changeArrToKeyIndex(list) {
+    var keyIndex = {};
+    list.forEach(function (item, i) {
+        var itemKey = item.node_id;
+        keyIndex[itemKey] = i;
     });
+    return keyIndex;
 }
 
 // 数组对比
@@ -129,6 +121,24 @@ function listDiff(oldList, newList) {
     };
 }
 
+// 对比同一父节点下子节点的差异
+function compareChildren(oldChildren, newChildren, index, patches, currentPatch) {
+    var diffs = listDiff(oldChildren, newChildren);
+    newChildren = diffs.children;
+    if (diffs.moves.length) {
+        var reorderPatch = { type: patch.REORDER, moves: diffs.moves };
+        currentPatch.push(reorderPatch);
+    }
+    var leftNode = null;
+    var currentNodeIndex = index;
+    oldChildren && oldChildren.forEach(function (child, i) {
+        var newChild = newChildren[i];
+        currentNodeIndex = (leftNode && leftNode.count) ? currentNodeIndex + leftNode.count + 1 : currentNodeIndex + 1;
+        compareNode(child, newChild, currentNodeIndex, patches);
+        leftNode = child;
+    });
+}
+
 function diffProps(oldNode, newNode) {
     var count = 0;
     var propsPatches = {};
@@ -150,17 +160,6 @@ function diffProps(oldNode, newNode) {
         return null;
     }
     return propsPatches;
-}
-
-// 将数组转成 key : index 形式的字符串
-function changeArrToKeyIndex(list) {
-    var keyIndex = {};
-    var len = list && list.length;
-    for (var i = 0; i < len; i++) {
-        var itemKey = list[i].node_id;
-        keyIndex[itemKey] = i;
-    }
-    return keyIndex;
 }
 
 function patchs(node, walker, patches) {
@@ -308,20 +307,21 @@ function changeParent(newTopNode, node, id) {
     if (node.node_id === id) {
         var checked = true;
         for (var i = 0; i < children.length; i++) {
+            // 只要有一个是false，就是false
             if (!children[i].checked) {
                 checked = false;
+                break;
             }
         }
         node.checked = checked;
-        if (node.parentId) {
-            changeParent(newTopNode, newTopNode, node.parentId);
-        }
-        return true;
+        // 检查是否还存在父级
+        node.parentId && changeParent(newTopNode, newTopNode, node.parentId);
+        return node;
     } else {
         for (var i = 0; i < children.length; i++) {
-            var flag = changeParent(newTopNode, children[i], id);
-            if (flag) {
-                return true;
+            var node = changeParent(newTopNode, children[i], id);
+            if (node) {
+                return node;
             }
         }
     }
@@ -330,18 +330,19 @@ function changeParent(newTopNode, node, id) {
 // 修改数据树的选中状态
 function changeChecked(newTopNode, node, id) {
     var children = node.children || [];
-    var checked = null;
     if (node.node_id === id) {
+        // 切换节点checked状态
         node.checked = !node.checked;
-        checked = node.checked;
-        changeChildren(children, checked);
+        // 子集的checked属性与父级保持一致
+        changeChildren(children, node.checked);
         changeParent(newTopNode, newTopNode, node.parentId);
-        return true;
+        return node;
     } else {
         for (var i = 0; i < children.length; i++) {
-            var flag = changeChecked(newTopNode, children[i], id);
-            if (flag) {
-                return true;
+            var node = changeChecked(newTopNode, children[i], id);
+            // 如果node存在，没有必要再循环下去，直接返回
+            if (node) {
+                return node;
             }
         }
     }
@@ -349,7 +350,8 @@ function changeChecked(newTopNode, node, id) {
 
 // 初始化事件
 function initEvents(sharkComponent) {
-    sharkComponent.component.on('click', 'li', function (e) {
+    var component = sharkComponent.component;
+    component.on('click', 'li', function (e) {
         var li = $(e.currentTarget);
         var id = li.data('id');
         var newTopNode = {};
@@ -358,8 +360,9 @@ function initEvents(sharkComponent) {
         changeChecked(newTopNode, newTopNode, id);
         // 得到两棵数据树的差异
         var patches = diff(sharkComponent.topNode, newTopNode);
-        patchs(sharkComponent.component, { index: 0 }, patches);
+        patchs(component, { index: 0 }, patches);
         sharkComponent.topNode = newTopNode;
+        // 阻止冒泡
         e.stopPropagation();
     });
 }
