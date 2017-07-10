@@ -163,13 +163,13 @@ function changeArrToKeyIndex(list) {
     return keyIndex;
 }
 
-function patchs(node, index, patches) {
-    var currentPatches = patches[index];
+function patchs(node, walker, patches) {
+    var currentPatches = patches[walker.index];
     var aLi = node.children('ul').children('li');
     for (var i = 0; i < aLi.length; i++) {
         var child = $(aLi[i]);
-        index++;
-        patchs(child, index, patches);
+        walker.index++;
+        patchs(child, walker, patches);
     }
     if (currentPatches) {
         applyPatches(node, currentPatches);
@@ -357,7 +357,7 @@ function initEvents(sharkComponent) {
         changeChecked(sharkComponent, sharkComponent.newTopNode, id);
         // 得到两棵数据树的差异
         var patches = diff(sharkComponent.topNode, sharkComponent.newTopNode);
-        patchs(sharkComponent.component, 0, patches);
+        patchs(sharkComponent.component, { index: 0 }, patches);
         sharkComponent.topNode = sharkComponent.newTopNode;
         e.stopPropagation();
     });
@@ -367,7 +367,7 @@ function initEvents(sharkComponent) {
 function render(sharkComponent, newTreeData) {
     var topNode = getTopNode(newTreeData);
     var patches = diff(sharkComponent.topNode, topNode);
-    patchs(sharkComponent.component, 0, patches);
+    patchs(sharkComponent.component, { index: 0 }, patches);
     sharkComponent.topNode = topNode;
 }
 
