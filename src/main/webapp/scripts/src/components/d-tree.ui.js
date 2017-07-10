@@ -7,10 +7,9 @@ import { SharkUI } from '../common/core';
 import { BaseComponent } from '../common/base';
 
 var patch = {
-    REPLACE: 0,
     REORDER: 1,
     PROPS: 2
-}
+};
 
 // 得到两棵数据树的差异
 function diff(oldTopNode, newTopNode) {
@@ -26,7 +25,7 @@ function compareNode(oldNode, newNode, index, patches) {
     if (newNode) {
         var propsPatches = diffProps(oldNode, newNode);
         if (propsPatches) {
-            currentPatch.push({ type: patch.PROPS, props: propsPatches })
+            currentPatch.push({ type: patch.PROPS, props: propsPatches });
         }
         compareChildren(
             oldNode.children || [],
@@ -41,16 +40,7 @@ function compareNode(oldNode, newNode, index, patches) {
     }
 }
 
-// 重新render
-function render(sharkComponent, newTreeData) {
-    var topNode = { children: newTreeData };
-    getNodeCount(topNode);
-    var patches = diff(sharkComponent.topNode, topNode);
-    patchs(sharkComponent.component, patches);
-    sharkComponent.topNode = topNode;
-}
-
-// 对比子节点的差异
+// 对比同一父节点下子节点的差异
 function compareChildren(oldChildren, newChildren, index, patches, currentPatch) {
     var diffs = listDiff(oldChildren, newChildren);
     newChildren = diffs.children;
@@ -136,7 +126,6 @@ function listDiff(oldList, newList) {
         children: children
     }
 }
-
 
 function diffProps(oldNode, newNode) {
     var count = 0;
@@ -290,7 +279,7 @@ function aaa(node, walker, patches) {
         aaa(child, walker, patches);
     }
     if (currentPatches) {
-        applyPatches(node, currentPatches)
+        applyPatches(node, currentPatches);
     }
 }
 
@@ -299,7 +288,7 @@ function applyPatches(node, currentPatches) {
         var currentPatch = currentPatches[i];
         switch (currentPatch.type) {
             case patch.REORDER:
-                reorderChildren(node, currentPatch.moves)
+                reOrderChildren(node, currentPatch.moves);
                 break;
             case patch.PROPS:
                 setProps(node, currentPatch.props);
@@ -307,7 +296,6 @@ function applyPatches(node, currentPatches) {
         }
     }
 }
-
 
 function setProps(node, props) {
     var span = node.children('span');
@@ -330,7 +318,7 @@ function setProps(node, props) {
     }
 }
 
-function reorderChildren(node, moves) {
+function reOrderChildren(node, moves) {
     for (var i = 0; i < moves.length; i++) {
         var ul = $(node).children('ul');
         var staticNodeList = $(node).children('ul').children('li');
@@ -350,6 +338,11 @@ function reorderChildren(node, moves) {
             span.html(item.node_name);
             li.append(checkbox);
             li.append(span);
+
+            if (item.children) {
+                var ul = getUlDom(item.children);
+                li.append(ul);
+            }
             if (index) {
                 staticNodeList.eq(index - 1).after(li);
             } else {
@@ -373,6 +366,15 @@ function initEvents(sharkComponent, config) {
         sharkComponent.topNode = sharkComponent.newTopNode;
         e.stopPropagation();
     });
+}
+
+// 重新render
+function render(sharkComponent, newTreeData) {
+    var topNode = { children: newTreeData };
+    getNodeCount(topNode);
+    var patches = diff(sharkComponent.topNode, topNode);
+    patchs(sharkComponent.component, patches);
+    sharkComponent.topNode = topNode;
 }
 
 SharkUI.sharkDTree = function (options, targetElement) {
