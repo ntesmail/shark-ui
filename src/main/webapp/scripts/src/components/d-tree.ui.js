@@ -6,11 +6,6 @@ import $ from 'jquery';
 import { SharkUI } from '../common/core';
 import { BaseComponent } from '../common/base';
 
-var patch = {
-    REORDER: 1,
-    PROPS: 2
-};
-
 // 得到两棵数据树的差异
 function diff(oldTopNode, newTopNode) {
     var index = 0;
@@ -26,7 +21,7 @@ function compareNode(oldNode, newNode, index, patches) {
     if (newNode) {
         var propsPatches = diffProps(oldNode, newNode);
         if (propsPatches) {
-            currentPatch.push({ type: patch.PROPS, props: propsPatches });
+            currentPatch.push({ type: "PROPS", props: propsPatches });
         }
         compareChildren(
             oldNode.children || [],
@@ -121,7 +116,7 @@ function compareChildren(oldChildren, newChildren, index, patches, currentPatch)
     var diffs = listDiff(oldChildren, newChildren);
     newChildren = diffs.children;
     if (diffs.moves.length) {
-        var reorderPatch = { type: patch.REORDER, moves: diffs.moves };
+        var reorderPatch = { type: "REORDER", moves: diffs.moves };
         currentPatch.push(reorderPatch);
     }
     var leftNode = null;
@@ -173,10 +168,10 @@ function applyPatches(node, currentPatches) {
     for (var i = 0; i < currentPatches.length; i++) {
         var currentPatch = currentPatches[i];
         switch (currentPatch.type) {
-            case patch.REORDER:
+            case "REORDER":
                 reOrderChildren(node, currentPatch.moves);
                 break;
-            case patch.PROPS:
+            case "PROPS":
                 setProps(node, currentPatch.props);
                 break;
         }
@@ -202,7 +197,6 @@ function changeS(oA, state) {
 }
 
 function changeOpenDom(node, open) {
-    console.log(node, open);
     var oI = node.children('i');
     var oUl = node.children('ul');
     oI.removeClass();
