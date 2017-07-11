@@ -97,21 +97,25 @@ function initEvents(calendar) {
                 console.log('already selected，do nothing');
             }
             else {
-                var tmp = new Date(calendar.renderValue);
+                var year = calendar.renderValue.getFullYear();
+                var month = calendar.renderValue.getMonth();
+                var date = parseInt(target.innerText);
                 if (hasClass(target, 'calendar-premonthday')) {
-                    tmp.addMonth(-1);
+                    --month;
+                    if (month === -1) {
+                        --year;
+                        month = 11;
+                    }
                 }
                 else if (hasClass(target, 'calendar-nextmonthday')) {
-                    tmp.addMonth(1);
+                    ++month;
+                    if (month === 12) {
+                        ++year;
+                        month = 0;
+                    }
                 }
-                var year = tmp.getFullYear();
-                var month = tmp.getMonth();
-                var date = parseInt(target.innerText);
-
-                calendar.renderValue.setFullYear(year);
-                calendar.renderValue.setMonth(month);
-                calendar.renderValue.setDate(date);
-                calendar.value = new Date(calendar.renderValue);
+                calendar.renderValue = new Date(year, month, date, 0, 0, 0, 0);
+                calendar.value = new Date(year, month, date, 0, 0, 0, 0);
                 calendar.render();
             }
         }
@@ -126,18 +130,14 @@ function forceRenderValueValid(calendar) {
     if (maxDate) {
         max = [new Date(maxDate).getFullYear(), new Date(maxDate).getMonth(), new Date(maxDate).getDate()];
         if (biggerThan(tArr, max)) {
-            calendar.renderValue.setFullYear(max[0]);
-            calendar.renderValue.setMonth(max[1]);
-            calendar.renderValue.setDate(max[2]);
+            calendar.renderValue = new Date(max[0], max[1], max[2], 0, 0, 0, 0);
         }
     }
     var min;
     if (minDate) {
         min = [new Date(minDate).getFullYear(), new Date(minDate).getMonth(), new Date(minDate).getDate()];
         if (biggerThan(min, tArr)) {
-            calendar.renderValue.setFullYear(min[0]);
-            calendar.renderValue.setMonth(min[1]);
-            calendar.renderValue.setDate(min[2]);
+            calendar.renderValue = new Date(min[0], min[1], min[2], 0, 0, 0, 0);
         }
     }
 }
@@ -247,16 +247,15 @@ function renderDom(calendar, renderData) {
 
 
 //创建列表组
-function Calendar(options) {
+function Calendar(options) {    
+    // tmp.getFullYear(), tmp.getMonth(), tmp.getDate(), tmp.getHours(), tmp.getMinutes(), tmp.getSeconds(), tmp.getMilliseconds()
     this.config = Object.assign({}, {
         format: 'yyyy-MM-dd',
         initDate: new Date('2017-07-09'),
         maxDate: null,
         minDate: new Date('2017-07-05'),
         beforeChange: function () { },
-        onChange: function () { },
-        onShow: function () { },
-        onHide: function () { }
+        onChanged: function () { }
     }, options);
     this.value = this.config.initDate;
     this.renderValue = SharkUI.isEmpty(this.value) ? new Date() : new Date(this.value);
@@ -282,7 +281,6 @@ Calendar.prototype.getId = function () {
 }
 
 Calendar.prototype.render = function () {
-    // tmp.getFullYear(), tmp.getMonth(), tmp.getDate(), tmp.getHours(), tmp.getMinutes(), tmp.getSeconds(), tmp.getMilliseconds()
     forceRenderValueValid(this);
     renderDom(this, getRenderData(this));
 }
