@@ -118,10 +118,25 @@ function checkAll(newTopNode, flag) {
     changeChildren(newTopNode);
 }
 
+// 反选
+function reverseCheck(newTopNode, node) {
+    var children = node.children || [];
+    children.forEach(function (child) {
+        if (!child.children) {
+            child.checked = !child.checked;
+            child.state = child.checked ? 2 : 0;
+        } else {
+           reverseCheck(newTopNode, child);
+        }
+    });
+    changeParent(newTopNode, node.id);
+}
+
 var Data = {
     getTopNode: getTopNode,
     changeChecked: changeChecked,
     changeOpen: changeOpen,
-    checkAll: checkAll
+    checkAll: checkAll,
+    reverseCheck: reverseCheck
 };
 export { Data };

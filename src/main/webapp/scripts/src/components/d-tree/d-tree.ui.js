@@ -45,6 +45,13 @@ function checkAll(sharkComponent, flag) {
     compareAndRender(sharkComponent, newTopNode);
 }
 
+// 反选
+function reverseCheck(sharkComponent) {
+    var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
+    Data.reverseCheck(newTopNode, newTopNode);
+    compareAndRender(sharkComponent, newTopNode);
+}
+
 SharkUI.sharkDTree = function (options, targetElement) {
     var config = {
         nodes: []
@@ -71,6 +78,10 @@ SharkUI.sharkDTree = function (options, targetElement) {
     // 全不选
     sharkComponent.checkNo = function () {
         checkAll(sharkComponent, false);
+    };
+    // 反选
+    sharkComponent.reverseCheck = function () {
+        reverseCheck(sharkComponent);
     };
     return sharkComponent;
 }

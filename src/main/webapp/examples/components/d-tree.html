@@ -1,4 +1,9 @@
 <div id="dTreeContainer"></div>
+<button id="dcheckAllBtn" class="btn btn-primary">全选</button>
+<button id="dreverseCheckBtn" class="btn btn-primary">反选</button>
+<button id="dcheckNoBtn" class="btn btn-primary">不选</button>
+<button id="reRenderBtn" class="btn btn-primary">重新渲染</button>
+
 <script type="text/javascript">
     var treeData = [{
         id: 'all',
@@ -75,16 +80,26 @@
         }]
     }];
 
-    var mytree = SharkUI.sharkDTree({
+    var dmytree = SharkUI.sharkDTree({
         nodes: treeData
     });
 
-    // mytree.checkNo();
+    dmytree.appendTo('#dTreeContainer');
 
-    // console.log(mytree);
-
-    // mytree.render(newTreeData);
-    mytree.appendTo('#dTreeContainer');
+    document.getElementById('dcheckAllBtn').addEventListener('click',function(){
+        console.log(dmytree)
+        dmytree.checkAll();
+    });
+    document.getElementById('dreverseCheckBtn').addEventListener('click',function(){
+        dmytree.reverseCheck();
+    });
+    document.getElementById('dcheckNoBtn').addEventListener('click',function(){
+        dmytree.checkNo();
+    });
+    document.getElementById('reRenderBtn').addEventListener('click',function(){
+        dmytree.render(newTreeData);
+    });
+    
 
      
 </script>
