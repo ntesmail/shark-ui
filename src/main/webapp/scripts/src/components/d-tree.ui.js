@@ -146,6 +146,10 @@ function diffProps(oldNode, newNode) {
             count++;
             propsPatches.state = newNode.state;
         }
+        if (oldNode.open !== newNode.open) {
+            count++;
+            propsPatches.open = newNode.open;
+        }
     }
     if (count === 0) {
         return null;
@@ -197,6 +201,21 @@ function changeS(oA, state) {
     }
 }
 
+function changeOpenDom(node, open) {
+    console.log(node, open);
+    var oI = node.children('i');
+    var oUl = node.children('ul');
+    oI.removeClass();
+    oUl.removeClass();
+    oI.addClass('tree-icon');
+    if (open) {
+        oI.addClass('tree-icon-down');
+        oUl.addClass('tree-open');
+    } else {
+        oI.addClass('tree-icon-right');
+    }
+}
+
 function setProps(node, props) {
     var oSpan = node.children('span');
     var oA = node.children('a');
@@ -208,6 +227,9 @@ function setProps(node, props) {
                     break;
                 case "state":
                     changeS(oA, props[key]);
+                    break;
+                case "open":
+                    changeOpenDom(node, props[key]);
                     break;
             }
         }
@@ -290,6 +312,13 @@ function getTopNode(nodes) {
 
 // 获取node的dom节点
 function getNodeDom(node) {
+    var children = node.children;
+    var open = !!node.open;
+    var oI = null;
+    if (children) {
+        oI = $('<i class="tree-icon"></i>');
+        open ? oI.addClass('tree-icon-down') : oI.addClass('tree-icon-right');
+    }
     var oA = $('<a class="tree-icon"></a>');
     switch (node.state) {
         case 0:
@@ -308,18 +337,20 @@ function getNodeDom(node) {
     oSpan.html(node.node_name);
     var oLi = $('<li></li>');
     oLi.data('id', node.node_id);
+    oLi.append(oI);
     oLi.append(oA);
     oLi.append(oSpan);
-    if (node && node.children) {
-        var oUl = getUlDom(node.children);
+    if (children) {
+        var oUl = getUlDom(children, open);
         oLi.append(oUl);
     }
     return oLi;
 }
 
 // 获取ul的dom节点
-function getUlDom(nodes) {
-    var oUl = $('<ul class="tree-open"></ul>');
+function getUlDom(nodes, open) {
+    var oUl = $('<ul></ul>');
+    open && oUl.addClass('tree-open');
     nodes.forEach(function (node) {
         var oLi = getNodeDom(node);
         oUl.append(oLi);
@@ -417,6 +448,24 @@ function changeChecked(newTopNode, node, id) {
     }
 }
 
+// 修改数据树的选中状态
+function changeOpen(node, id) {
+    var children = node.children || [];
+    if (node.node_id === id) {
+        // 切换节点checked状态
+        node.open = !node.open;
+        return node;
+    } else {
+        for (var i = 0; i < children.length; i++) {
+            var node = changeOpen(children[i], id);
+            // 如果node存在，没有必要再循环下去，直接返回
+            if (node) {
+                return node;
+            }
+        }
+    }
+}
+
 // 初始化事件
 function initEvents(sharkComponent) {
     var component = sharkComponent.component;
@@ -429,9 +478,21 @@ function initEvents(sharkComponent) {
         changeChecked(newTopNode, newTopNode, id);
         // 得到两棵数据树的差异
         var patches = diff(sharkComponent.topNode, newTopNode);
+        patchs(component, { index: 0 }, patches);
+        sharkComponent.topNode = newTopNode;
+        // 阻止冒泡
+        e.stopPropagation();
+    });
 
-        console.log(patches);
-
+    component.on('click', 'i', function (e) {
+        var li = $(e.currentTarget).parent('li');
+        var id = li.data('id');
+        var newTopNode = {};
+        SharkUI.extend(newTopNode, sharkComponent.topNode);
+        // 修改展开收起的状态
+        changeOpen(newTopNode, id);
+        // 得到两棵数据树的差异
+        var patches = diff(sharkComponent.topNode, newTopNode);
         patchs(component, { index: 0 }, patches);
         sharkComponent.topNode = newTopNode;
         // 阻止冒泡
