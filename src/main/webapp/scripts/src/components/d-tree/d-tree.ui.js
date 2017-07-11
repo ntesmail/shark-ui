@@ -11,34 +11,32 @@ import { Dom } from './dom';
 
 // 初始化事件
 function initEvents(sharkComponent) {
-    var component = sharkComponent.component;
-    component.on('click', 'li', function (evt) {
-        var li = $(evt.currentTarget);
-        var id = li.data('id');
-        var newTopNode = {};
-        SharkUI.extend(newTopNode, sharkComponent.topNode);
-        if (evt.target.tagName.toUpperCase() === 'I') {
-            // 修改展开收起的状态
+    sharkComponent.component.on('click', 'li', function (evt) {
+        var id = $(evt.currentTarget).data('id');
+        var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
+        if (evt.target.tagName.toUpperCase() === 'I') { // 修改展开收起的状态
             Data.changeOpen(newTopNode, id);
-        } else {
-            // 修改新的数据树的选中状态
+        } else {  // 修改新的数据树的选中状态
             Data.changeChecked(newTopNode, newTopNode, id);
         }
-        // 得到两棵数据树的差异
-        var patches = Diff.diff(sharkComponent.topNode, newTopNode);
-        Dom.modifyComponent(component, { index: 0 }, patches);
-        sharkComponent.topNode = newTopNode;
+        compareAndRender(sharkComponent, newTopNode);
         // 阻止冒泡
         evt.stopPropagation();
     });
 }
 
-// 重新render
-function render(sharkComponent, newTreeData) {
-    var newTopNode = Data.getTopNode(newTreeData);
+// 比较两棵数据树的差异，并且渲染
+function compareAndRender(sharkComponent, newTopNode) {
+    // 得到两棵数据树的差异
     var patches = Diff.diff(sharkComponent.topNode, newTopNode);
     Dom.modifyComponent(sharkComponent.component, { index: 0 }, patches);
     sharkComponent.topNode = newTopNode;
+}
+
+// 重新render
+function render(sharkComponent, newTreeData) {
+    var newTopNode = Data.getTopNode(newTreeData);
+    compareAndRender(sharkComponent, newTopNode);
 }
 
 SharkUI.sharkDTree = function (options, targetElement) {
