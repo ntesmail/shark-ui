@@ -3,12 +3,12 @@
  * @description 日期选择器
  */
 import $ from 'jquery';
-import { SharkUI } from '../common/core';
-import { Event } from '../common/event';
-import { DomHelper } from '../common/domhelper';
-import { Templates } from '../common/templates';
-import { BaseComponent } from '../common/base';
-import '../common/date';
+import { SharkUI } from '../../common/core';
+import { Event } from '../../common/event';
+import { DomHelper } from '../../common/domhelper';
+import { Templates } from '../../common/templates';
+import { BaseComponent } from '../../common/base';
+import '../../common/date';
 import { Calendar } from './calendar.ui';
 // input模板
 var templateInput = Templates.input;

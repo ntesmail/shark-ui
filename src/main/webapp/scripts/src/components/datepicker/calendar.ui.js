@@ -2,9 +2,9 @@
  * @author sweetyx
  * @description 日历
  */
-import { SharkUI } from '../common/core';
-import { Templates } from '../common/templates';
-import { DomHelper } from '../common/domhelper';
+import { SharkUI } from '../../common/core';
+import { Templates } from '../../common/templates';
+import { DomHelper } from '../../common/domhelper';
 var template = Templates.calendar;
 var templateFun = Templates.templateAoT(template);
 

@@ -1,5 +1,5 @@
 import './components/autocomplete.ui';
-import './components/datepicker.ui';
+import './components/datepicker/datepicker.ui';
 import './components/dropdown.ui';
 import './components/fileupload.ui';
 import './components/pager.ui';
