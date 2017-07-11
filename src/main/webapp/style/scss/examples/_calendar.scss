@@ -2,7 +2,6 @@
     position: absolute;
     left: 0;
     top: 0;
-    display: none;
     border: 1px solid #acacac;
     background-color: #ffffff;
     border-radius: 2px;
@@ -108,4 +107,10 @@
             background-color: #eeeeee;
         }
     }
+}
+.shark-picker-container{
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: none;
 }

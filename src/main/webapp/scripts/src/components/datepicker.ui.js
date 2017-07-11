@@ -27,6 +27,12 @@ function initDom(sharkComponent, config, targetElement) {
     sharkComponent.component.addClass('shark-datapicker');
     return sharkComponent;
 }
+function initContainer() {
+    var container = $('<div class="shark-picker-container"></div>');
+    $(document.body).append(container);
+    container.attr('id', SharkUI.createUUID());
+    return container;
+}
 // 初始化事件
 function initEvents(sharkComponent, config) {
     var datepicker = sharkComponent.component;
@@ -38,6 +44,7 @@ function initEvents(sharkComponent, config) {
 }
 // 渲染下拉列表
 function initCalendar(sharkComponent, config) {
+    var container = initContainer();
     var calendar = new Calendar({
         initDate: config.initDate,
         maxDate: config.maxDate,
@@ -50,10 +57,12 @@ function initCalendar(sharkComponent, config) {
             }
         }
     });
+    container.append(calendar.nativeElement);
     sharkComponent.calendar = calendar;
+    sharkComponent.container = container;
     Event.addCloseListener(
-        calendar.getId(),
-        [sharkComponent.component, calendar.element],
+        container.attr('id'),
+        [sharkComponent.component, container],
         BaseComponent.filterComponentAction(sharkComponent, function (evt) {
             sharkComponent.hide();
         })
@@ -93,8 +102,9 @@ SharkUI.sharkDatepicker = function (options, targetElement) {
         if (!sharkComponent.isCalendarInit) {
             initCalendar(sharkComponent, config);
         }
-        sharkComponent.calendar.show();
-        sharkComponent.calendar.adjustPostion(sharkComponent.component);
+        var postion = DomHelper.calcOffset(sharkComponent.component, sharkComponent.container, 'bottom');
+        sharkComponent.container.css(postion);
+        sharkComponent.container.show();
         sharkComponent.isOpen = true;
         if (typeof config.onShow === 'function') {
             config.onShow.call(sharkComponent);
@@ -104,7 +114,7 @@ SharkUI.sharkDatepicker = function (options, targetElement) {
         if (!sharkComponent.isOpen) {
             return;
         }
-        sharkComponent.calendar.hide();
+        sharkComponent.container.hide();
         sharkComponent.isOpen = false;
         if (typeof config.onHide === 'function') {
             config.onHide.call(sharkComponent);
@@ -113,6 +123,10 @@ SharkUI.sharkDatepicker = function (options, targetElement) {
     sharkComponent.destroy = function () {
         if (sharkComponent.calendar) {
             sharkComponent.calendar.destroy();
+        }
+        if (sharkComponent.container) {
+            Event.removeCloseListener(sharkComponent.container.attr('id'));
+            sharkComponent.container.remove();
         }
         if (sharkComponent.createType === 'construct') {
             sharkComponent.component.remove();

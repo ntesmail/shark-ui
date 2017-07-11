@@ -2,56 +2,13 @@
  * @author sweetyx
  * @description 日历
  */
-import $ from 'jquery';
 import { SharkUI } from '../common/core';
 import { Templates } from '../common/templates';
 import { DomHelper } from '../common/domhelper';
 var template = Templates.calendar;
 var templateFun = Templates.templateAoT(template);
 
-function parseToHTML(str) {
-    var tmpDiv = document.createElement('div');
-    tmpDiv.innerHTML = str;
-    return tmpDiv.children;
-}
-
-function getClassList(nativeElement) {
-    var arr = nativeElement.className.split(' ');
-    for (var i = 0; i < arr.length; i++) {
-        if (SharkUI.isEmpty(arr[i])) {
-            arr.splice(i, 1);
-            i--;
-        }
-    }
-    return arr;
-}
-
-function addClass(nativeElement, className) {
-    var classList = getClassList(nativeElement);
-    classList.push(className);
-    nativeElement.className = classList.join(' ');
-}
-
-function removeClass(nativeElement, className) {
-    var classList = getClassList(nativeElement);
-    var index = classList.indexOf(className);
-    if (index > -1) {
-        classList.splice(index, 1);
-    }
-    nativeElement.className = classList.join(' ');
-}
-
-function hasClass(nativeElement, className) {
-    var classList = getClassList(nativeElement);
-    var index = classList.indexOf(className);
-    if (index > -1) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-
+// 日期a和b是否相等
 function equal(a, b) {
     if (a[0] === b[0] && a[1] === b[1] && a[2] === b[2]) {
         return true;
@@ -60,7 +17,7 @@ function equal(a, b) {
         return false;
     }
 }
-
+// 日期a是否大于b
 function biggerThan(a, b) {
     if ((a[0] > b[0]) || (a[0] >= b[0] && a[1] > b[1]) || (a[0] >= b[0] && a[1] >= b[1] && a[2] > b[2])) {
         return true;
@@ -69,45 +26,45 @@ function biggerThan(a, b) {
         return false;
     }
 }
-// calendar function
+// 初始化日历的事件
 function initEvents(calendar) {
-    calendar.nativeElement.addEventListener('click', function (evt) {
+    var eventHandler = function (evt) {
         var target = evt.target;
-        if (hasClass(target, 'calendar-disabled')) {
+        if (DomHelper.hasClass(target, 'calendar-disabled')) {
             return;
         }
-        else if (hasClass(target, 'calendar-prev-year')) {
+        else if (DomHelper.hasClass(target, 'calendar-prev-year')) {
             calendar.renderValue.addYear(-1);
             calendar.render();
         }
-        else if (hasClass(target, 'calendar-prev-month')) {
+        else if (DomHelper.hasClass(target, 'calendar-prev-month')) {
             calendar.renderValue.addMonth(-1);
             calendar.render();
         }
-        else if (hasClass(target, 'calendar-next-year')) {
+        else if (DomHelper.hasClass(target, 'calendar-next-year')) {
             calendar.renderValue.addYear(1);
             calendar.render();
         }
-        else if (hasClass(target, 'calendar-next-month')) {
+        else if (DomHelper.hasClass(target, 'calendar-next-month')) {
             calendar.renderValue.addMonth(1);
             calendar.render();
         }
-        else if (hasClass(target, 'calendar-day')) {
-            if (hasClass(target, 'calendar-selected')) {
+        else if (DomHelper.hasClass(target, 'calendar-day')) {
+            if (DomHelper.hasClass(target, 'calendar-selected')) {
                 console.log('already selected，do nothing');
             }
             else {
                 var year = calendar.renderValue.getFullYear();
                 var month = calendar.renderValue.getMonth();
                 var date = parseInt(target.innerText);
-                if (hasClass(target, 'calendar-premonthday')) {
+                if (DomHelper.hasClass(target, 'calendar-premonthday')) {
                     --month;
                     if (month === -1) {
                         --year;
                         month = 11;
                     }
                 }
-                else if (hasClass(target, 'calendar-nextmonthday')) {
+                else if (DomHelper.hasClass(target, 'calendar-nextmonthday')) {
                     ++month;
                     if (month === 12) {
                         ++year;
@@ -131,9 +88,11 @@ function initEvents(calendar) {
                 }
             }
         }
-    });
+    }
+    calendar.nativeElement.addEventListener('click', eventHandler);
+    calendar.nativeElement.cblist = [{ eventType: 'click', cb: eventHandler }];
 }
-
+// 强制把renderValue设置为合法（min<=renderValue<=max）
 function forceRenderValueValid(calendar) {
     var tArr = [new Date(calendar.renderValue).getFullYear(), new Date(calendar.renderValue).getMonth(), new Date(calendar.renderValue).getDate()];
     var maxDate = calendar.config.maxDate;
@@ -153,7 +112,7 @@ function forceRenderValueValid(calendar) {
         }
     }
 }
-
+// 生成要渲染的数据
 function getRenderData(calendar) {
     var tmp = new Date(calendar.renderValue);
     tmp.addMonth(-1);
@@ -188,7 +147,7 @@ function getRenderData(calendar) {
         days: weekDaysArray
     }
 }
-
+// 把数据渲染成日历的dom
 function renderDom(calendar, renderData) {
     var today = [new Date().getFullYear(), new Date().getMonth(), new Date().getDate()];
     var current;
@@ -235,74 +194,67 @@ function renderDom(calendar, renderData) {
     nativeElement.querySelector('.calendar-weekday-wrap').innerHTML = html;
     nativeElement.querySelector('.calendar-current-year').value = renderData.year;
     nativeElement.querySelector('.calendar-current-month').value = renderData.month + 1;
-    removeClass(nativeElement.querySelector('.calendar-next-year'), 'calendar-disabled');
-    removeClass(nativeElement.querySelector('.calendar-next-month'), 'calendar-disabled');
-    removeClass(nativeElement.querySelector('.calendar-prev-year'), 'calendar-disabled');
-    removeClass(nativeElement.querySelector('.calendar-prev-month'), 'calendar-disabled');
+    DomHelper.removeClass(nativeElement.querySelector('.calendar-next-year'), 'calendar-disabled');
+    DomHelper.removeClass(nativeElement.querySelector('.calendar-next-month'), 'calendar-disabled');
+    DomHelper.removeClass(nativeElement.querySelector('.calendar-prev-year'), 'calendar-disabled');
+    DomHelper.removeClass(nativeElement.querySelector('.calendar-prev-month'), 'calendar-disabled');
     if (max) {
         if (renderData.year >= max[0]) {
-            addClass(nativeElement.querySelector('.calendar-next-year'), 'calendar-disabled');
+            DomHelper.addClass(nativeElement.querySelector('.calendar-next-year'), 'calendar-disabled');
         }
         if (renderData.year > max[0] || (renderData.year >= max[0] && renderData.month >= max[1])) {
-            addClass(nativeElement.querySelector('.calendar-next-month'), 'calendar-disabled');
+            DomHelper.addClass(nativeElement.querySelector('.calendar-next-month'), 'calendar-disabled');
         }
     }
     if (min) {
         if (renderData.year <= min[0]) {
-            addClass(nativeElement.querySelector('.calendar-prev-year'), 'calendar-disabled');
+            DomHelper.addClass(nativeElement.querySelector('.calendar-prev-year'), 'calendar-disabled');
         }
         if (renderData.year < min[0] || (renderData.year <= min[0] && renderData.month <= min[1])) {
-            addClass(nativeElement.querySelector('.calendar-prev-month'), 'calendar-disabled');
+            DomHelper.addClass(nativeElement.querySelector('.calendar-prev-month'), 'calendar-disabled');
         }
     }
 }
 
-
-//创建列表组
+// 日历组件
 function Calendar(options) {
     // tmp.getFullYear(), tmp.getMonth(), tmp.getDate(), tmp.getHours(), tmp.getMinutes(), tmp.getSeconds(), tmp.getMilliseconds()
     this.config = Object.assign({}, {
-        initDate: new Date('2017-07-09'),
+        initDate: null,
         maxDate: null,
-        minDate: new Date('2017-07-05'),
+        minDate: null,
         beforeChange: function () { },
         onChanged: function () { }
     }, options);
+    this.nativeElement = DomHelper.parseToHTML(templateFun.apply())[0];
+    this.nativeElement.setAttribute('id', 'xxx');
+    document.body.appendChild(this.nativeElement);
+    initEvents(this);
     this.value = this.config.initDate;
     this.renderValue = SharkUI.isEmpty(this.value) ? new Date() : new Date(this.value);
-    var elements = parseToHTML(templateFun.apply());
-    this.nativeElement = elements[0];
-    this.nativeElement.setAttribute('id', SharkUI.createUUID());
-    document.body.appendChild(this.nativeElement);
-    this.element = $(this.nativeElement);
-    initEvents(this);
     this.render();
 }
-
-Calendar.prototype.show = function () {
-    this.element.show();
-}
-
-Calendar.prototype.hide = function () {
-    this.element.hide();
-}
-
-Calendar.prototype.getDate = function () {
+// 获取值
+Calendar.prototype.getValue = function () {
     return this.value;
 }
-
-Calendar.prototype.getId = function () {
-    return this.element.attr('id');
+// 设置值
+Calendar.prototype.setValue = function (date) {
+    this.value = new Date(date);
+    this.renderValue = new Date(date);
+    this.render();
 }
-
+// 渲染
 Calendar.prototype.render = function () {
     forceRenderValueValid(this);
     renderDom(this, getRenderData(this));
 }
-
-Calendar.prototype.adjustPostion = function (target) {
-    var postion = DomHelper.calcOffset(target, this.element, 'bottom');
-    this.element.css(postion);
+// 销毁
+Calendar.prototype.destroy = function () {
+    this.nativeElement.cblist && this.nativeElement.cblist.forEach((item) => {
+        this.nativeElement.removeEventListener(item.eventType, item.cb);
+    });
+    DomHelper.remove(this.nativeElement);
 }
 
 export { Calendar };
