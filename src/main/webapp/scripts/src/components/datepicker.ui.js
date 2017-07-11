@@ -38,7 +38,18 @@ function initEvents(sharkComponent, config) {
 }
 // 渲染下拉列表
 function initCalendar(sharkComponent, config) {
-    var calendar = new Calendar();
+    var calendar = new Calendar({
+        initDate: config.initDate,
+        maxDate: config.maxDate,
+        minDate: config.minDate,
+        beforeChange: config.beforeChange,
+        onChanged: function (date) {
+            sharkComponent.setValue(date);
+            if (typeof config.onChanged === 'function') {
+                config.onChanged.call(this, date);
+            }
+        }
+    });
     sharkComponent.calendar = calendar;
     Event.addCloseListener(
         calendar.getId(),
@@ -54,10 +65,13 @@ SharkUI.sharkDatepicker = function (options, targetElement) {
     /*********默认参数配置*************/
     var config = {
         format: 'yyyy-MM-dd HH:mm:ss.S',
-        date: Date.now(),
-        maxDate: Date.now(),
-        minDate: Date.now(),
-        onChange: function () { },
+        initDate: new Date('2017-07-09'),
+        maxDate: null,
+        minDate: new Date('2017-07-05'),
+        beforeChange: function (date) {
+        },
+        onChanged: function (date) {
+        },
         onShow: function () { },
         onHide: function () { }
     };
@@ -67,6 +81,11 @@ SharkUI.sharkDatepicker = function (options, targetElement) {
     initDom(sharkComponent, config, targetElement);
     BaseComponent.addComponentBaseFn(sharkComponent, config);
     initEvents(sharkComponent, config);
+
+    sharkComponent.setValue = function (date) {
+        var tmp = new Date(date);
+        sharkComponent.component.val(tmp.Format('yyyy-MM-dd HH:mm:ss.S'));
+    };
     sharkComponent.show = function () {
         if (sharkComponent.isOpen) {
             return;

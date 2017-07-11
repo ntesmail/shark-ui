@@ -114,9 +114,21 @@ function initEvents(calendar) {
                         month = 0;
                     }
                 }
-                calendar.renderValue = new Date(year, month, date, 0, 0, 0, 0);
-                calendar.value = new Date(year, month, date, 0, 0, 0, 0);
-                calendar.render();
+                var beforeChangeCb;
+                if (typeof calendar.config.beforeChange === 'function') {
+                    beforeChangeCb = calendar.config.beforeChange.call(calendar, new Date(year, month, date, 0, 0, 0, 0));
+                }
+                if (beforeChangeCb === false) {
+                    return;
+                }
+                else {
+                    calendar.renderValue = new Date(year, month, date, 0, 0, 0, 0);
+                    calendar.value = new Date(year, month, date, 0, 0, 0, 0);
+                    calendar.render();
+                    if (typeof calendar.config.onChanged === 'function') {
+                        beforeChangeCb = calendar.config.onChanged.call(calendar, new Date(year, month, date, 0, 0, 0, 0));
+                    }
+                }
             }
         }
     });
@@ -247,10 +259,9 @@ function renderDom(calendar, renderData) {
 
 
 //创建列表组
-function Calendar(options) {    
+function Calendar(options) {
     // tmp.getFullYear(), tmp.getMonth(), tmp.getDate(), tmp.getHours(), tmp.getMinutes(), tmp.getSeconds(), tmp.getMilliseconds()
     this.config = Object.assign({}, {
-        format: 'yyyy-MM-dd',
         initDate: new Date('2017-07-09'),
         maxDate: null,
         minDate: new Date('2017-07-05'),
@@ -274,6 +285,10 @@ Calendar.prototype.show = function () {
 
 Calendar.prototype.hide = function () {
     this.element.hide();
+}
+
+Calendar.prototype.getDate = function () {
+    return this.value;
 }
 
 Calendar.prototype.getId = function () {
