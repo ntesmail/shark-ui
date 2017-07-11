@@ -58,9 +58,15 @@ function openAll(sharkComponent) {
     compareAndRender(sharkComponent, newTopNode);
 }
 
-function setChecked(sharkComponent, checkedList, config) {
+function setChecked(sharkComponent, idList, config) {
     var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
-    Data.setChecked(newTopNode, checkedList, config.link);
+    Data.setChecked(newTopNode, idList, config.link);
+    compareAndRender(sharkComponent, newTopNode);
+}
+
+function openTo(sharkComponent, idList) {
+    var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
+    Data.openTo(newTopNode, idList);
     compareAndRender(sharkComponent, newTopNode);
 }
 
@@ -100,17 +106,21 @@ SharkUI.sharkDTree = function (options, targetElement) {
     sharkComponent.reverseCheck = function () {
         reverseCheck(sharkComponent);
     };
-
-    sharkComponent.setChecked = function (checkedList) {
-        setChecked(sharkComponent, checkedList, config);
+    // 设置某几个节点为选中的
+    sharkComponent.setChecked = function (idList) {
+        setChecked(sharkComponent, idList, config);
     };
     // 展开全部
     sharkComponent.openAll = function () {
         openAll(sharkComponent);
     };
-
+    // 获取选中的id列表
     sharkComponent.getChecked = function () {
         return Data.getChecked(sharkComponent.topNode);
+    };
+    // 打开某几个节点
+    sharkComponent.openTo = function (idList) {
+        openTo(sharkComponent, idList);
     };
     return sharkComponent;
 }

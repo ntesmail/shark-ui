@@ -146,9 +146,9 @@ function openAll(node) {
 }
 
 // 设置选中项
-function setChecked(newTopNode, checkedList, link) {
+function setChecked(newTopNode, idList, link) {
     checkAll(newTopNode, false);
-    checkedList.forEach(function (id) {
+    idList.forEach(function (id) {
         var node = getNodeById(newTopNode, id);
         if (node) {
             node.checked = true;
@@ -157,22 +157,33 @@ function setChecked(newTopNode, checkedList, link) {
     handleNode(newTopNode, link);
 }
 
+// 获取选中的id列表
 function getChecked(topNode) {
-    var checkedList = [];
-    getCheckedItem(topNode, checkedList);
-    return checkedList;
+    var idList = [];
+    getCheckedItem(topNode, idList);
+    return idList;
 }
 
-function getCheckedItem(node, checkedList) {
+// 获取选中的id
+function getCheckedItem(node, idList) {
     var children = node.children || [];
     children.forEach(function (child) {
-        getCheckedItem(child, checkedList);
+        getCheckedItem(child, idList);
     });
     if (node.checked) {
-        checkedList.push(node.id);
+        idList.push(node.id);
     }
 }
 
+// 打开某几个节点
+function openTo(newTopNode, idList) {
+    idList.forEach(function (id) {
+        var node = getNodeById(newTopNode, id);
+        if (node && node.children) {
+            node.open = true;
+        }
+    });
+}
 
 var Data = {
     getTopNode: getTopNode,
@@ -182,6 +193,7 @@ var Data = {
     reverseCheck: reverseCheck,
     openAll: openAll,
     setChecked: setChecked,
-    getChecked: getChecked
+    getChecked: getChecked,
+    openTo: openTo
 };
 export { Data };

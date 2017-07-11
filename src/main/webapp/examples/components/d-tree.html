@@ -10,7 +10,7 @@
     var treeData = [{
         id: 'all',
         name: '所有组件',
-        open: true,
+       //  open: true,
         children: [{
             id: 'autocomplete',
             name: 'autocomplete组件',
@@ -113,10 +113,16 @@
         console.log(dmytree.getChecked());
     });
 
+
+
     // setTimeout(function() {
     //  dmytree.setChecked(['modal', 'pager']);
     // }, 2000);
 
+
+     setTimeout(function() {
+        dmytree.openTo(['all']);
+     }, 2000);
 
     
 
