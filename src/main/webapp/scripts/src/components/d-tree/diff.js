@@ -92,8 +92,6 @@ function compareChildren(oldChildren, newChildren, index, patches, currentPatch)
 }
 
 function diffProps(oldNode, newNode, currentPatch) {
-    var count = 0;
-    var propsPatches = {};
     if (oldNode && newNode) {
         if (oldNode.name !== newNode.name) {
             currentPatch.push({ type: "NAME", name: newNode.name });
@@ -112,13 +110,7 @@ function compareNode(oldNode, newNode, index, patches) {
     var currentPatch = [];
     if (newNode) {
         diffProps(oldNode, newNode, currentPatch);
-        compareChildren(
-            oldNode.children || [],
-            newNode.children || [],
-            index,
-            patches,
-            currentPatch
-        );
+        compareChildren(oldNode.children || [], newNode.children || [], index, patches, currentPatch);
     }
     if (currentPatch.length) {
         patches[index] = currentPatch;
@@ -137,5 +129,4 @@ function diff(oldTopNode, newTopNode) {
 var Diff = {
     diff: diff
 };
-
 export { Diff };

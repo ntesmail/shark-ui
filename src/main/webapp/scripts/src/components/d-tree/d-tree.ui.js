@@ -33,7 +33,7 @@ function compareAndRender(sharkComponent, newTopNode) {
     sharkComponent.topNode = newTopNode;
 }
 
-// 重新render
+// 用新数据重新render
 function render(sharkComponent, newTreeData) {
     var newTopNode = Data.getTopNode(newTreeData);
     compareAndRender(sharkComponent, newTopNode);
