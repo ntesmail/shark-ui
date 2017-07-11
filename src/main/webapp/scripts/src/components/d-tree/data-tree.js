@@ -127,10 +127,10 @@ function changeOpen(node, id) {
     }
 }
 
-var DataProcess = {
+var DataTree = {
     getTopNode: getTopNode,
     changeChecked: changeChecked,
     changeOpen: changeOpen
 };
 
-export { DataProcess };
+export { DataTree };

@@ -6,7 +6,7 @@ import $ from 'jquery';
 import { SharkUI } from '../../common/core';
 import { BaseComponent } from '../../common/base';
 import { Diff } from './diff';
-import { DataProcess } from './data-process';
+import { DataTree } from './data-tree';
 
 function patchs(node, walker, patches) {
     var currentPatches = patches[walker.index];
@@ -162,7 +162,7 @@ function initEvents(sharkComponent) {
         var newTopNode = {};
         SharkUI.extend(newTopNode, sharkComponent.topNode);
         // 修改新的数据树的选中状态
-        DataProcess.changeChecked(newTopNode, newTopNode, id);
+        DataTree.changeChecked(newTopNode, newTopNode, id);
         // 得到两棵数据树的差异
         var patches = Diff.diff(sharkComponent.topNode, newTopNode);
         patchs(component, { index: 0 }, patches);
@@ -177,7 +177,7 @@ function initEvents(sharkComponent) {
         var newTopNode = {};
         SharkUI.extend(newTopNode, sharkComponent.topNode);
         // 修改展开收起的状态
-        DataProcess.changeOpen(newTopNode, id);
+        DataTree.changeOpen(newTopNode, id);
         // 得到两棵数据树的差异
         var patches = Diff.diff(sharkComponent.topNode, newTopNode);
         patchs(component, { index: 0 }, patches);
@@ -189,7 +189,7 @@ function initEvents(sharkComponent) {
 
 // 重新render
 function render(sharkComponent, newTreeData) {
-    var newTopNode = DataProcess.getTopNode(newTreeData);
+    var newTopNode = DataTree.getTopNode(newTreeData);
     var patches = Diff.diff(sharkComponent.topNode, newTopNode);
     patchs(sharkComponent.component, { index: 0 }, patches);
     sharkComponent.topNode = newTopNode;
@@ -203,7 +203,7 @@ SharkUI.sharkDTree = function (options, targetElement) {
     // 组件对象
     var sharkComponent = {};
     // 获取数据根节点
-    sharkComponent.topNode = DataProcess.getTopNode(config.nodes);
+    sharkComponent.topNode = DataTree.getTopNode(config.nodes);
     // 初始化dom节点
     initDom(sharkComponent, targetElement);
     // 添加基础方法
