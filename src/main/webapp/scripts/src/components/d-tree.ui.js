@@ -222,15 +222,46 @@ function reOrderChildren(node, moves) {
     }
 }
 
-// 处理节点，为每个节点加上count属性和父节点id
+// 根据子节点的选中情况，得到node的选中状态
+function getNodeState(node) {
+    var children = node.children;
+    if (children) {
+        var count = 0;
+        var len = children.length;
+        for (var i = 0; i < len; i++) {
+            var child = children[i];
+            if (child.state === 1) {
+                count = 'minus';
+                break;
+            }
+            if (child.checked) {
+                count++;
+            }
+        }
+        switch (count) {
+            case 0: node.state = 0;
+                break;
+            case len: node.state = 2;
+                break;
+            default: node.state = 1;
+                break;
+        }
+    } else {
+        node.state = node.checked ? 2 : 0;
+    }
+}
+
+// 处理节点，为每个节点加上count属性，父节点id和选中状态
 function handleNode(node) {
-    var children = node.children || [];
+    var children = node.children;
     node.count = 0;
-    children.forEach(function (child) {
+    children && children.forEach(function (child) {
         handleNode(child);
         child.parentId = node.node_id;
         node.count += child.count + 1;
     });
+    // 根据子节点的选中情况，得到node的选中状态
+    getNodeState(node);
 }
 
 // 获取数据根节点
@@ -374,6 +405,11 @@ SharkUI.sharkDTree = function (options, targetElement) {
     var sharkComponent = {};
     // 获取数据根节点
     sharkComponent.topNode = getTopNode(config.nodes);
+
+
+    console.log(sharkComponent.topNode);
+
+
     // 初始化dom节点
     initDom(sharkComponent, targetElement);
     // 添加基础方法
