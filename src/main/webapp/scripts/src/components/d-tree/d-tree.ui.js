@@ -6,21 +6,22 @@ import $ from 'jquery';
 import { SharkUI } from '../../common/core';
 import { BaseComponent } from '../../common/base';
 import { Diff } from './diff';
-import { DataTree } from './data-tree';
+import { Data } from './data';
 
-function patchs(node, walker, patches) {
+// 根据得到的差异数组，修改组件
+function modifyComponent(node, walker, patches) {
     var currentPatches = patches[walker.index];
     var aLi = node.children('ul').children('li');
     aLi.each(function (i, oLi) {
         walker.index++;
-        patchs($(oLi), walker, patches);
+        modifyComponent($(oLi), walker, patches);
     });
     currentPatches && applyPatches(node, currentPatches);
 }
 
+// 根据得到的当前节点的差异，修改当前节点
 function applyPatches(node, currentPatches) {
-    for (var i = 0; i < currentPatches.length; i++) {
-        var currentPatch = currentPatches[i];
+    currentPatches.forEach(function (currentPatch) {
         switch (currentPatch.type) {
             case "REORDER":
                 reOrderChildren(node, currentPatch.moves);
@@ -29,34 +30,25 @@ function applyPatches(node, currentPatches) {
                 setProps(node, currentPatch.props);
                 break;
         }
-    }
+    });
 }
 
 // 修改复选框的状态
 function changeCheckState(oA, state) {
-    oA.removeClass();
-    oA.addClass('tree-icon');
-    switch (state) {
-        case 0:
-            oA.addClass('tree-icon-check-empty');
-            break;
-        case 1:
-            oA.addClass('tree-icon-check-minus');
-            break;
-        case 2:
-            oA.addClass('tree-icon-check');
-            break;
-        default:
-            oA.addClass('tree-icon-check-empty');
-    }
+    oA.removeClass('tree-icon-check-empty tree-icon-check-minus tree-icon-check');
+    var classObj = {
+        '0': 'tree-icon-check-empty',
+        '1': 'tree-icon-check-minus',
+        '2': 'tree-icon-check'
+    };
+    oA.addClass(classObj[state]);
 }
 
 function changeOpenDom(node, open) {
     var oI = node.children('i');
     var oUl = node.children('ul');
-    oI.removeClass();
+    oI.removeClass('tree-icon-down tree-icon-right');
     oUl.removeClass();
-    oI.addClass('tree-icon');
     if (open) {
         oI.addClass('tree-icon-down');
         oUl.addClass('tree-open');
@@ -87,10 +79,9 @@ function setProps(node, props) {
 
 // 重新排序子节点
 function reOrderChildren(node, moves) {
-    for (var i = 0; i < moves.length; i++) {
+    moves.forEach(function (move) {
         var ul = $(node).children('ul');
         var staticNodeList = $(node).children('ul').children('li');
-        var move = moves[i];
         var index = move.index;
         if (move.type === 0) {
             var li = staticNodeList.eq(index);
@@ -104,7 +95,7 @@ function reOrderChildren(node, moves) {
                 ul.prepend(li);
             }
         }
-    }
+    });
 }
 
 // 获取node的dom节点
@@ -121,7 +112,7 @@ function getNodeDom(node) {
     oLi.append(oSpan);
     if (children) {
         var oUl = getUlDom(children);
-        oLi.prepend('<i></i>');
+        oLi.prepend('<i class="tree-icon"></i>');
         oLi.append(oUl);
         changeOpenDom(oLi, open);
     }
@@ -162,10 +153,10 @@ function initEvents(sharkComponent) {
         var newTopNode = {};
         SharkUI.extend(newTopNode, sharkComponent.topNode);
         // 修改新的数据树的选中状态
-        DataTree.changeChecked(newTopNode, newTopNode, id);
+        Data.changeChecked(newTopNode, newTopNode, id);
         // 得到两棵数据树的差异
         var patches = Diff.diff(sharkComponent.topNode, newTopNode);
-        patchs(component, { index: 0 }, patches);
+        modifyComponent(component, { index: 0 }, patches);
         sharkComponent.topNode = newTopNode;
         // 阻止冒泡
         e.stopPropagation();
@@ -177,10 +168,10 @@ function initEvents(sharkComponent) {
         var newTopNode = {};
         SharkUI.extend(newTopNode, sharkComponent.topNode);
         // 修改展开收起的状态
-        DataTree.changeOpen(newTopNode, id);
+        Data.changeOpen(newTopNode, id);
         // 得到两棵数据树的差异
         var patches = Diff.diff(sharkComponent.topNode, newTopNode);
-        patchs(component, { index: 0 }, patches);
+        modifyComponent(component, { index: 0 }, patches);
         sharkComponent.topNode = newTopNode;
         // 阻止冒泡
         e.stopPropagation();
@@ -189,9 +180,9 @@ function initEvents(sharkComponent) {
 
 // 重新render
 function render(sharkComponent, newTreeData) {
-    var newTopNode = DataTree.getTopNode(newTreeData);
+    var newTopNode = Data.getTopNode(newTreeData);
     var patches = Diff.diff(sharkComponent.topNode, newTopNode);
-    patchs(sharkComponent.component, { index: 0 }, patches);
+    modifyComponent(sharkComponent.component, { index: 0 }, patches);
     sharkComponent.topNode = newTopNode;
 }
 
@@ -203,7 +194,7 @@ SharkUI.sharkDTree = function (options, targetElement) {
     // 组件对象
     var sharkComponent = {};
     // 获取数据根节点
-    sharkComponent.topNode = DataTree.getTopNode(config.nodes);
+    sharkComponent.topNode = Data.getTopNode(config.nodes);
     // 初始化dom节点
     initDom(sharkComponent, targetElement);
     // 添加基础方法

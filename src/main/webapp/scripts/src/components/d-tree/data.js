@@ -127,10 +127,10 @@ function changeOpen(node, id) {
     }
 }
 
-var DataTree = {
+var Data = {
     getTopNode: getTopNode,
     changeChecked: changeChecked,
     changeOpen: changeOpen
 };
 
-export { DataTree };
+export { Data };
