@@ -145,12 +145,25 @@ function openAll(node) {
     });
 }
 
+// 设置选中项
+function setChecked(newTopNode, checkedList, link) {
+    checkAll(newTopNode, false);
+    checkedList.forEach(function (id) {
+        var node = getNodeById(newTopNode, id);
+        if (node) {
+            node.checked = true;
+        }
+    });
+    handleNode(newTopNode, link);
+}
+
 var Data = {
     getTopNode: getTopNode,
     changeChecked: changeChecked,
     changeOpen: changeOpen,
     checkAll: checkAll,
     reverseCheck: reverseCheck,
-    openAll: openAll
+    openAll: openAll,
+    setChecked: setChecked
 };
 export { Data };

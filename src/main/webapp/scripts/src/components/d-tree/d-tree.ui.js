@@ -58,6 +58,12 @@ function openAll(sharkComponent) {
     compareAndRender(sharkComponent, newTopNode);
 }
 
+function setChecked(sharkComponent, checkedList, config) {
+    var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
+    Data.setChecked(newTopNode, checkedList, config.link);
+    compareAndRender(sharkComponent, newTopNode);
+}
+
 SharkUI.sharkDTree = function (options, targetElement) {
     var config = {
         nodes: [],
@@ -95,6 +101,9 @@ SharkUI.sharkDTree = function (options, targetElement) {
         reverseCheck(sharkComponent);
     };
 
+    sharkComponent.setChecked = function (checkedList) {
+        setChecked(sharkComponent, checkedList, config);
+    };
     // 展开全部
     sharkComponent.openAll = function () {
         openAll(sharkComponent);

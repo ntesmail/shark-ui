@@ -100,9 +100,12 @@
     document.getElementById('reRenderBtn').addEventListener('click',function(){
         dmytree.reRender(newTreeData);
     });
-    
     document.getElementById('openAllBtn').addEventListener('click',function(){
         dmytree.openAll();
     });
+    
+    setTimeout(function() {
+        dmytree.setChecked(['modal', 'pager']);
+    }, 2000);
 
 </script>
