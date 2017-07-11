@@ -1,8 +1,8 @@
 /**
  * @author sweetyx
- * 提供一些dom的计算与定位
+ * 提供一些dom的操作
  */
-var calcOffset = function (target, elem, direction, fixOption) {
+function calcOffset(target, elem, direction, fixOption) {
     //根据绑定的目标元素和展示方向计算位置
     var fixWidth = fixOption ? (fixOption.width || 0) : 0;
     var fixHeight = fixOption ? (fixOption.height || 0) : 0;
@@ -43,7 +43,59 @@ var calcOffset = function (target, elem, direction, fixOption) {
     };
 };
 
+function parseToHTML(str) {
+    var tmpDiv = document.createElement('div');
+    tmpDiv.innerHTML = str;
+    return tmpDiv.children;
+}
+
+function getClassList(nativeElement) {
+    var arr = nativeElement.className.split(' ');
+    for (var i = 0; i < arr.length; i++) {
+        if (SharkUI.isEmpty(arr[i])) {
+            arr.splice(i, 1);
+            i--;
+        }
+    }
+    return arr;
+}
+
+function addClass(nativeElement, className) {
+    var classList = getClassList(nativeElement);
+    classList.push(className);
+    nativeElement.className = classList.join(' ');
+}
+
+function removeClass(nativeElement, className) {
+    var classList = getClassList(nativeElement);
+    var index = classList.indexOf(className);
+    if (index > -1) {
+        classList.splice(index, 1);
+    }
+    nativeElement.className = classList.join(' ');
+}
+
+function hasClass(nativeElement, className) {
+    var classList = getClassList(nativeElement);
+    var index = classList.indexOf(className);
+    if (index > -1) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+function remove(nativeElement) {
+    nativeElement.parentNode.removeChild(nativeElement);
+}
+
 var DomHelper = {
-    calcOffset: calcOffset
+    calcOffset: calcOffset,
+    parseToHTML: parseToHTML,
+    addClass: addClass,
+    removeClass: removeClass,
+    hasClass: hasClass,
+    remove: remove
 };
 export { DomHelper };
