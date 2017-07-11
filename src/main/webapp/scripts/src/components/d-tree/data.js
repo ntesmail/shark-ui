@@ -44,7 +44,7 @@ function handleNode(node) {
     node.count = 0;
     children && children.forEach(function (child) {
         handleNode(child);
-        child.parentId = node.node_id;
+        child.parentId = node.id;
         node.count += child.count + 1;
     });
     // 得到node的选中状态(选中/未选中/半选)
@@ -72,7 +72,7 @@ function changeChildren(children, checked) {
 // 修改父集的选中状态
 function changeParent(newTopNode, node, id) {
     var children = node.children || [];
-    if (node.node_id === id) {
+    if (node.id === id) {
         setStateByCount(node, children);
         // 检查是否还存在父级
         node.parentId && changeParent(newTopNode, newTopNode, node.parentId);
@@ -90,7 +90,7 @@ function changeParent(newTopNode, node, id) {
 // 修改数据树的选中状态
 function changeChecked(newTopNode, node, id) {
     var children = node.children || [];
-    if (node.node_id === id) {
+    if (node.id === id) {
         // 切换节点checked状态
         node.checked = !node.checked;
         node.state = node.checked ? 2 : 0;
@@ -112,7 +112,7 @@ function changeChecked(newTopNode, node, id) {
 // 修改数据树的选中状态
 function changeOpen(node, id) {
     var children = node.children || [];
-    if (node.node_id === id) {
+    if (node.id === id) {
         // 切换节点checked状态
         node.open = !node.open;
         return node;

@@ -1,76 +1,76 @@
 <div id="dTreeContainer"></div>
 <script type="text/javascript">
     var treeData = [{
-        node_id: 'all',
-        node_name: '所有组件',
+        id: 'all',
+        name: '所有组件',
         open: true,
         children: [{
-            node_id: 'autocomplete',
-            node_name: 'autocomplete组件',
+            id: 'autocomplete',
+            name: 'autocomplete组件',
             children: [{
-                node_id: 'autocomplete1',
-                node_name: 'autocomplete组件1'
+                id: 'autocomplete1',
+                name: 'autocomplete组件1'
             },{
-                node_id: 'autocomplete2',
-                node_name: 'autocomplete组件2'
+                id: 'autocomplete2',
+                name: 'autocomplete组件2'
             }]
         }, {
-            node_id: 'dropdown',
-            node_name: 'dropdown组件',
+            id: 'dropdown',
+            name: 'dropdown组件',
             checked: true
         }, {
-            node_id: 'fileupload',
-            node_name: 'fileupload组件'
+            id: 'fileupload',
+            name: 'fileupload组件'
         }, {
-            node_id: 'modal',
-            node_name: 'modal组件'
+            id: 'modal',
+            name: 'modal组件'
         }, {
-            node_id: 'pager',
-            node_name: 'pager组件'
+            id: 'pager',
+            name: 'pager组件'
         }, {
-            node_id: 'popover',
-            node_name: 'popover组件'
+            id: 'popover',
+            name: 'popover组件'
         }, {
-            node_id: 'selecter',
-            node_name: 'selecter组件'
+            id: 'selecter',
+            name: 'selecter组件'
         }, {
-            node_id: 'tabs',
-            node_name: 'tabs组件'
+            id: 'tabs',
+            name: 'tabs组件'
         }, {
-            node_id: 'toastr',
-            node_name: 'toastr组件'
+            id: 'toastr',
+            name: 'toastr组件'
         }, {
-            node_id: 'tree',
-            node_name: 'tree组件'
+            id: 'tree',
+            name: 'tree组件'
         }]
     }];
 
     var newTreeData = [{
-        node_id: '3',
-        node_name: '3',
+        id: '3',
+        name: '3',
         checked: false
     }, {
-        node_id: '4',
-        node_name: '4',
+        id: '4',
+        name: '4',
         checked: true
     }, {
-        node_id: '1',
-        node_name: '45',
+        id: '1',
+        name: '45',
         children: [{
-            node_id: '44',
-            node_name: '444',
+            id: '44',
+            name: '444',
             checked: false
         }, {
-            node_id: '555',
-            node_name: '555',
+            id: '555',
+            name: '555',
             checked: false
         }, {
-            node_id: '666',
-            node_name: '666',
+            id: '666',
+            name: '666',
             checked: false
         }, {
-            node_id: '777',
-            node_name: '777',
+            id: '777',
+            name: '777',
             checked: false
         }]
     }];
@@ -81,7 +81,7 @@
 
     // console.log(mytree);
 
-    mytree.render(newTreeData);
+    // mytree.render(newTreeData);
     mytree.appendTo('#dTreeContainer');
 
      

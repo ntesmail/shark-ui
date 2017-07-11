@@ -2,7 +2,7 @@
 function changeArrToKeyIndex(list) {
     var keyIndex = {};
     list.forEach(function (item, i) {
-        var itemKey = item.node_id;
+        var itemKey = item.id;
         keyIndex[itemKey] = i;
     });
     return keyIndex;
@@ -16,7 +16,7 @@ function listDiff(oldList, newList) {
     var children = [];
     // 首先新老对比,检查相对于新集,老集是否有元素被删除
     oldList.forEach(function (item) {
-        var itemKey = item.node_id;
+        var itemKey = item.id;
         if (!newKeyIndex.hasOwnProperty(itemKey)) {
             children.push(null);
         } else {
@@ -35,9 +35,9 @@ function listDiff(oldList, newList) {
     }
     var j = 0;
     newList.forEach(function (item, i) {
-        var itemKey = item.node_id;
+        var itemKey = item.id;
         var tempItem = tempList[j];
-        var tempItemKey = tempItem && tempItem.node_id;
+        var tempItemKey = tempItem && tempItem.id;
         if (tempItem) {
             if (itemKey === tempItemKey) {
                 j++;
@@ -45,7 +45,7 @@ function listDiff(oldList, newList) {
                 if (!oldKeyIndex.hasOwnProperty(itemKey)) {
                     insert(i, item);
                 } else {
-                    var nextItemKey = tempList[j + 1].node_id;
+                    var nextItemKey = tempList[j + 1].id;
                     if (nextItemKey === itemKey) {
                         remove(i);
                         tempList.splice(j, 1);
@@ -95,9 +95,9 @@ function diffProps(oldNode, newNode) {
     var count = 0;
     var propsPatches = {};
     if (oldNode && newNode) {
-        if (oldNode.node_name !== newNode.node_name) {
+        if (oldNode.name !== newNode.name) {
             count++;
-            propsPatches.node_name = newNode.node_name;
+            propsPatches.name = newNode.name;
         }
         if (oldNode.state !== newNode.state) {
             count++;

@@ -60,19 +60,17 @@ function changeOpenDom(node, open) {
 function setProps(node, props) {
     var oSpan = node.children('span');
     var oA = node.children('a');
-    if (oA.length) {
-        for (var key in props) {
-            switch (key) {
-                case "node_name":
-                    oSpan.text(props[key]);
-                    break;
-                case "state":
-                    changeCheckState(oA, props[key]);
-                    break;
-                case "open":
-                    changeOpenDom(node, props[key]);
-                    break;
-            }
+    for (var key in props) {
+        switch (key) {
+            case "name":
+                oSpan.text(props[key]);
+                break;
+            case "state":
+                changeCheckState(oA, props[key]);
+                break;
+            case "open":
+                changeOpenDom(node, props[key]);
+                break;
         }
     }
 }
@@ -105,9 +103,9 @@ function getNodeDom(node) {
     var oA = $('<a class="tree-icon"></a>');
     changeCheckState(oA, node.state);
     var oSpan = $('<span class="tree-node-name"></span>');
-    oSpan.html(node.node_name);
+    oSpan.html(node.name);
     var oLi = $('<li></li>');
-    oLi.data('id', node.node_id);
+    oLi.data('id', node.id);
     oLi.append(oA);
     oLi.append(oSpan);
     if (children) {
