@@ -39,6 +39,12 @@ function render(sharkComponent, newTreeData) {
     compareAndRender(sharkComponent, newTopNode);
 }
 
+function checkAll(sharkComponent, flag) {
+    var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
+    Data.checkAll(newTopNode, flag);
+    compareAndRender(sharkComponent, newTopNode);
+}
+
 SharkUI.sharkDTree = function (options, targetElement) {
     var config = {
         nodes: []
@@ -57,6 +63,14 @@ SharkUI.sharkDTree = function (options, targetElement) {
     // 在组件对象上添加render方法
     sharkComponent.render = function (nodes) {
         render(sharkComponent, nodes);
+    };
+    // 全选
+    sharkComponent.checkAll = function () {
+        checkAll(sharkComponent, true);
+    };
+    // 全不选
+    sharkComponent.checkNo = function () {
+        checkAll(sharkComponent, false);
     };
     return sharkComponent;
 }

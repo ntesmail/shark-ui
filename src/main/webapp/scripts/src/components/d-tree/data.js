@@ -112,9 +112,16 @@ function changeOpen(newTopNode, id) {
     node.open = !node.open;
 }
 
+// 全选
+function checkAll(newTopNode, flag) {
+    newTopNode.checked = flag;
+    changeChildren(newTopNode);
+}
+
 var Data = {
     getTopNode: getTopNode,
     changeChecked: changeChecked,
-    changeOpen: changeOpen
+    changeOpen: changeOpen,
+    checkAll: checkAll
 };
 export { Data };
