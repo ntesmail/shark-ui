@@ -10,13 +10,11 @@ import { Diff } from './diff';
 function patchs(node, walker, patches) {
     var currentPatches = patches[walker.index];
     var aLi = node.children('ul').children('li');
-    for (var i = 0; i < aLi.length; i++) {
+    aLi.each(function (i, oLi) {
         walker.index++;
-        patchs($(aLi[i]), walker, patches);
-    }
-    if (currentPatches) {
-        applyPatches(node, currentPatches);
-    }
+        patchs($(oLi), walker, patches);
+    });
+    currentPatches && applyPatches(node, currentPatches);
 }
 
 function applyPatches(node, currentPatches) {
@@ -33,7 +31,8 @@ function applyPatches(node, currentPatches) {
     }
 }
 
-function changeS(oA, state) {
+// 修改复选框的状态
+function changeCheckState(oA, state) {
     oA.removeClass();
     oA.addClass('tree-icon');
     switch (state) {
@@ -75,7 +74,7 @@ function setProps(node, props) {
                     oSpan.text(props[key]);
                     break;
                 case "state":
-                    changeS(oA, props[key]);
+                    changeCheckState(oA, props[key]);
                     break;
                 case "open":
                     changeOpenDom(node, props[key]);
@@ -107,6 +106,19 @@ function reOrderChildren(node, moves) {
     }
 }
 
+function changeStateByCount(node, count, len) {
+    switch (count) {
+        case 0:
+            node.state = 0;
+            break;
+        case len:
+            node.state = 2;
+            break;
+        default:
+            node.state = 1;
+    }
+}
+
 // 根据子节点的选中情况，得到node的选中状态
 function getNodeState(node) {
     var children = node.children;
@@ -123,16 +135,7 @@ function getNodeState(node) {
                 count++;
             }
         }
-        switch (count) {
-            case 0:
-                node.state = 0;
-                break;
-            case len:
-                node.state = 2;
-                break;
-            default:
-                node.state = 1;
-        }
+        changeStateByCount(node, count, len);
     } else {
         node.state = node.checked ? 2 : 0;
     }
@@ -163,35 +166,19 @@ function getTopNode(nodes) {
 function getNodeDom(node) {
     var children = node.children;
     var open = !!node.open;
-    var oI = null;
-    if (children) {
-        oI = $('<i class="tree-icon"></i>');
-        open ? oI.addClass('tree-icon-down') : oI.addClass('tree-icon-right');
-    }
     var oA = $('<a class="tree-icon"></a>');
-    switch (node.state) {
-        case 0:
-            oA.addClass('tree-icon-check-empty');
-            break;
-        case 1:
-            oA.addClass('tree-icon-check-minus');
-            break;
-        case 2:
-            oA.addClass('tree-icon-check');
-            break;
-        default:
-            oA.addClass('tree-icon-check-empty');
-    }
+    changeCheckState(oA, node.state);
     var oSpan = $('<span class="tree-node-name"></span>');
     oSpan.html(node.node_name);
     var oLi = $('<li></li>');
     oLi.data('id', node.node_id);
-    oLi.append(oI);
     oLi.append(oA);
     oLi.append(oSpan);
     if (children) {
-        var oUl = getUlDom(children, open);
+        var oUl = getUlDom(children);
+        oLi.prepend('<i></i>');
         oLi.append(oUl);
+        changeOpenDom(oLi, open);
     }
     return oLi;
 }
@@ -199,7 +186,6 @@ function getNodeDom(node) {
 // 获取ul的dom节点
 function getUlDom(nodes, open) {
     var oUl = $('<ul></ul>');
-    open && oUl.addClass('tree-open');
     nodes.forEach(function (node) {
         var oLi = getNodeDom(node);
         oUl.append(oLi);
@@ -251,16 +237,7 @@ function changeParent(newTopNode, node, id) {
                 break;
             }
         }
-        switch (count) {
-            case 0:
-                node.state = 0;
-                break;
-            case len:
-                node.state = 2;
-                break;
-            default:
-                node.state = 1;
-        }
+        changeStateByCount(node, count, len);
         node.checked = checked;
         // 检查是否还存在父级
         node.parentId && changeParent(newTopNode, newTopNode, node.parentId);
