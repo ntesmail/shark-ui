@@ -20,8 +20,16 @@ function applyPatches(node, currentPatches) {
             case "REORDER":
                 reOrderChildren(node, currentPatch.moves);
                 break;
-            case "PROPS":
-                setProps(node, currentPatch.props);
+            case "NAME":
+                var oSpan = node.children('span');
+                oSpan.text(currentPatch.name);
+                break;
+            case "STATE":
+                var oA = node.children('a');
+                changeCheckState(oA, currentPatch.state);
+                break;
+            case "OPEN":
+                changeOpenDom(node, currentPatch.open);
                 break;
         }
     });
@@ -48,24 +56,6 @@ function changeOpenDom(node, open) {
         oUl.addClass('tree-open');
     } else {
         oI.addClass('tree-icon-right');
-    }
-}
-
-function setProps(node, props) {
-    var oSpan = node.children('span');
-    var oA = node.children('a');
-    for (var key in props) {
-        switch (key) {
-            case "name":
-                oSpan.text(props[key]);
-                break;
-            case "state":
-                changeCheckState(oA, props[key]);
-                break;
-            case "open":
-                changeOpenDom(node, props[key]);
-                break;
-        }
     }
 }
 

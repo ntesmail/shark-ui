@@ -91,37 +91,27 @@ function compareChildren(oldChildren, newChildren, index, patches, currentPatch)
     });
 }
 
-function diffProps(oldNode, newNode) {
+function diffProps(oldNode, newNode, currentPatch) {
     var count = 0;
     var propsPatches = {};
     if (oldNode && newNode) {
         if (oldNode.name !== newNode.name) {
-            count++;
-            propsPatches.name = newNode.name;
+            currentPatch.push({ type: "NAME", name: newNode.name });
         }
         if (oldNode.state !== newNode.state) {
-            count++;
-            propsPatches.state = newNode.state;
+            currentPatch.push({ type: "STATE", state: newNode.state });
         }
         if (oldNode.open !== newNode.open) {
-            count++;
-            propsPatches.open = newNode.open;
+            currentPatch.push({ type: "OPEN", open: newNode.open });
         }
     }
-    if (count === 0) {
-        return null;
-    }
-    return propsPatches;
 }
 
 // 对比两个相同位置的节点之间的差异
 function compareNode(oldNode, newNode, index, patches) {
     var currentPatch = [];
     if (newNode) {
-        var propsPatches = diffProps(oldNode, newNode);
-        if (propsPatches) {
-            currentPatch.push({ type: "PROPS", props: propsPatches });
-        }
+        diffProps(oldNode, newNode, currentPatch);
         compareChildren(
             oldNode.children || [],
             newNode.children || [],
