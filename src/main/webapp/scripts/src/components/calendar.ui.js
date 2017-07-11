@@ -15,6 +15,43 @@ function parseToHTML(str) {
     return tmpDiv.children;
 }
 
+function getClassList(nativeElement) {
+    var arr = nativeElement.className.split(' ');
+    for (var i = 0; i < arr.length; i++) {
+        if (SharkUI.isEmpty(arr[i])) {
+            arr.splice(i, 1);
+            i--;
+        }
+    }
+    return arr;
+}
+
+function addClass(nativeElement, className) {
+    var classList = getClassList(nativeElement);
+    classList.push(className);
+    nativeElement.className = classList.join(' ');
+}
+
+function removeClass(nativeElement, className) {
+    var classList = getClassList(nativeElement);
+    var index = classList.indexOf(className);
+    if (index > -1) {
+        classList.splice(index, 1);
+    }
+    nativeElement.className = classList.join(' ');
+}
+
+function hasClass(nativeElement, className) {
+    var classList = getClassList(nativeElement);
+    var index = classList.indexOf(className);
+    if (index > -1) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 function isLeapYear(year) {
     if (year % 100 === 0) {
         //整百年
@@ -91,44 +128,78 @@ function biggerThan(a, b) {
         return false;
     }
 }
-
-function initEvents(nativeElement) {
-    nativeElement.addEventListener('click', function (evt) {
+// calendar function
+function initEvents(calendar) {
+    calendar.nativeElement.addEventListener('click', function (evt) {
         var target = evt.target;
-        if (target.className.indexOf('calendar-disabled') > -1) {
+        if (hasClass(target, 'calendar-disabled')) {
             return;
         }
-        else if (target.className.split(' ').indexOf('calendar-prev-year') > -1) {
-            addYear(-1);
+        else if (hasClass(target, 'calendar-prev-year')) {
+            calendar.renderValue.addYear(-1);
+            calendar.render();
         }
-        else if (target.className.split(' ').indexOf('calendar-prev-month') > -1) {
-            addMonth(-1);
+        else if (hasClass(target, 'calendar-prev-month')) {
+            calendar.renderValue.addMonth(-1);
+            calendar.render();
         }
-        else if (target.className.split(' ').indexOf('calendar-next-year') > -1) {
-            addYear(1);
+        else if (hasClass(target, 'calendar-next-year')) {
+            calendar.renderValue.addYear(1);
+            calendar.render();
         }
-        else if (target.className.split(' ').indexOf('calendar-next-month') > -1) {
-            addMonth(1);
+        else if (hasClass(target, 'calendar-next-month')) {
+            calendar.renderValue.addMonth(1);
+            calendar.render();
         }
-        else if (target.className.split(' ').indexOf('calendar-day') > -1) {
-            if (target.className.split(' ').indexOf('calendar-selected') > -1) {
+        else if (hasClass(target, 'calendar-day')) {
+            if (hasClass(target, 'calendar-selected')) {
                 console.log('already selected，do nothing');
             }
             else {
-                setDay(target.innerText);
+                var date = parseInt(target.innerText);
+                var tmp = new Date(calendar.renderValue);
+                tmp.setDate(date);
+                if (hasClass(target, 'calendar-premonthday')) {
+                    tmp.addMonth(-1);
+                    calendar.renderValue.addMonth(-1);
+                }
+                else if (hasClass(target, 'calendar-nextmonthday')) {
+                    tmp.addMonth(1);
+                    calendar.renderValue.addMonth(1);
+                }
+                calendar.value = tmp;
+                calendar.render();
             }
         }
     });
 }
 
-function getRenderData(date) {
-    var tmp;
-    if (date) {
-        tmp = new Date(date);
+function forceRenderValueValid(calendar) {
+    var tArr = [new Date(calendar.renderValue).getFullYear(), new Date(calendar.renderValue).getMonth(), new Date(calendar.renderValue).getDate()];
+    var maxDate = calendar.config.maxDate;
+    var minDate = calendar.config.minDate;
+    var max;
+    if (maxDate) {
+        max = [new Date(maxDate).getFullYear(), new Date(maxDate).getMonth(), new Date(maxDate).getDate()];
+        if (biggerThan(tArr, max)) {
+            calendar.renderValue.setFullYear(max[0]);
+            calendar.renderValue.setMonth(max[1]);
+            calendar.renderValue.setDate(max[2]);
+        }
     }
-    else {
-        tmp = new Date();
+    var min;
+    if (minDate) {
+        min = [new Date(minDate).getFullYear(), new Date(minDate).getMonth(), new Date(minDate).getDate()];
+        if (biggerThan(min, tArr)) {
+            calendar.renderValue.setFullYear(min[0]);
+            calendar.renderValue.setMonth(min[1]);
+            calendar.renderValue.setDate(min[2]);
+        }
     }
+}
+
+function getRenderData(calendar) {
+    var tmp = new Date(calendar.renderValue);
     tmp.addMonth(-1);
     var lastYear = tmp.getFullYear();
     var lastMonth = tmp.getMonth();
@@ -162,26 +233,23 @@ function getRenderData(date) {
     }
 }
 
-function renderDom(nativeElement, data, currentDate, maxDate, minDate) {
-    document.querySelector('.calendar-current-year').value = data.year;
-    document.querySelector('.calendar-current-month').value = data.month + 1;
-
+function renderDom(calendar, renderData) {
     var today = [new Date().getFullYear(), new Date().getMonth(), new Date().getDate()];
     var current;
-    if (currentDate) {
-        current = [new Date(currentDate).getFullYear(), new Date(currentDate).getMonth(), new Date(currentDate).getDate()];
+    if (calendar.value) {
+        current = [new Date(calendar.value).getFullYear(), new Date(calendar.value).getMonth(), new Date(calendar.value).getDate()];
     }
     var max;
-    if (maxDate) {
-        max = [new Date(maxDate).getFullYear(), new Date(maxDate).getMonth(), new Date(maxDate).getDate()];
+    if (calendar.config.maxDate) {
+        max = [new Date(calendar.config.maxDate).getFullYear(), new Date(calendar.config.maxDate).getMonth(), new Date(calendar.config.maxDate).getDate()];
     }
     var min;
-    if (minDate) {
-        min = [new Date(minDate).getFullYear(), new Date(minDate).getMonth(), new Date(minDate).getDate()];
+    if (calendar.config.minDate) {
+        min = [new Date(calendar.config.minDate).getFullYear(), new Date(calendar.config.minDate).getMonth(), new Date(calendar.config.minDate).getDate()];
     }
     var html = '';
     var flag = 0;
-    data.days.forEach(function (item) {
+    renderData.days.forEach(function (item) {
         var additionClass = '';
         // 今天
         if (today && equal(item, today)) {
@@ -199,27 +267,38 @@ function renderDom(nativeElement, data, currentDate, maxDate, minDate) {
             additionClass = additionClass + ' calendar-disabled'
         }
         // 上个月/下个月
-        if (item[0] < data.year || item[1] < data.month) {
-            additionClass = additionClass + ' calendar-nextmonthday'
+        if (item[0] < renderData.year || item[1] < renderData.month) {
+            additionClass = additionClass + ' calendar-premonthday'
         }
-        else if (item[0] > data.year || item[1] > data.month) {
+        else if (item[0] > renderData.year || item[1] > renderData.month) {
             additionClass = additionClass + ' calendar-nextmonthday'
         }
         html = html + `<span class="calendar-day${additionClass}">${item[2]}</span>`;
     });
-    document.querySelector('.calendar-day-wrap').innerHTML = html;
-}
-
-function addYear(count) {
-    console.log(count);
-}
-
-function addMonth(count) {
-    console.log(count);
-}
-
-function setDay(day) {
-    console.log(day);
+    var nativeElement = calendar.nativeElement;
+    nativeElement.querySelector('.calendar-weekday-wrap').innerHTML = html;
+    nativeElement.querySelector('.calendar-current-year').value = renderData.year;
+    nativeElement.querySelector('.calendar-current-month').value = renderData.month + 1;
+    removeClass(nativeElement.querySelector('.calendar-next-year'), 'calendar-disabled');
+    removeClass(nativeElement.querySelector('.calendar-next-month'), 'calendar-disabled');
+    removeClass(nativeElement.querySelector('.calendar-prev-year'), 'calendar-disabled');
+    removeClass(nativeElement.querySelector('.calendar-prev-month'), 'calendar-disabled');
+    if (max) {
+        if (renderData.year >= max[0]) {
+            addClass(nativeElement.querySelector('.calendar-next-year'), 'calendar-disabled');
+        }
+        if (renderData.year > max[0] || (renderData.year >= max[0] && renderData.month >= max[1])) {
+            addClass(nativeElement.querySelector('.calendar-next-month'), 'calendar-disabled');
+        }
+    }
+    if (min) {
+        if (renderData.year <= min[0]) {
+            addClass(nativeElement.querySelector('.calendar-prev-year'), 'calendar-disabled');
+        }
+        if (renderData.year < min[0] || (renderData.year <= min[0] && renderData.month <= min[1])) {
+            addClass(nativeElement.querySelector('.calendar-prev-month'), 'calendar-disabled');
+        }
+    }
 }
 
 
@@ -228,21 +307,20 @@ function Calendar(options) {
     this.config = Object.assign({}, {
         format: 'yyyy-MM-dd',
         initDate: new Date('2017-07-09'),
-        maxDate: new Date('2017-07-15'),
+        maxDate: null,
         minDate: new Date('2017-07-05'),
         onChange: function () { },
         onShow: function () { },
         onHide: function () { }
     }, options);
     this.value = this.config.initDate;
+    this.renderValue = SharkUI.isEmpty(this.value) ? new Date() : new Date(this.value);
     var elements = parseToHTML(templateFun.apply());
     this.nativeElement = elements[0];
     this.nativeElement.setAttribute('id', SharkUI.createUUID());
     document.body.appendChild(this.nativeElement);
     this.element = $(this.nativeElement);
-
-    initEvents(this.nativeElement);
-
+    initEvents(this);
     this.render();
 }
 
@@ -260,8 +338,8 @@ Calendar.prototype.getId = function () {
 
 Calendar.prototype.render = function () {
     // tmp.getFullYear(), tmp.getMonth(), tmp.getDate(), tmp.getHours(), tmp.getMinutes(), tmp.getSeconds(), tmp.getMilliseconds()
-    var renderData = getRenderData(this.value);
-    renderDom(this.nativeElement, renderData, this.value, this.config.maxDate, this.config.minDate);
+    forceRenderValueValid(this);
+    renderDom(this, getRenderData(this));
 }
 
 Calendar.prototype.adjustPostion = function (target) {

@@ -13,14 +13,9 @@
         padding: 5px 0;
         text-align: center;
         .calendar-prev-year,
-        .calendar-prev-month {
-            float: left;
-        }
+        .calendar-prev-month,
         .calendar-next-year,
         .calendar-next-month {
-            float: right;
-        }
-        a {
             display: block;
             cursor: pointer;
             margin: 0 5px;
@@ -31,15 +26,19 @@
             background-repeat: no-repeat;
         }
         .calendar-prev-year {
+            float: left;
             background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAeUExURQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALcob2oAAAAKdFJOUwD+dlMMvZ7aMZlYDG2gAAAAM0lEQVQI12NgYGBgKmFgrgDSDIpCDIaSIAHBBGbBEJCAGIOhqAMxAggGXIpYIailEGcAAHOtDG28kPRsAAAAAElFTkSuQmCC);
         }
         .calendar-prev-month {
+            float: left;
             background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAgMAAABinRfyAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAMUExURQAAAAAAAAAAAAAAADXpN5YAAAAEdFJOUwD+dlQZqnPdAAAALklEQVQI12NgYOBiAALVBiAx9QADA1M4kMEZAxIqQBYCE2AuRAKsBFkQZAAXAwCMqgoLR0QF3wAAAABJRU5ErkJggg==);
         }
         .calendar-next-year {
+            float: right;
             background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAhUExURQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG3RSMEAAAALdFJOUwB4VJ0KvW/aJkr+00F2iwAAADZJREFUCNdjaFdgaBdgAAKrRQxZC0EM11UKzKtAQixRixisiBBayWC1DJkBk4IrximAsBTmDAD8xRxNDQ62FwAAAABJRU5ErkJggg==);
         }
         .calendar-next-month {
+            float: right;
             background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAgMAAABinRfyAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAMUExURQAAAAAAAAAAAAAAADXpN5YAAAAEdFJOUwD+dlQZqnPdAAAALklEQVQI12NgWMDAwMAUASSYw4AEw9UGIGGaACR40QRBBJgLlgArgQuBDQAZBQCn8wqhEuR6awAAAABJRU5ErkJggg==);
         }
         input {
@@ -81,20 +80,31 @@
             font-weight: normal;
             color: #393939;
         }
+        .calendar-day:hover {
+            background-color: #ececec;
+        }
         .calendar-today {
             border-color: #acacac;
         }
-        .calendar-selected {
+        .calendar-selected,
+        .calendar-selected:hover {
             background-color: #00cbff;
         }
-        .flatpickr-nextmonthday,
-        .flatpickr-nextmonthday {
+        .calendar-premonthday,
+        .calendar-nextmonthday {
             color: #acacac;
         }
     }
     .calendar-disabled,
-    .calendar-disabled.calendar-day {
-        cursor: not-allowed;
-        color: #acacac;
+    .calendar-disabled:hover {
+        &.calendar-day,
+        &.calendar-prev-year,
+        &.calendar-prev-month,
+        &.calendar-next-year,
+        &.calendar-next-month {
+            cursor: not-allowed;
+            color: #ffffff;
+            background-color: #eeeeee;
+        }
     }
 }

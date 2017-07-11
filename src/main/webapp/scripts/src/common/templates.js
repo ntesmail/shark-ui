@@ -147,29 +147,15 @@ var calendar = `
         </div>
         <div class="calendar-dayarea">
             <div class="calendar-weekday-wrap">
-                <span class="calendar-weekday">Sun</span>
-                <span class="calendar-weekday">Mon</span>
-                <span class="calendar-weekday">Tue</span>
-                <span class="calendar-weekday">Wed</span>
-                <span class="calendar-weekday">Thu</span>
-                <span class="calendar-weekday">Fri</span>
-                <span class="calendar-weekday">Sat</span>
+                <span class="calendar-weekday">日</span>
+                <span class="calendar-weekday">一</span>
+                <span class="calendar-weekday">二</span>
+                <span class="calendar-weekday">三</span>
+                <span class="calendar-weekday">四</span>
+                <span class="calendar-weekday">五</span>
+                <span class="calendar-weekday">六</span>
             </div>
             <div class="calendar-day-wrap">
-                <span class="calendar-day">Sun</span>
-                <span class="calendar-day">Sun</span>
-                <span class="calendar-day">Sun</span>
-                <span class="calendar-day">Sun</span>
-                <span class="calendar-day">Sun</span>
-                <span class="calendar-day">Sun</span>
-                <span class="calendar-day">Sun</span>
-                <span class="calendar-day">Sun</span>
-                <span class="calendar-day">Sun</span>
-                <span class="calendar-day">Sun</span>
-                <span class="calendar-day">Sun</span>
-                <span class="calendar-day">Sun</span>
-                <span class="calendar-day">Sun</span>
-                <span class="calendar-day">Sun</span>
             </div>
         </div>
     </div>
