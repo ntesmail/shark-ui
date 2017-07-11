@@ -85,6 +85,9 @@
     var dmytree = SharkUI.sharkDTree({
         nodes: treeData,
         openAll: false,
+        onNodeChecked: function(node, isChecked) {
+            console.log(node, isChecked);
+        },
        // link: false
     });
     dmytree.appendTo('#dTreeContainer');

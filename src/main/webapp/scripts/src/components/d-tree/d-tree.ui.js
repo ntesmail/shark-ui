@@ -17,7 +17,8 @@ function initEvents(sharkComponent, config) {
         if (evt.target.tagName.toUpperCase() === 'I') { // 修改展开收起的状态
             Data.changeOpen(newTopNode, id);
         } else {  // 修改新的数据树的选中状态
-            Data.changeChecked(newTopNode, newTopNode, id, config.link);
+            var node = Data.changeChecked(newTopNode, newTopNode, id, config.link);
+            config.onNodeChecked.call(sharkComponent, node, node.checked);
         }
         compareAndRender(sharkComponent, newTopNode);
         // 阻止冒泡
@@ -74,7 +75,8 @@ SharkUI.sharkDTree = function (options, targetElement) {
     var config = {
         nodes: [],
         openAll: true,
-        link: true
+        link: true,
+        onNodeChecked: function () { }
     };
     SharkUI.extend(config, options);
     // 组件对象

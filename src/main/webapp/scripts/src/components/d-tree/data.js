@@ -106,6 +106,7 @@ function changeChecked(newTopNode, node, id, link) {
             changeParent(newTopNode, node.parentId);
         }
     }
+    return node;
 }
 
 // 修改数据树的展开和收起
