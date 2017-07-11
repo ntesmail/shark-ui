@@ -52,15 +52,26 @@ function reverseCheck(sharkComponent) {
     compareAndRender(sharkComponent, newTopNode);
 }
 
+function openAll(sharkComponent) {
+    var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
+    Data.openAll(newTopNode);
+    compareAndRender(sharkComponent, newTopNode);
+}
+
 SharkUI.sharkDTree = function (options, targetElement) {
     var config = {
-        nodes: []
+        nodes: [],
+        openAll: true,
+        link: true
     };
     SharkUI.extend(config, options);
     // 组件对象
     var sharkComponent = {};
     // 获取数据根节点
     sharkComponent.topNode = Data.getTopNode(config.nodes);
+    if (config.openAll) {
+        Data.openAll(sharkComponent.topNode);
+    }
     // 初始化dom节点
     Dom.initDom(sharkComponent, targetElement);
     // 添加基础方法
@@ -82,6 +93,11 @@ SharkUI.sharkDTree = function (options, targetElement) {
     // 反选
     sharkComponent.reverseCheck = function () {
         reverseCheck(sharkComponent);
+    };
+
+    // 展开全部
+    sharkComponent.openAll = function () {
+        openAll(sharkComponent);
     };
     return sharkComponent;
 }

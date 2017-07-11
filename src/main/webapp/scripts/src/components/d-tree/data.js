@@ -126,10 +126,21 @@ function reverseCheck(newTopNode, node) {
             child.checked = !child.checked;
             child.state = child.checked ? 2 : 0;
         } else {
-           reverseCheck(newTopNode, child);
+            reverseCheck(newTopNode, child);
         }
     });
     changeParent(newTopNode, node.id);
+}
+
+// 展开全部
+function openAll(node) {
+    var children = node.children || [];
+    if (children.length) {
+        node.open = true;
+    }
+    children.forEach(function (child) {
+        openAll(child);
+    });
 }
 
 var Data = {
@@ -137,6 +148,7 @@ var Data = {
     changeChecked: changeChecked,
     changeOpen: changeOpen,
     checkAll: checkAll,
-    reverseCheck: reverseCheck
+    reverseCheck: reverseCheck,
+    openAll: openAll
 };
 export { Data };

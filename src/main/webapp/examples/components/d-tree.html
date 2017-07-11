@@ -3,6 +3,7 @@
 <button id="dreverseCheckBtn" class="btn btn-primary">反选</button>
 <button id="dcheckNoBtn" class="btn btn-primary">不选</button>
 <button id="reRenderBtn" class="btn btn-primary">重新渲染</button>
+<button id="openAllBtn" class="btn btn-primary">展开全部</button>
 
 <script type="text/javascript">
     var treeData = [{
@@ -81,7 +82,8 @@
     }];
 
     var dmytree = SharkUI.sharkDTree({
-        nodes: treeData
+        nodes: treeData,
+        openAll: false
     });
 
     dmytree.appendTo('#dTreeContainer');
@@ -100,6 +102,9 @@
         dmytree.render(newTreeData);
     });
     
+    document.getElementById('openAllBtn').addEventListener('click',function(){
+        dmytree.openAll();
+    });
 
      
 </script>
