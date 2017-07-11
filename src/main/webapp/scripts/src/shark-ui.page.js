@@ -10,7 +10,7 @@ import './components/popover.ui';
 import './components/modal.ui';
 import './components/multi-select.ui';
 import './components/toastr.ui';
-import './components/d-tree.ui';
+import './components/d-tree/d-tree.ui';
 
 import { SharkUI } from './common/core';
 if (typeof window !== 'undefined') {
