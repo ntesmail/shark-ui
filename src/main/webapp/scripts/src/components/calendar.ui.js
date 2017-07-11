@@ -52,65 +52,6 @@ function hasClass(nativeElement, className) {
     }
 }
 
-function isLeapYear(year) {
-    if (year % 100 === 0) {
-        //整百年
-        if (year % 400 === 0) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-    else {
-        //非整百年
-        if (year % 4 === 0) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-}
-
-function getMonthDayCount(year, month) {
-    month = month + 1;
-    switch (month) {
-        case 1:
-            return 31;
-        case 2:
-            if (isLeapYear(year)) {
-                return 29;
-            }
-            else {
-                return 28;
-            }
-        case 3:
-            return 31;
-        case 4:
-            return 30;
-        case 5:
-            return 31;
-        case 6:
-            return 30;
-        case 7:
-            return 31;
-        case 8:
-            return 31;
-        case 9:
-            return 30;
-        case 10:
-            return 31;
-        case 11:
-            return 30;
-        case 12:
-            return 31;
-        default:
-            return 30;
-    }
-
-}
-
 function equal(a, b) {
     if (a[0] === b[0] && a[1] === b[1] && a[2] === b[2]) {
         return true;
@@ -156,18 +97,21 @@ function initEvents(calendar) {
                 console.log('already selected，do nothing');
             }
             else {
-                var date = parseInt(target.innerText);
                 var tmp = new Date(calendar.renderValue);
-                tmp.setDate(date);
                 if (hasClass(target, 'calendar-premonthday')) {
                     tmp.addMonth(-1);
-                    calendar.renderValue.addMonth(-1);
                 }
                 else if (hasClass(target, 'calendar-nextmonthday')) {
                     tmp.addMonth(1);
-                    calendar.renderValue.addMonth(1);
                 }
-                calendar.value = tmp;
+                var year = tmp.getFullYear();
+                var month = tmp.getMonth();
+                var date = parseInt(target.innerText);
+
+                calendar.renderValue.setFullYear(year);
+                calendar.renderValue.setMonth(month);
+                calendar.renderValue.setDate(date);
+                calendar.value = new Date(calendar.renderValue);
                 calendar.render();
             }
         }
@@ -203,11 +147,11 @@ function getRenderData(calendar) {
     tmp.addMonth(-1);
     var lastYear = tmp.getFullYear();
     var lastMonth = tmp.getMonth();
-    var lastMonthTotalDayCount = getMonthDayCount(lastYear, lastMonth);
+    var lastMonthTotalDayCount = Date.getMonthDayCount(lastYear, lastMonth);
     tmp.addMonth(1);
     var currentYear = tmp.getFullYear();
     var currentMonth = tmp.getMonth();
-    var currentMonthTotalDayCount = getMonthDayCount(currentYear, currentMonth);
+    var currentMonthTotalDayCount = Date.getMonthDayCount(currentYear, currentMonth);
     tmp.setDate(1);
     var currentMonthFirstDay = tmp.getDay();
     tmp.addMonth(1);
@@ -267,10 +211,10 @@ function renderDom(calendar, renderData) {
             additionClass = additionClass + ' calendar-disabled'
         }
         // 上个月/下个月
-        if (item[0] < renderData.year || item[1] < renderData.month) {
+        if (biggerThan([renderData.year, renderData.month, 1], [item[0], item[1], 1])) {
             additionClass = additionClass + ' calendar-premonthday'
         }
-        else if (item[0] > renderData.year || item[1] > renderData.month) {
+        else if (biggerThan([item[0], item[1], 1], [renderData.year, renderData.month, 1])) {
             additionClass = additionClass + ' calendar-nextmonthday'
         }
         html = html + `<span class="calendar-day${additionClass}">${item[2]}</span>`;
@@ -309,6 +253,7 @@ function Calendar(options) {
         initDate: new Date('2017-07-09'),
         maxDate: null,
         minDate: new Date('2017-07-05'),
+        beforeChange: function () { },
         onChange: function () { },
         onShow: function () { },
         onHide: function () { }

@@ -9,6 +9,7 @@
     z-index: 999999;
     width: ((40+4)*7+2) + px;
     box-sizing: border-box;
+    user-select: none;
     .calendar-montharea {
         padding: 5px 0;
         text-align: center;

@@ -48,14 +48,27 @@ Date.prototype.addMonth = function (count) {
             dtArr[0] = dtArr[0] - 1;
         }
     }
-    date.setFullYear(dtArr[0]);
+    var dayCount = Date.getMonthDayCount(dtArr[0], dtArr[1] - 1);
+    if (dtArr[2] > dayCount) {
+        //如果 2017-10-31，减一个月，为2017-09-31，然而由于9月没有31号，所以最终时间为2017-09-30
+        dtArr[2] = dayCount;
+        date.setDate(dtArr[2]);
+    }
     date.setMonth(dtArr[1] - 1);
+    date.setFullYear(dtArr[0]);
     return date;
 };
 Date.prototype.addYear = function (count) {
     var date = this;
     var dtArr = [date.getFullYear(), date.getMonth() + 1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds()];
     dtArr[0] = dtArr[0] + count;
+    var dayCount = Date.getMonthDayCount(dtArr[0], dtArr[1] - 1);
+    if (dtArr[2] > dayCount) {
+        //如果 2017-10-31，减一个月，为2017-09-31，然而由于9月没有31号，所以最终时间为2017-09-30
+        dtArr[2] = dayCount;
+        date.setDate(dtArr[2]);
+    }
+    date.setMonth(dtArr[1] - 1);
     date.setFullYear(dtArr[0]);
     return date;
 };
@@ -82,3 +95,61 @@ Date.todaytime = function () {
     date.setMilliseconds(0);
     return date;
 };
+
+Date.isLeapYear = function (year) {
+    if (year % 100 === 0) {
+        //整百年
+        if (year % 400 === 0) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    else {
+        //非整百年
+        if (year % 4 === 0) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+}
+
+Date.getMonthDayCount = function (year, month) {
+    month = month + 1;
+    switch (month) {
+        case 1:
+            return 31;
+        case 2:
+            if (Date.isLeapYear(year)) {
+                return 29;
+            }
+            else {
+                return 28;
+            }
+        case 3:
+            return 31;
+        case 4:
+            return 30;
+        case 5:
+            return 31;
+        case 6:
+            return 30;
+        case 7:
+            return 31;
+        case 8:
+            return 31;
+        case 9:
+            return 30;
+        case 10:
+            return 31;
+        case 11:
+            return 30;
+        case 12:
+            return 31;
+        default:
+            return 30;
+    }
+}
