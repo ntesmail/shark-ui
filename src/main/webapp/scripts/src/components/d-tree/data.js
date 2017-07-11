@@ -29,7 +29,7 @@ function setStateByCount(node, children) {
 
 // 得到node的选中状态(选中/未选中/半选)
 function getNodeState(node, children) {
-    if (children) { // 存在子节点，由子节点决定state状态
+    if (children && children.length) { // 存在子节点，由子节点决定state状态
         setStateByCount(node, children);
     } else { // 不存在子节点，由自身的checked状态来决定state状态
         node.state = node.checked ? 2 : 0;
@@ -38,9 +38,9 @@ function getNodeState(node, children) {
 
 // 处理节点，为每个节点加上count属性，父节点id和选中状态 | (做递归处理)
 function handleNode(node) {
-    var children = node.children;
+    var children = node.children || [];
     node.count = 0;
-    children && children.forEach(function (child) {
+    children.forEach(function (child) {
         handleNode(child);
         child.parentId = node.id;
         node.count += child.count + 1;
@@ -54,6 +54,8 @@ function getTopNode(nodes) {
     var topNode = { children: nodes };
     // 处理节点，为每个节点加上count属性和父节点id和选中状态
     handleNode(topNode);
+    console.log(topNode)
+
     return topNode;
 }
 
