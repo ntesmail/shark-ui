@@ -84,7 +84,7 @@
     var dmytree = SharkUI.sharkDTree({
         nodes: treeData,
         openAll: false,
-        link: false
+       // link: false
     });
     dmytree.appendTo('#dTreeContainer');
     document.getElementById('dcheckAllBtn').addEventListener('click',function(){
@@ -98,7 +98,7 @@
         dmytree.checkNo();
     });
     document.getElementById('reRenderBtn').addEventListener('click',function(){
-        dmytree.render(newTreeData);
+        dmytree.reRender(newTreeData);
     });
     
     document.getElementById('openAllBtn').addEventListener('click',function(){

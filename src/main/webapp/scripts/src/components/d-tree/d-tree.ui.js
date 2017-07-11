@@ -34,7 +34,7 @@ function compareAndRender(sharkComponent, newTopNode) {
 }
 
 // 用新数据重新render
-function render(sharkComponent, newTreeData, config) {
+function reRender(sharkComponent, newTreeData, config) {
     var newTopNode = Data.getTopNode(newTreeData, config.link);
     compareAndRender(sharkComponent, newTopNode);
 }
@@ -78,9 +78,9 @@ SharkUI.sharkDTree = function (options, targetElement) {
     BaseComponent.addComponentBaseFn(sharkComponent, config);
     // 初始化事件
     initEvents(sharkComponent, config);
-    // 在组件对象上添加render方法
-    sharkComponent.render = function (nodes) {
-        render(sharkComponent, nodes, config);
+    // 在组件对象上添加reRender方法
+    sharkComponent.reRender = function (nodes) {
+        reRender(sharkComponent, nodes, config);
     };
     // 全选
     sharkComponent.checkAll = function () {
