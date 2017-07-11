@@ -83,11 +83,10 @@
 
     var dmytree = SharkUI.sharkDTree({
         nodes: treeData,
-        openAll: false
+        openAll: false,
+        link: false
     });
-
     dmytree.appendTo('#dTreeContainer');
-
     document.getElementById('dcheckAllBtn').addEventListener('click',function(){
         console.log(dmytree)
         dmytree.checkAll();
@@ -106,5 +105,4 @@
         dmytree.openAll();
     });
 
-     
 </script>

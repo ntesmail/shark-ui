@@ -10,14 +10,14 @@ import { Data } from './data';
 import { Dom } from './dom';
 
 // 初始化事件
-function initEvents(sharkComponent) {
+function initEvents(sharkComponent, config) {
     sharkComponent.component.on('click', 'li', function (evt) {
         var id = $(evt.currentTarget).data('id');
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
         if (evt.target.tagName.toUpperCase() === 'I') { // 修改展开收起的状态
             Data.changeOpen(newTopNode, id);
         } else {  // 修改新的数据树的选中状态
-            Data.changeChecked(newTopNode, newTopNode, id);
+            Data.changeChecked(newTopNode, newTopNode, id, config.link);
         }
         compareAndRender(sharkComponent, newTopNode);
         // 阻止冒泡
@@ -34,8 +34,8 @@ function compareAndRender(sharkComponent, newTopNode) {
 }
 
 // 用新数据重新render
-function render(sharkComponent, newTreeData) {
-    var newTopNode = Data.getTopNode(newTreeData);
+function render(sharkComponent, newTreeData, config) {
+    var newTopNode = Data.getTopNode(newTreeData, config.link);
     compareAndRender(sharkComponent, newTopNode);
 }
 
@@ -68,7 +68,7 @@ SharkUI.sharkDTree = function (options, targetElement) {
     // 组件对象
     var sharkComponent = {};
     // 获取数据根节点
-    sharkComponent.topNode = Data.getTopNode(config.nodes);
+    sharkComponent.topNode = Data.getTopNode(config.nodes, config.link);
     if (config.openAll) {
         Data.openAll(sharkComponent.topNode);
     }
@@ -77,10 +77,10 @@ SharkUI.sharkDTree = function (options, targetElement) {
     // 添加基础方法
     BaseComponent.addComponentBaseFn(sharkComponent, config);
     // 初始化事件
-    initEvents(sharkComponent);
+    initEvents(sharkComponent, config);
     // 在组件对象上添加render方法
     sharkComponent.render = function (nodes) {
-        render(sharkComponent, nodes);
+        render(sharkComponent, nodes, config);
     };
     // 全选
     sharkComponent.checkAll = function () {
