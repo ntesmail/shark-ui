@@ -1,12 +1,9 @@
 .shark-calendar {
-    position: absolute;
-    left: 0;
-    top: 0;
     border: 1px solid #acacac;
     background-color: #ffffff;
     border-radius: 2px;
     z-index: 999999;
-    width: ((40+4)*7+2) + px;
+    width: ((40+2)*7+2) + px;
     box-sizing: border-box;
     user-select: none;
     .calendar-montharea {
@@ -24,6 +21,9 @@
             background-size: 16px 16px;
             background-position: center center;
             background-repeat: no-repeat;
+            &.calendar-disabled {
+                cursor: not-allowed;
+            }
         }
         .calendar-prev-year {
             float: left;
@@ -79,38 +79,75 @@
         .calendar-day {
             font-weight: normal;
             color: #393939;
-        }
-        .calendar-day:hover {
-            background-color: #ececec;
-        }
-        .calendar-today {
-            border-color: #acacac;
-        }
-        .calendar-selected,
-        .calendar-selected:hover {
-            background-color: #00cbff;
-        }
-        .calendar-premonthday,
-        .calendar-nextmonthday {
-            color: #acacac;
+            &:hover {
+                background-color: #ececec;
+            }
+            &.calendar-today {
+                border-color: #acacac;
+            }
+            &.calendar-selected {
+                background-color: #00cbff;
+            }
+            &.calendar-premonthday,
+            &.calendar-nextmonthday {
+                color: #acacac;
+            }
+            &.calendar-disabled {
+                cursor: not-allowed;
+                color: #ffffff;
+                background-color: #eeeeee;
+            }
         }
     }
-    .calendar-disabled,
-    .calendar-disabled:hover {
-        &.calendar-day,
-        &.calendar-prev-year,
-        &.calendar-prev-month,
-        &.calendar-next-year,
-        &.calendar-next-month {
+}
+
+.shark-picker-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: none;
+}
+
+.shark-timepanel {
+    border: 1px solid #acacac;
+    background-color: #ffffff;
+    border-radius: 2px;
+    z-index: 9999999;
+    width: 200px;
+    box-sizing: border-box;
+    user-select: none;
+    &::after {
+        content: '';
+        display: block;
+        clear: both;
+    }
+    .timepanel-list {
+        display: block;
+        height: 150px;
+        float: left;
+        width: 33.33%;
+        border-left: 1px solid #efefef;
+        overflow: hidden;
+        &:first-child {
+            border-left: none;
+        }
+        &:hover {
+            overflow: auto;
+        }
+    }
+    .timepanel-list-item {
+        cursor: pointer;
+        padding: 2px 0 2px 22px;
+        &:hover {
+            background-color: #ececec;
+        }
+        &.timepanel-selected {
+            background-color: #00cbff;
+        }
+        &.timepanel-disabled {
             cursor: not-allowed;
             color: #ffffff;
             background-color: #eeeeee;
         }
     }
-}
-.shark-picker-container{
-    position: absolute;
-    left: 0;
-    top: 0;
-    display: none;
 }

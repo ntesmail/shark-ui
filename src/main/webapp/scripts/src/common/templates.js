@@ -162,23 +162,15 @@ var calendar = `
 `;
 
 var timepicker = `
-    <div class="shark-timepicker">
-        <div class="calendar-hour">
-            <input class="calendar-current-hour" readonly="readonly" type="text" />
-            <span class="calendar-prev-hour">↑</span>
-            <span class="calendar-next-hour">↓</span>
+    <div class="shark-timepanel">
+        <div class="timepanel-list timepanel-list-hours">
+            <div class="timepanel-list-item">00</div>
+            <div class="timepanel-list-item">01</div>
+            <div class="timepanel-list-item">02</div>
         </div>
-        <div class="calendar-minute">
-            <input class="calendar-current-minute" readonly="readonly" type="text" />
-            <span class="calendar-prev-minute">↑</span>
-            <span class="calendar-next-minute">↓</span>
-        </div>
-        <div class="calendar-second">
-            <input class="calendar-current-second" readonly="readonly" type="text" />
-            <span class="calendar-prev-second">↑</span>
-            <span class="calendar-next-second">↓</span>
-        </div>
-    <div>
+        <div class="timepanel-list timepanel-list-minutes"></div>
+        <div class="timepanel-list timepanel-list-second"></div>
+    </div>
 `;
 
 function tempAdd(line, isJs) {
