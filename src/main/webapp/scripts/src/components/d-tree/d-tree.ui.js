@@ -108,5 +108,9 @@ SharkUI.sharkDTree = function (options, targetElement) {
     sharkComponent.openAll = function () {
         openAll(sharkComponent);
     };
+
+    sharkComponent.getChecked = function () {
+        return Data.getChecked(sharkComponent.topNode);
+    };
     return sharkComponent;
 }

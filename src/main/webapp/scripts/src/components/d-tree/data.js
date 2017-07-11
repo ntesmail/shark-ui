@@ -157,6 +157,23 @@ function setChecked(newTopNode, checkedList, link) {
     handleNode(newTopNode, link);
 }
 
+function getChecked(topNode) {
+    var checkedList = [];
+    getCheckedItem(topNode, checkedList);
+    return checkedList;
+}
+
+function getCheckedItem(node, checkedList) {
+    var children = node.children || [];
+    children.forEach(function (child) {
+        getCheckedItem(child, checkedList);
+    });
+    if (node.checked) {
+        checkedList.push(node.id);
+    }
+}
+
+
 var Data = {
     getTopNode: getTopNode,
     changeChecked: changeChecked,
@@ -164,6 +181,7 @@ var Data = {
     checkAll: checkAll,
     reverseCheck: reverseCheck,
     openAll: openAll,
-    setChecked: setChecked
+    setChecked: setChecked,
+    getChecked: getChecked
 };
 export { Data };
