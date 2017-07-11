@@ -1,3 +1,18 @@
+// 通过id查找节点
+function getNodeById(node, id) {
+    var children = node.children || [];
+    if (node.id === id) {
+        return node;
+    } else {
+        for (var i = 0; i < children.length; i++) {
+            var node = getNodeById(children[i], id);
+            if (node) {
+                return node;
+            }
+        }
+    }
+}
+
 // 通过count来决定元素的选中状态, 父级checked状态不对，可以在此修正
 function setStateByCount(node, children) {
     node.checked = false;
@@ -49,16 +64,6 @@ function handleNode(node) {
     getNodeState(node, children);
 }
 
-// 获取数据根节点
-function getTopNode(nodes) {
-    var topNode = { children: nodes };
-    // 处理节点，为每个节点加上count属性和父节点id和选中状态
-    handleNode(topNode);
-    console.log(topNode)
-
-    return topNode;
-}
-
 // 修改子集的选中状态
 function changeChildren(node) {
     var children = node.children || [];
@@ -70,21 +75,6 @@ function changeChildren(node) {
     });
 }
 
-// 通过id查找节点
-function getNodeById(node, id) {
-    var children = node.children || [];
-    if (node.id === id) {
-        return node;
-    } else {
-        for (var i = 0; i < children.length; i++) {
-            var node = getNodeById(children[i], id);
-            if (node) {
-                return node;
-            }
-        }
-    }
-}
-
 // 修改父集的选中状态
 function changeParent(newTopNode, id) {
     var node = getNodeById(newTopNode, id);
@@ -93,6 +83,14 @@ function changeParent(newTopNode, id) {
         setStateByCount(node, children);
         node.parentId && changeParent(newTopNode, node.parentId);
     }
+}
+
+// 获取数据根节点
+function getTopNode(nodes) {
+    var topNode = { children: nodes };
+    // 处理节点，为每个节点加上count属性和父节点id和选中状态
+    handleNode(topNode);
+    return topNode;
 }
 
 // 修改数据树的选中状态
@@ -109,21 +107,9 @@ function changeChecked(newTopNode, node, id) {
 }
 
 // 修改数据树的展开和收起
-function changeOpen(node, id) {
-    if (node.id === id) {
-        // 切换节点checked状态
-        node.open = !node.open;
-        return node;
-    } else {
-        var children = node.children || [];
-        for (var i = 0; i < children.length; i++) {
-            var node = changeOpen(children[i], id);
-            // 如果node存在，没有必要再循环下去，直接返回
-            if (node) {
-                return node;
-            }
-        }
-    }
+function changeOpen(newTopNode, id) {
+    var node = getNodeById(newTopNode, id);
+    node.open = !node.open;
 }
 
 var Data = {
