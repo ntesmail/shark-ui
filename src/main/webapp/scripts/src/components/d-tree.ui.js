@@ -142,9 +142,9 @@ function diffProps(oldNode, newNode) {
             count++;
             propsPatches.node_name = newNode.node_name;
         }
-        if (oldNode.checked !== newNode.checked) {
+        if (oldNode.state !== newNode.state) {
             count++;
-            propsPatches.checked = newNode.checked;
+            propsPatches.state = newNode.state;
         }
     }
     if (count === 0) {
@@ -179,21 +179,35 @@ function applyPatches(node, currentPatches) {
     }
 }
 
+function changeS(oA, state) {
+    oA.removeClass();
+    oA.addClass('tree-icon');
+    switch (state) {
+        case 0:
+            oA.addClass('tree-icon-check-empty');
+            break;
+        case 1:
+            oA.addClass('tree-icon-check-minus');
+            break;
+        case 2:
+            oA.addClass('tree-icon-check');
+            break;
+        default:
+            oA.addClass('tree-icon-check-empty');
+    }
+}
+
 function setProps(node, props) {
     var oSpan = node.children('span');
-    var oCheckbox = node.children('input:checkbox');
-    if (oCheckbox.length) {
+    var oA = node.children('a');
+    if (oA.length) {
         for (var key in props) {
             switch (key) {
                 case "node_name":
                     oSpan.text(props[key]);
                     break;
-                case "checked":
-                    if (!props[key]) {
-                        oCheckbox.prop('checked', false);
-                    } else {
-                        oCheckbox.prop('checked', true);
-                    }
+                case "state":
+                    changeS(oA, props[key]);
                     break;
             }
         }
@@ -239,12 +253,14 @@ function getNodeState(node) {
             }
         }
         switch (count) {
-            case 0: node.state = 0;
+            case 0:
+                node.state = 0;
                 break;
-            case len: node.state = 2;
+            case len:
+                node.state = 2;
                 break;
-            default: node.state = 1;
-                break;
+            default:
+                node.state = 1;
         }
     } else {
         node.state = node.checked ? 2 : 0;
@@ -274,13 +290,25 @@ function getTopNode(nodes) {
 
 // 获取node的dom节点
 function getNodeDom(node) {
-    var checkbox = $('<input type="checkbox" />');
-    checkbox.prop('checked', node.checked);
+    var oA = $('<a class="tree-icon"></a>');
+    switch (node.state) {
+        case 0:
+            oA.addClass('tree-icon-check-empty');
+            break;
+        case 1:
+            oA.addClass('tree-icon-check-minus');
+            break;
+        case 2:
+            oA.addClass('tree-icon-check');
+            break;
+        default:
+            oA.addClass('tree-icon-check-empty');
+    }
     var oSpan = $('<span class="tree-node-name"></span>');
     oSpan.html(node.node_name);
     var oLi = $('<li></li>');
     oLi.data('id', node.node_id);
-    oLi.append(checkbox);
+    oLi.append(oA);
     oLi.append(oSpan);
     if (node && node.children) {
         var oUl = getUlDom(node.children);
@@ -291,7 +319,7 @@ function getNodeDom(node) {
 
 // 获取ul的dom节点
 function getUlDom(nodes) {
-    var oUl = $('<ul></ul>');
+    var oUl = $('<ul class="tree-open"></ul>');
     nodes.forEach(function (node) {
         var oLi = getNodeDom(node);
         oUl.append(oLi);
@@ -301,7 +329,7 @@ function getUlDom(nodes) {
 
 // 根据根数据根节点，初始化树组件的dom结构
 function initDom(sharkComponent, targetElement) {
-    var component = $('<div class="shark-d-tree"></div>');
+    var component = $('<div class="shark-d-tree shark-tree"></div>');
     var children = sharkComponent.topNode.children;
     if (children) {
         var oUl = getUlDom(children);
@@ -317,6 +345,7 @@ function initDom(sharkComponent, targetElement) {
 function changeChildren(children, checked) {
     children.forEach(function (child) {
         child.checked = checked;
+        child.state = checked ? 2 : 0;
         var iChildren = child.children;
         iChildren && changeChildren(iChildren, checked);
     });
@@ -327,12 +356,30 @@ function changeParent(newTopNode, node, id) {
     var children = node.children || [];
     if (node.node_id === id) {
         var checked = true;
-        for (var i = 0; i < children.length; i++) {
+        var len = children.length;
+        var count = 0;
+        for (var i = 0; i < len; i++) {
             // 只要有一个是false，就是false
             if (!children[i].checked) {
                 checked = false;
+            } else {
+                count++;
+            }
+            if (children[i].state === 1) {
+                checked = false;
+                count = 'minus';
                 break;
             }
+        }
+        switch (count) {
+            case 0:
+                node.state = 0;
+                break;
+            case len:
+                node.state = 2;
+                break;
+            default:
+                node.state = 1;
         }
         node.checked = checked;
         // 检查是否还存在父级
@@ -354,6 +401,7 @@ function changeChecked(newTopNode, node, id) {
     if (node.node_id === id) {
         // 切换节点checked状态
         node.checked = !node.checked;
+        node.state = node.checked ? 2 : 0;
         // 子集的checked属性与父级保持一致
         changeChildren(children, node.checked);
         changeParent(newTopNode, newTopNode, node.parentId);
@@ -381,6 +429,9 @@ function initEvents(sharkComponent) {
         changeChecked(newTopNode, newTopNode, id);
         // 得到两棵数据树的差异
         var patches = diff(sharkComponent.topNode, newTopNode);
+
+        console.log(patches);
+
         patchs(component, { index: 0 }, patches);
         sharkComponent.topNode = newTopNode;
         // 阻止冒泡
@@ -405,11 +456,6 @@ SharkUI.sharkDTree = function (options, targetElement) {
     var sharkComponent = {};
     // 获取数据根节点
     sharkComponent.topNode = getTopNode(config.nodes);
-
-
-    console.log(sharkComponent.topNode);
-
-
     // 初始化dom节点
     initDom(sharkComponent, targetElement);
     // 添加基础方法
