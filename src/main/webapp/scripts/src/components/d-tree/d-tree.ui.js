@@ -123,11 +123,11 @@ SharkUI.sharkDTree = function (options, targetElement) {
     };
     // 获取选中的id列表
     sharkComponent.getChecked = function () {
-        return TreeData.getChecked(sharkComponent.topNode);
+        return TreeData.getNodeIdList(sharkComponent.topNode, 'checked', config.checkable);
     };
     // 获取选中的id列表
     sharkComponent.getSelected = function () {
-        return TreeData.getSelected(sharkComponent.topNode);
+        return TreeData.getNodeIdList(sharkComponent.topNode, 'selected', config.selectable);
     }
     // 销毁组件
     sharkComponent.destroy = function () {

@@ -202,7 +202,7 @@ function setChecked(newTopNode, idList, link) {
     handleNode(newTopNode, link);
 }
 
-
+// 设置选中项
 function setSelected(newTopNode, idList, multiple) {
     changeAllSelected(newTopNode);
     for (var i = 0; i < idList.length; i++) {
@@ -217,37 +217,23 @@ function setSelected(newTopNode, idList, multiple) {
     }
 }
 
-// 获取选中的id
-function getCheckedItem(node, idList) {
+// 根据某种状态获取节点id列表
+function getNodeItem(node, key, idList) {
     var children = node.children;
     children && children.forEach(function (child) {
-        getCheckedItem(child, idList);
+        getNodeItem(child, key, idList);
     });
-    if (node.id && node.checked) {
+    if (node.id && node[key]) {
         idList.push(node.id);
     }
 }
 
-// 获取选中的id列表
-function getChecked(topNode) {
+// 根据某种状态获取节点id列表
+function getNodeIdList(topNode, key, flag) {
     var idList = [];
-    getCheckedItem(topNode, idList);
-    return idList;
-}
-
-function getSelectedItem(node, idList) {
-    var children = node.children;
-    children && children.forEach(function (child) {
-        getSelectedItem(child, idList);
-    });
-    if (node.id && node.selected) {
-        idList.push(node.id);
+    if (flag) {
+        getNodeItem(topNode, key, idList);
     }
-}
-
-function getSelected(topNode) {
-    var idList = [];
-    getSelectedItem(topNode, idList);
     return idList;
 }
 
@@ -261,8 +247,7 @@ var TreeData = {
     openAll: openAll,
     openTo: openTo,
     setChecked: setChecked,
-    getChecked: getChecked,
     setSelected: setSelected,
-    getSelected: getSelected
+    getNodeIdList: getNodeIdList
 };
 export { TreeData };
