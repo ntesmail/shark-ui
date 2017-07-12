@@ -1,50 +1,62 @@
 import $ from 'jquery';
 
-// 获取node的dom节点
-function getNodeDom(node) {
-    var children = node.children;
-    var checkbox = $('<span class="tree-checkbox tree-icon"></span>');
-    changeCheckState(checkbox, node.state);
-    var title = $('<span class="tree-title tree-node-name"></span>');
-    title.html(node.name);
-    var oLi = $('<li></li>');
-    oLi.data('id', node.id);
-    oLi.append(checkbox);
-    oLi.append(title);
-    if (children) {
-        var oUl = getUlDom(children);
-        oLi.prepend('<span class="tree-switcher tree-icon"></span>');
-        oLi.append(oUl);
-        changeOpenDom(oLi, node.open);
+// 展开/收起子树
+function toggleChildTree(node, open) {
+    var switcher = node.children('.tree-switcher');
+    var childTree = node.children('ul');
+    switcher.removeClass('tree-icon-down tree-icon-right');
+    // 先收起子树，再根据状态选择要不要打开
+    childTree.removeClass('tree-open');
+    if (open) {
+        switcher.addClass('tree-icon-down');
+        childTree.addClass('tree-open');
+    } else {
+        switcher.addClass('tree-icon-right');
     }
-    return oLi;
 }
 
-// 获取ul的dom节点
-function getUlDom(nodes, open) {
-    var oUl = $('<ul></ul>');
+// 获取node的dom节点
+function getTreeNode(nodeData) {
+    var children = nodeData.children;
+    var checkbox = $('<span class="tree-checkbox tree-icon"></span>');
+    var treeNode = $('<li><span class="tree-title tree-node-name">' + nodeData.name + '</span></li>');
+    changeCheckState(checkbox, nodeData.state);
+    treeNode.data('id', nodeData.id);
+    treeNode.prepend(checkbox);
+    if (children) {
+        var childTree = getChildTree(children);
+        treeNode.prepend('<span class="tree-switcher tree-icon"></span>');
+        treeNode.append(childTree);
+        toggleChildTree(treeNode, nodeData.open);
+    }
+    return treeNode;
+}
+
+// 获取子树的dom
+function getChildTree(nodes, open) {
+    var tree = $('<ul></ul>');
     nodes.forEach(function (node) {
-        var oLi = getNodeDom(node);
-        oUl.append(oLi);
+        var treeNode = getTreeNode(node);
+        tree.append(treeNode);
     });
-    return oUl;
+    return tree;
 }
 
 // 根据根数据根节点，初始化树组件的dom结构
 function initDom(topNode) {
-    var component = $('<div class="shark-d-tree shark-tree"></div>');
-    var oUl = getUlDom(topNode.children);
-    component.append(oUl);
-    return component;
+    var container = $('<div class="shark-d-tree shark-tree"></div>');
+    var tree = getChildTree(topNode.children);
+    container.append(tree);
+    return container;
 }
 
 // 根据得到的差异数组，修改组件
 function modifyComponent(node, walker, patches) {
     var currentPatches = patches[walker.index];
-    var aLi = node.children('ul').children('li');
-    aLi.each(function (i, oLi) {
+    var treeNodes = node.children('ul').children('li');
+    treeNodes.each(function (i, treeNode) {
         walker.index++;
-        modifyComponent($(oLi), walker, patches);
+        modifyComponent($(treeNode), walker, patches);
     });
     currentPatches && applyPatches(node, currentPatches);
 }
@@ -65,7 +77,7 @@ function applyPatches(node, currentPatches) {
                 changeCheckState(checkbox, currentPatch.state);
                 break;
             case "OPEN":
-                changeOpenDom(node, currentPatch.open);
+                toggleChildTree(node, currentPatch.open);
                 break;
         }
     });
@@ -82,35 +94,24 @@ function changeCheckState(checkbox, state) {
     checkbox.addClass(classObj[state]);
 }
 
-function changeOpenDom(node, open) {
-    var oI = node.children('.tree-switcher');
-    var oUl = node.children('ul');
-    oI.removeClass('tree-icon-down tree-icon-right');
-    oUl.removeClass();
-    if (open) {
-        oI.addClass('tree-icon-down');
-        oUl.addClass('tree-open');
-    } else {
-        oI.addClass('tree-icon-right');
-    }
-}
+
 
 // 重新排序子节点
 function reOrderChildren(node, moves) {
     moves.forEach(function (move) {
-        var ul = $(node).children('ul');
-        var staticNodeList = $(node).children('ul').children('li');
+        var childTree = $(node).children('ul');
+        var nodeList = childTree.children('li');
         var index = move.index;
         if (move.type === 0) {
-            var li = staticNodeList.eq(index);
-            li.remove();
+            var treeNode = nodeList.eq(index);
+            treeNode.remove();
         } else if (move.type === 1) {
             var item = move.item;
-            var li = getNodeDom(item);
+            var treeNode = getTreeNode(item);
             if (index) {
-                staticNodeList.eq(index - 1).after(li);
+                nodeList.eq(index - 1).after(treeNode);
             } else {
-                ul.prepend(li);
+                childTree.prepend(treeNode);
             }
         }
     });
