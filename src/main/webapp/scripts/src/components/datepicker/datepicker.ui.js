@@ -10,6 +10,7 @@ import { Templates } from '../../common/templates';
 import { BaseComponent } from '../../common/base';
 import '../../common/date';
 import { Calendar } from './calendar.ui';
+import { Timepanel } from './timepanel.ui';
 // input模板
 var templateInput = Templates.input;
 var templateInputFun = Templates.templateAoT(templateInput);
@@ -57,7 +58,9 @@ function initCalendar(sharkComponent, config) {
             }
         }
     });
+    var timepanel = new Timepanel();
     container.append(calendar.nativeElement);
+    container.append(timepanel.nativeElement);
     sharkComponent.calendar = calendar;
     sharkComponent.container = container;
     Event.addCloseListener(

@@ -227,7 +227,6 @@ function Calendar(options) {
         onChanged: function () { }
     }, options);
     this.nativeElement = DomHelper.parseToHTML(templateFun.apply())[0];
-    this.nativeElement.setAttribute('id', 'xxx');
     document.body.appendChild(this.nativeElement);
     initEvents(this);
     this.value = this.config.initDate;

@@ -107,7 +107,6 @@
     top: 0;
     display: none;
 }
-
 .shark-timepanel {
     border: 1px solid #acacac;
     background-color: #ffffff;
@@ -138,6 +137,9 @@
     .timepanel-list-item {
         cursor: pointer;
         padding: 2px 0 2px 22px;
+        &:last-child {
+            margin-bottom: 130px;
+        }
         &:hover {
             background-color: #ececec;
         }

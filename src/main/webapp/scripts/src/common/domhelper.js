@@ -90,12 +90,40 @@ function remove(nativeElement) {
     nativeElement.parentNode.removeChild(nativeElement);
 }
 
+function scrollTo(nativeElement, value) {
+    var diff = nativeElement.scrollTop - value;
+    var tmp = nativeElement.scrollTop;
+    if (diff === 0 || value >= nativeElement.scrollHeight) {
+        return;
+    }
+    scroll();
+    function scroll() {
+        nativeElement.scrollTop = tmp;
+        if (diff > 0) {
+            tmp = nativeElement.scrollTop - 20;
+            if (tmp < value) {
+                tmp = value;
+            }
+        }
+        else {
+            tmp = nativeElement.scrollTop + 20;
+            if (tmp > value) {
+                tmp = value;
+            }
+        }
+        if (nativeElement.scrollTop !== value) {
+            requestAnimationFrame(scroll);
+        }
+    }
+}
+
+
 var DomHelper = {
     calcOffset: calcOffset,
     parseToHTML: parseToHTML,
     addClass: addClass,
     removeClass: removeClass,
     hasClass: hasClass,
-    remove: remove
+    scrollTo: scrollTo
 };
 export { DomHelper };

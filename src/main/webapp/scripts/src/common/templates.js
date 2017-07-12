@@ -163,13 +163,9 @@ var calendar = `
 
 var timepicker = `
     <div class="shark-timepanel">
-        <div class="timepanel-list timepanel-list-hours">
-            <div class="timepanel-list-item">00</div>
-            <div class="timepanel-list-item">01</div>
-            <div class="timepanel-list-item">02</div>
-        </div>
+        <div class="timepanel-list timepanel-list-hours"></div>
         <div class="timepanel-list timepanel-list-minutes"></div>
-        <div class="timepanel-list timepanel-list-second"></div>
+        <div class="timepanel-list timepanel-list-seconds"></div>
     </div>
 `;
 
@@ -209,6 +205,7 @@ function template2html(template, data) {
 
 var Templates = {
     calendar: calendar,
+    timepicker: timepicker,
     input: input,
     fileupload: fileupload,
     listgroup: listgroup,
