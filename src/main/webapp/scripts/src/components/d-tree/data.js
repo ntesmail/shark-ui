@@ -63,17 +63,6 @@ function getTopNode(treeData, link) {
     return topNode;
 }
 
-// 全部展开（递归展开）
-function openAll(node) {
-    var children = node.children;
-    if (children) {
-        node.open = true;
-        children.forEach(function (child) {
-            openAll(child);
-        });
-    }
-}
-
 // 通过id查找节点
 function getNodeById(node, id) {
     var children = node.children || [];
@@ -132,6 +121,27 @@ function changeOpen(newTopNode, id) {
     node.open = !node.open;
 }
 
+// 全部展开（递归展开）
+function openAll(node) {
+    var children = node.children;
+    if (children) {
+        node.open = true;
+        children.forEach(function (child) {
+            openAll(child);
+        });
+    }
+}
+
+// 打开某几个节点
+function openTo(newTopNode, idList) {
+    idList.forEach(function (id) {
+        var node = getNodeById(newTopNode, id);
+        if (node && node.children) {
+            node.open = true;
+        }
+    });
+}
+
 // 全选
 function checkAll(newTopNode, flag) {
     newTopNode.checked = flag;
@@ -164,17 +174,10 @@ function setChecked(newTopNode, idList, link) {
     handleNode(newTopNode, link);
 }
 
-// 获取选中的id列表
-function getChecked(topNode) {
-    var idList = [];
-    getCheckedItem(topNode, idList);
-    return idList;
-}
-
 // 获取选中的id
 function getCheckedItem(node, idList) {
-    var children = node.children || [];
-    children.forEach(function (child) {
+    var children = node.children;
+    children && children.forEach(function (child) {
         getCheckedItem(child, idList);
     });
     if (node.id && node.checked) {
@@ -182,14 +185,11 @@ function getCheckedItem(node, idList) {
     }
 }
 
-// 打开某几个节点
-function openTo(newTopNode, idList) {
-    idList.forEach(function (id) {
-        var node = getNodeById(newTopNode, id);
-        if (node && node.children) {
-            node.open = true;
-        }
-    });
+// 获取选中的id列表
+function getChecked(topNode) {
+    var idList = [];
+    getCheckedItem(topNode, idList);
+    return idList;
 }
 
 var TreeData = {
