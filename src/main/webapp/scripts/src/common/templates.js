@@ -161,13 +161,25 @@ var calendar = `
     </div>
 `;
 
-var timepicker = `
+var timepanel = `
     <div class="shark-timepanel">
         <div class="timepanel-list timepanel-list-hours"></div>
         <div class="timepanel-list timepanel-list-minutes"></div>
         <div class="timepanel-list timepanel-list-seconds"></div>
     </div>
 `;
+
+var pickercontainer = `
+    <div class="shark-picker-container">
+        <div class="shark-datepicker">
+        </div>
+        <div class="shark-timepicker">
+            <button class="nowtime">此刻</button>
+            <input class="input-time" readonly="readonly" />
+        </div>
+    </div>
+`;
+
 
 function tempAdd(line, isJs) {
     if (/^\s*$/.test(line)) {
@@ -205,7 +217,8 @@ function template2html(template, data) {
 
 var Templates = {
     calendar: calendar,
-    timepicker: timepicker,
+    timepanel: timepanel,
+    pickercontainer: pickercontainer,
     input: input,
     fileupload: fileupload,
     listgroup: listgroup,

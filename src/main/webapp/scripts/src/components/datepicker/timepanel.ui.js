@@ -5,7 +5,7 @@
 import { SharkUI } from '../../common/core';
 import { Templates } from '../../common/templates';
 import { DomHelper } from '../../common/domhelper';
-var template = Templates.timepicker;
+var template = Templates.timepanel;
 var templateFun = Templates.templateAoT(template);
 
 function createTimeArr(count) {

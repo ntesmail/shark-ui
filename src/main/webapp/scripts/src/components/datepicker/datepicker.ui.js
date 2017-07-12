@@ -13,7 +13,9 @@ import { Calendar } from './calendar.ui';
 import { Timepanel } from './timepanel.ui';
 // input模板
 var templateInput = Templates.input;
+var templateContainer = Templates.pickercontainer;
 var templateInputFun = Templates.templateAoT(templateInput);
+var templateContainerFun = Templates.templateAoT(templateContainer);
 // 初始化selecter的dom
 function initDom(sharkComponent, config, targetElement) {
     if (!targetElement) {
@@ -29,7 +31,7 @@ function initDom(sharkComponent, config, targetElement) {
     return sharkComponent;
 }
 function initContainer() {
-    var container = $('<div class="shark-picker-container"></div>');
+    var container = $(templateContainerFun.apply());
     $(document.body).append(container);
     container.attr('id', SharkUI.createUUID());
     return container;
@@ -59,9 +61,10 @@ function initCalendar(sharkComponent, config) {
         }
     });
     var timepanel = new Timepanel();
-    container.append(calendar.nativeElement);
-    container.append(timepanel.nativeElement);
+    container.find('.shark-datepicker').append(calendar.nativeElement);
+    container.find('.shark-timepicker').append(timepanel.nativeElement);
     sharkComponent.calendar = calendar;
+    sharkComponent.timepanel = timepanel;
     sharkComponent.container = container;
     Event.addCloseListener(
         container.attr('id'),
