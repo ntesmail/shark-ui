@@ -27,11 +27,23 @@ function toggleCheckBox(checkbox, state) {
     checkbox.addClass(classObj[state]);
 }
 
+function toggleSelected(title, selected) {
+    title.removeClass('tree-node-selected');
+    if (selected) {
+        title.addClass('tree-node-selected');
+    }
+}
+
 // 生成树节点的dom
 function getTreeNode(nodeData) {
-    var treeNode = $('<li><span class="tree-title tree-node-name">' + nodeData.name + '</span></li>');
+    var treeNode = $('<li></li>');
+    var title = $('<span class="tree-title tree-node-name">' + nodeData.name + '</span>');
     var checkbox = $('<span class="tree-checkbox tree-icon"></span>');
     var children = nodeData.children;
+    if (nodeData.selected) {
+        title.addClass('tree-node-selected');
+    }
+    treeNode.append(title);
     treeNode.data('id', nodeData.id);
     toggleCheckBox(checkbox, nodeData.state);
     treeNode.prepend(checkbox);
@@ -98,6 +110,10 @@ function applyPatches(node, currentPatches) {
             case "STATE":
                 var checkbox = node.children('.tree-checkbox');
                 toggleCheckBox(checkbox, currentPatch.state);
+                break;
+            case "SELECTED":
+                var title = node.children('.tree-title');
+                toggleSelected(title, currentPatch.selected);
                 break;
             case "OPEN":
                 toggleChildTree(node, currentPatch.open);

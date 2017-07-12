@@ -5,6 +5,7 @@
 <button id="reRenderBtn" class="btn btn-primary">重新渲染</button>
 <button id="openAllBtn" class="btn btn-primary">展开全部</button>
 <button id="getCheckedBtn" class="btn btn-primary">获取选中项</button>
+<button id="getSelectedBtn" class="btn btn-primary">获取选中项</button>
 
 <script type="text/javascript">
     var treeData = [{
@@ -88,6 +89,12 @@
         onNodeChecked: function(node, isChecked) {
             console.log(node, isChecked);
         },
+        onExpand: function(node, isExpandd) {
+            console.log(node, isExpandd);
+        },
+        onNodeSelected: function(node) {
+            console.log(node);
+        }
        // link: false
     });
     dmytree.appendTo('#dTreeContainer');
@@ -116,6 +123,10 @@
         console.log(dmytree.getChecked());
     });
 
+
+    document.getElementById('getSelectedBtn').addEventListener('click',function(){
+        console.log(dmytree.getSelected());
+    });
 
 
      //setTimeout(function() {

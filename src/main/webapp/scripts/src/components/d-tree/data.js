@@ -115,10 +115,33 @@ function changeChecked(newTopNode, node, id, link) {
     return node;
 }
 
+
+// 修改子集的选中状态
+function changeAllSelected(node) {
+    var children = node.children;
+    children && children.forEach(function (child) {
+        child.selected = false;
+        changeAllSelected(child);
+    });
+}
+
+// 修改数据节点的选中
+function selectNode(sharkComponent, newTopNode, id, multiple) {
+    if (!multiple) {
+        changeAllSelected(newTopNode);
+    }
+    var node = getNodeById(newTopNode, id);
+    if (node) {
+        node.selected = true;
+    }
+    return node;
+}
+
 // 修改数据树的展开和收起
 function changeOpen(newTopNode, id) {
     var node = getNodeById(newTopNode, id);
     node.open = !node.open;
+    return node;
 }
 
 // 全部展开（递归展开）
@@ -192,15 +215,33 @@ function getChecked(topNode) {
     return idList;
 }
 
+function getSelectedItem(node, idList) {
+    var children = node.children;
+    children && children.forEach(function (child) {
+        getSelectedItem(child, idList);
+    });
+    if (node.id && node.selected) {
+        idList.push(node.id);
+    }
+}
+
+function getSelected(topNode) {
+    var idList = [];
+    getSelectedItem(topNode, idList);
+    return idList;
+}
+
 var TreeData = {
     getTopNode: getTopNode,
     changeChecked: changeChecked,
+    selectNode: selectNode,
     changeOpen: changeOpen,
     checkAll: checkAll,
     reverseCheck: reverseCheck,
     openAll: openAll,
     openTo: openTo,
     setChecked: setChecked,
-    getChecked: getChecked
+    getChecked: getChecked,
+    getSelected: getSelected
 };
 export { TreeData };

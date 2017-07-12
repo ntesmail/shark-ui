@@ -102,6 +102,9 @@ function diffProps(oldNode, newNode, currentPatch) {
         if (oldNode.open !== newNode.open) {
             currentPatch.push({ type: "OPEN", open: newNode.open });
         }
+        if (oldNode.selected !== newNode.selected) {
+            currentPatch.push({ type: "SELECTED", selected: newNode.selected });
+        }
     }
 }
 
