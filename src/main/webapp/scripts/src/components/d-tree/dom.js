@@ -18,13 +18,15 @@ function toggleChildTree(treeNode, open) {
 
 // 修改复选框的状态
 function toggleCheckBox(checkbox, state) {
-    checkbox.removeClass('tree-icon-check-empty tree-icon-check-minus tree-icon-check');
-    var classObj = {
-        '0': 'tree-icon-check-empty',
-        '1': 'tree-icon-check-minus',
-        '2': 'tree-icon-check'
-    };
-    checkbox.addClass(classObj[state]);
+    if (checkbox) {
+        checkbox.removeClass('tree-icon-check-empty tree-icon-check-minus tree-icon-check');
+        var classObj = {
+            '0': 'tree-icon-check-empty',
+            '1': 'tree-icon-check-minus',
+            '2': 'tree-icon-check'
+        };
+        checkbox.addClass(classObj[state]);
+    }
 }
 
 function toggleSelected(title, selected) {
@@ -35,10 +37,9 @@ function toggleSelected(title, selected) {
 }
 
 // 生成树节点的dom
-function getTreeNode(nodeData) {
+function getTreeNode(nodeData, checkable) {
     var treeNode = $('<li></li>');
     var title = $('<span class="tree-title tree-node-name">' + nodeData.name + '</span>');
-    var checkbox = $('<span class="tree-checkbox tree-icon"></span>');
     var children = nodeData.children;
     if (nodeData.selected) {
         title.addClass('tree-node-selected');
@@ -46,9 +47,12 @@ function getTreeNode(nodeData) {
     treeNode.append(title);
     treeNode.data('id', nodeData.id);
     toggleCheckBox(checkbox, nodeData.state);
-    treeNode.prepend(checkbox);
+    if (checkable) {
+        var checkbox = $('<span class="tree-checkbox tree-icon"></span>');
+        treeNode.prepend(checkbox);
+    }
     if (children) {
-        var childTree = getChildTree(children);
+        var childTree = getChildTree(children, nodeData.open, checkable);
         // 存在子树则在节点前添加展开收起子树的按钮
         treeNode.prepend('<span class="tree-switcher tree-icon"></span>');
         treeNode.append(childTree);
@@ -58,19 +62,19 @@ function getTreeNode(nodeData) {
 }
 
 // 生成子树的dom
-function getChildTree(nodesData, open) {
+function getChildTree(nodesData, open, checkable) {
     var tree = $('<ul></ul>');
     nodesData.forEach(function (nodeData) {
-        var treeNode = getTreeNode(nodeData);
+        var treeNode = getTreeNode(nodeData, checkable);
         tree.append(treeNode);
     });
     return tree;
 }
 
 // 根据根数据根节点，初始化树组件的dom结构
-function initDom(topNode) {
+function initDom(topNode, checkable) {
     var container = $('<div class="shark-d-tree shark-tree"></div>');
-    var tree = getChildTree(topNode.children);
+    var tree = getChildTree(topNode.children, checkable);
     container.append(tree);
     return container;
 }

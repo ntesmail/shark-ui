@@ -86,6 +86,8 @@
     var dmytree = SharkUI.sharkDTree({
         nodes: treeData,
         openAll: false,
+        selectable: true,
+        checkable: false,
         onNodeChecked: function(node, isChecked) {
             console.log(node, isChecked);
         },

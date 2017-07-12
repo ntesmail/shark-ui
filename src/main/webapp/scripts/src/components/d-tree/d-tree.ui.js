@@ -18,11 +18,11 @@ function initEvents(sharkComponent, config) {
         if (target.hasClass('tree-switcher')) { // 修改展开收起的状态
             var node = TreeData.changeOpen(newTopNode, id);
             config.onExpand.call(sharkComponent, node, node.open);
-        } else if (target.hasClass('tree-checkbox')) {  // 修改新的数据树的选中状态
-            var node = TreeData.changeChecked(newTopNode, newTopNode, id, config.link);
+        } else if (target.hasClass('tree-checkbox') && config.checkable) {  // 修改新的数据树的选中状态
+            var node = TreeData.changeChecked(config.checkable, newTopNode, newTopNode, id, config.link);
             config.onNodeChecked.call(sharkComponent, node, node.checked);
-        } else if (target.hasClass('tree-title')) {
-            var node = TreeData.selectNode(sharkComponent, newTopNode, id, config.multiple);
+        } else if (target.hasClass('tree-title') && config.selectable) {
+            var node = TreeData.selectNode(config.selectable, newTopNode, id, config.multiple);
             config.onNodeSelected.call(sharkComponent, node);
         }
         compareAndRender(sharkComponent, newTopNode);
@@ -52,7 +52,9 @@ SharkUI.sharkDTree = function (options, targetElement) {
         nodes: [], // 树数据
         openAll: true, // 是否全部展开，默认true
         link: true, // 父子级节点是否关联，默认为true
+        selectable: false,
         multiple: false,
+        checkable: true,
         onExpand: function () { },
         onNodeChecked: function () { }, // check之后的回调
         onNodeSelected: function () { }
@@ -61,13 +63,13 @@ SharkUI.sharkDTree = function (options, targetElement) {
     // 添加基础方法
     BaseComponent.addComponentBaseFn(sharkComponent, config);
     // 获取经过一系列处理的数据根节点
-    sharkComponent.topNode = TreeData.getTopNode(config.nodes, config.link);
+    sharkComponent.topNode = TreeData.getTopNode(config.nodes, config.link, config.checkable);
     // 是否全部展开，如果是则重新处理数据树
     if (config.openAll) {
         TreeData.openAll(sharkComponent.topNode);
     }
     // 初始化dom节点
-    sharkComponent.component = TreeDom.initDom(sharkComponent.topNode);
+    sharkComponent.component = TreeDom.initDom(sharkComponent.topNode, config.checkable);
     if (targetElement) {
         targetElement.append(sharkComponent.component);
     }
@@ -75,7 +77,7 @@ SharkUI.sharkDTree = function (options, targetElement) {
     initEvents(sharkComponent, config);
     // reRender方法
     sharkComponent.reRender = function (nodes) {
-        var newTopNode = TreeData.getTopNode(nodes, config.link);
+        var newTopNode = TreeData.getTopNode(nodes, config.link, config.checkable);
         compareAndRender(sharkComponent, newTopNode);
     };
     // 全选
@@ -115,7 +117,7 @@ SharkUI.sharkDTree = function (options, targetElement) {
         return TreeData.getChecked(sharkComponent.topNode);
     };
     // 获取选中的id列表
-    sharkComponent.getSelected = function() {
+    sharkComponent.getSelected = function () {
         return TreeData.getSelected(sharkComponent.topNode);
     }
     // 销毁组件

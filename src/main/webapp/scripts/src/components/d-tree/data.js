@@ -41,7 +41,7 @@ function getNodeState(node, children, link) {
 }
 
 // 处理节点，为每个节点加上count属性，父节点id和选中状态 | (做递归处理)
-function handleNode(node, link) {
+function handleNode(node, link, checkable) {
     var children = node.children;
     node.count = 0;
     children && children.forEach(function (child) {
@@ -51,15 +51,17 @@ function handleNode(node, link) {
         // 统计子节点数量
         node.count += child.count + 1;
     });
-    // 得到当前node的选中状态(选中/未选中/半选中)
-    getNodeState(node, children, link);
+    if (checkable) {
+        // 得到当前node的选中状态(选中/未选中/半选中)
+        getNodeState(node, children, link);
+    }
 }
 
 // 获取数据根节点
-function getTopNode(treeData, link) {
+function getTopNode(treeData, link, checkable) {
     var topNode = { children: treeData };
     // 处理节点，为每个节点加上count属性，父id和当前选中状态
-    handleNode(topNode, link);
+    handleNode(topNode, link, checkable);
     return topNode;
 }
 
@@ -100,21 +102,22 @@ function changeParent(newTopNode, id) {
 }
 
 // 修改数据树的选中状态
-function changeChecked(newTopNode, node, id, link) {
-    var node = getNodeById(newTopNode, id);
-    if (node) {
-        // 切换节点checked状态
-        node.checked = !node.checked;
-        node.state = node.checked ? 2 : 0;
-        if (link) {
-            // 子集的checked属性与父级保持一致
-            changeChildren(node);
-            changeParent(newTopNode, node.parentId);
+function changeChecked(checkable, newTopNode, node, id, link) {
+    if (checkable) {
+        var node = getNodeById(newTopNode, id);
+        if (node) {
+            // 切换节点checked状态
+            node.checked = !node.checked;
+            node.state = node.checked ? 2 : 0;
+            if (link) {
+                // 子集的checked属性与父级保持一致
+                changeChildren(node);
+                changeParent(newTopNode, node.parentId);
+            }
         }
+        return node;
     }
-    return node;
 }
-
 
 // 修改子集的选中状态
 function changeAllSelected(node) {
@@ -126,15 +129,17 @@ function changeAllSelected(node) {
 }
 
 // 修改数据节点的选中
-function selectNode(sharkComponent, newTopNode, id, multiple) {
-    if (!multiple) {
-        changeAllSelected(newTopNode);
+function selectNode(selectable, newTopNode, id, multiple) {
+    if (selectable) {
+        if (!multiple) {
+            changeAllSelected(newTopNode);
+        }
+        var node = getNodeById(newTopNode, id);
+        if (node) {
+            node.selected = true;
+        }
+        return node;
     }
-    var node = getNodeById(newTopNode, id);
-    if (node) {
-        node.selected = true;
-    }
-    return node;
 }
 
 // 修改数据树的展开和收起
