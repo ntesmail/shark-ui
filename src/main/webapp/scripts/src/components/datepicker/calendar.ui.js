@@ -243,6 +243,10 @@ Calendar.prototype.setValue = function (date) {
     this.renderValue = new Date(date);
     this.render();
 }
+Timepanel.prototype.setConfig = function (key, value) {
+    this.config[key] = value;
+    this.render();
+}
 // 渲染
 Calendar.prototype.render = function () {
     forceRenderValueValid(this);

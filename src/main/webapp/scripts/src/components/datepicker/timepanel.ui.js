@@ -46,7 +46,15 @@ function equal(a, b) {
 // 日期a是否大于b
 function biggerThan(a, b) {
     if (a instanceof Array) {
-        return parseInt(a.join('')) > parseInt(b.join(''));
+        var aStr = '';
+        a.forEach((item) => {
+            aStr = aStr + time2Str(item);
+        });
+        var bStr = '';
+        b.forEach((item) => {
+            bStr = bStr + time2Str(item);
+        });
+        return parseInt(aStr) > parseInt(bStr);
     }
     else {
         return a > b;
@@ -182,15 +190,12 @@ function renderDom(timepanel) {
         preSecond = timepanel.preValue[2];
     }
     if (!SharkUI.isEmpty(currentHour) && currentHour !== preHour) {
-        console.log('scroll hour');
         DomHelper.scrollTo(hoursContainer, currentHour * hoursContainer.childNodes.item(currentHour).offsetHeight);
     }
     if (!SharkUI.isEmpty(currentMinute) && currentMinute !== preMinute) {
-        console.log('scroll minute');
         DomHelper.scrollTo(minutesContainer, currentMinute * minutesContainer.childNodes.item(currentMinute).offsetHeight);
     }
     if (!SharkUI.isEmpty(currentSecond) && currentSecond !== preSecond) {
-        console.log('scroll second');
         DomHelper.scrollTo(secondsContainer, currentSecond * secondsContainer.childNodes.item(currentSecond).offsetHeight);
     }
 
@@ -219,8 +224,12 @@ Timepanel.prototype.getValue = function () {
     return this.value;
 }
 // 设置值
-Timepanel.prototype.setValue = function (date) {
-    this.value = new Date(date);
+Timepanel.prototype.setValue = function (time) {
+    this.value = time;
+    this.render();
+}
+Timepanel.prototype.setConfig = function (key, value) {
+    this.config[key] = value;
     this.render();
 }
 // 渲染
