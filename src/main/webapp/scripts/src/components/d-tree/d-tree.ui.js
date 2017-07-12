@@ -6,8 +6,8 @@ import $ from 'jquery';
 import { SharkUI } from '../../common/core';
 import { BaseComponent } from '../../common/base';
 import { Diff } from './diff';
-import { Data } from './data';
-import { Dom } from './dom';
+import { TreeData } from './data';
+import { TreeDom } from './dom';
 
 // 初始化事件
 function initEvents(sharkComponent, config) {
@@ -15,9 +15,9 @@ function initEvents(sharkComponent, config) {
         var id = $(evt.currentTarget).data('id');
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
         if ($(evt.target).hasClass('tree-switcher')) { // 修改展开收起的状态
-            Data.changeOpen(newTopNode, id);
+            TreeData.changeOpen(newTopNode, id);
         } else {  // 修改新的数据树的选中状态
-            var node = Data.changeChecked(newTopNode, newTopNode, id, config.link);
+            var node = TreeData.changeChecked(newTopNode, newTopNode, id, config.link);
             config.onNodeChecked.call(sharkComponent, node, node.checked);
         }
         compareAndRender(sharkComponent, newTopNode);
@@ -30,13 +30,13 @@ function initEvents(sharkComponent, config) {
 function compareAndRender(sharkComponent, newTopNode) {
     // 得到两棵数据树的差异
     var patches = Diff.diff(sharkComponent.topNode, newTopNode);
-    Dom.modifyComponent(sharkComponent.component, { index: 0 }, patches);
+    TreeDom.modifyComponent(sharkComponent.component, { index: 0 }, patches);
     sharkComponent.topNode = newTopNode;
 }
 
 function checkAll(sharkComponent, flag) {
     var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
-    Data.checkAll(newTopNode, flag);
+    TreeData.checkAll(newTopNode, flag);
     compareAndRender(sharkComponent, newTopNode);
 }
 
@@ -53,13 +53,13 @@ SharkUI.sharkDTree = function (options, targetElement) {
     // 添加基础方法
     BaseComponent.addComponentBaseFn(sharkComponent, config);
     // 获取经过一系列处理的数据根节点
-    sharkComponent.topNode = Data.getTopNode(config.nodes, config.link);
+    sharkComponent.topNode = TreeData.getTopNode(config.nodes, config.link);
     // 是否全部展开，如果是则重新处理数据树
     if (config.openAll) {
-        Data.openAll(sharkComponent.topNode);
+        TreeData.openAll(sharkComponent.topNode);
     }
     // 初始化dom节点
-    sharkComponent.component = Dom.initDom(sharkComponent.topNode);
+    sharkComponent.component = TreeDom.initDom(sharkComponent.topNode);
     if (targetElement) {
         targetElement.append(sharkComponent.component);
     }
@@ -74,7 +74,7 @@ SharkUI.sharkDTree = function (options, targetElement) {
 
     // reRender方法
     sharkComponent.reRender = function (nodes) {
-        var newTopNode = Data.getTopNode(nodes, config.link);
+        var newTopNode = TreeData.getTopNode(nodes, config.link);
         compareAndRender(sharkComponent, newTopNode);
     };
     // 全选
@@ -88,31 +88,31 @@ SharkUI.sharkDTree = function (options, targetElement) {
     // 反选
     sharkComponent.reverseCheck = function () {
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
-        Data.reverseCheck(newTopNode, newTopNode);
+        TreeData.reverseCheck(newTopNode, newTopNode);
         compareAndRender(sharkComponent, newTopNode);
     };
     // 设置某几个节点为选中的
     sharkComponent.setChecked = function (idList) {
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
-        Data.setChecked(newTopNode, idList, config.link);
+        TreeData.setChecked(newTopNode, idList, config.link);
         compareAndRender(sharkComponent, newTopNode);
     };
     // 展开全部
     sharkComponent.openAll = function () {
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
-        Data.openAll(newTopNode);
+        TreeData.openAll(newTopNode);
         compareAndRender(sharkComponent, newTopNode);
 
     };
     // 展开某几个节点
     sharkComponent.openTo = function (idList) {
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
-        Data.openTo(newTopNode, idList);
+        TreeData.openTo(newTopNode, idList);
         compareAndRender(sharkComponent, newTopNode);
     };
     // 获取选中的id列表
     sharkComponent.getChecked = function () {
-        return Data.getChecked(sharkComponent.topNode);
+        return TreeData.getChecked(sharkComponent.topNode);
     };
     return sharkComponent;
 }

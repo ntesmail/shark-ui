@@ -94,8 +94,6 @@ function changeCheckState(checkbox, state) {
     checkbox.addClass(classObj[state]);
 }
 
-
-
 // 重新排序子节点
 function reOrderChildren(node, moves) {
     moves.forEach(function (move) {
@@ -117,8 +115,8 @@ function reOrderChildren(node, moves) {
     });
 }
 
-var Dom = {
+var TreeDom = {
     initDom: initDom,
     modifyComponent: modifyComponent
 };
-export { Dom };
+export { TreeDom };

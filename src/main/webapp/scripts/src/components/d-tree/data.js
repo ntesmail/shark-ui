@@ -177,7 +177,7 @@ function getCheckedItem(node, idList) {
     children.forEach(function (child) {
         getCheckedItem(child, idList);
     });
-    if (node.checked) {
+    if (node.id && node.checked) {
         idList.push(node.id);
     }
 }
@@ -192,7 +192,7 @@ function openTo(newTopNode, idList) {
     });
 }
 
-var Data = {
+var TreeData = {
     getTopNode: getTopNode,
     changeChecked: changeChecked,
     changeOpen: changeOpen,
@@ -203,4 +203,4 @@ var Data = {
     setChecked: setChecked,
     getChecked: getChecked
 };
-export { Data };
+export { TreeData };
