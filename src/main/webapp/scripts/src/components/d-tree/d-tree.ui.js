@@ -63,15 +63,8 @@ SharkUI.sharkDTree = function (options, targetElement) {
     if (targetElement) {
         targetElement.append(sharkComponent.component);
     }
-
-
-
-
-
-
     // 初始化事件
     initEvents(sharkComponent, config);
-
     // reRender方法
     sharkComponent.reRender = function (nodes) {
         var newTopNode = TreeData.getTopNode(nodes, config.link);
@@ -113,6 +106,11 @@ SharkUI.sharkDTree = function (options, targetElement) {
     // 获取选中的id列表
     sharkComponent.getChecked = function () {
         return TreeData.getChecked(sharkComponent.topNode);
+    };
+    // 销毁组件
+    sharkComponent.destroy = function () {
+        sharkComponent.component.remove();
+        sharkComponent = null;
     };
     return sharkComponent;
 }
