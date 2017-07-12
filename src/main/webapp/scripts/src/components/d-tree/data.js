@@ -63,6 +63,17 @@ function getTopNode(treeData, link) {
     return topNode;
 }
 
+// 全部展开（递归展开）
+function openAll(node) {
+    var children = node.children;
+    if (children) {
+        node.open = true;
+        children.forEach(function (child) {
+            openAll(child);
+        });
+    }
+}
+
 // 通过id查找节点
 function getNodeById(node, id) {
     var children = node.children || [];
@@ -139,17 +150,6 @@ function reverseCheck(newTopNode, node) {
         }
     });
     changeParent(newTopNode, node.id);
-}
-
-// 展开全部
-function openAll(node) {
-    var children = node.children || [];
-    if (children.length) {
-        node.open = true;
-    }
-    children.forEach(function (child) {
-        openAll(child);
-    });
 }
 
 // 设置选中项

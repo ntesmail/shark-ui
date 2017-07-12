@@ -14,7 +14,7 @@ function initEvents(sharkComponent, config) {
     sharkComponent.component.on('click', 'li', function (evt) {
         var id = $(evt.currentTarget).data('id');
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
-        if (evt.target.tagName.toUpperCase() === 'I') { // 修改展开收起的状态
+        if ($(evt.target).hasClass('tree-switcher')) { // 修改展开收起的状态
             Data.changeOpen(newTopNode, id);
         } else {  // 修改新的数据树的选中状态
             var node = Data.changeChecked(newTopNode, newTopNode, id, config.link);
@@ -50,21 +50,25 @@ SharkUI.sharkDTree = function (options, targetElement) {
         onNodeChecked: function () { } // check之后的回调
     };
     SharkUI.extend(config, options);
+    // 添加基础方法
+    BaseComponent.addComponentBaseFn(sharkComponent, config);
     // 获取经过一系列处理的数据根节点
     sharkComponent.topNode = Data.getTopNode(config.nodes, config.link);
     // 是否全部展开，如果是则重新处理数据树
     if (config.openAll) {
         Data.openAll(sharkComponent.topNode);
     }
-
-
-
-
-
     // 初始化dom节点
-    Dom.initDom(sharkComponent, targetElement);
-    // 添加基础方法
-    BaseComponent.addComponentBaseFn(sharkComponent, config);
+    sharkComponent.component = Dom.initDom(sharkComponent.topNode);
+    if (targetElement) {
+        targetElement.append(sharkComponent.component);
+    }
+
+
+
+
+
+
     // 初始化事件
     initEvents(sharkComponent, config);
 

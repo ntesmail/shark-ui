@@ -1,6 +1,42 @@
 import $ from 'jquery';
-import { Diff } from './diff';
-import { Data } from './data';
+
+// 获取node的dom节点
+function getNodeDom(node) {
+    var children = node.children;
+    var checkbox = $('<span class="tree-checkbox tree-icon"></span>');
+    changeCheckState(checkbox, node.state);
+    var title = $('<span class="tree-title tree-node-name"></span>');
+    title.html(node.name);
+    var oLi = $('<li></li>');
+    oLi.data('id', node.id);
+    oLi.append(checkbox);
+    oLi.append(title);
+    if (children) {
+        var oUl = getUlDom(children);
+        oLi.prepend('<span class="tree-switcher tree-icon"></span>');
+        oLi.append(oUl);
+        changeOpenDom(oLi, node.open);
+    }
+    return oLi;
+}
+
+// 获取ul的dom节点
+function getUlDom(nodes, open) {
+    var oUl = $('<ul></ul>');
+    nodes.forEach(function (node) {
+        var oLi = getNodeDom(node);
+        oUl.append(oLi);
+    });
+    return oUl;
+}
+
+// 根据根数据根节点，初始化树组件的dom结构
+function initDom(topNode) {
+    var component = $('<div class="shark-d-tree shark-tree"></div>');
+    var oUl = getUlDom(topNode.children);
+    component.append(oUl);
+    return component;
+}
 
 // 根据得到的差异数组，修改组件
 function modifyComponent(node, walker, patches) {
@@ -21,12 +57,12 @@ function applyPatches(node, currentPatches) {
                 reOrderChildren(node, currentPatch.moves);
                 break;
             case "NAME":
-                var oSpan = node.children('span');
-                oSpan.text(currentPatch.name);
+                var title = node.children('.tree-title');
+                title.text(currentPatch.name);
                 break;
             case "STATE":
-                var oA = node.children('a');
-                changeCheckState(oA, currentPatch.state);
+                var checkbox = node.children('.tree-checkbox');
+                changeCheckState(checkbox, currentPatch.state);
                 break;
             case "OPEN":
                 changeOpenDom(node, currentPatch.open);
@@ -36,18 +72,18 @@ function applyPatches(node, currentPatches) {
 }
 
 // 修改复选框的状态
-function changeCheckState(oA, state) {
-    oA.removeClass('tree-icon-check-empty tree-icon-check-minus tree-icon-check');
+function changeCheckState(checkbox, state) {
+    checkbox.removeClass('tree-icon-check-empty tree-icon-check-minus tree-icon-check');
     var classObj = {
         '0': 'tree-icon-check-empty',
         '1': 'tree-icon-check-minus',
         '2': 'tree-icon-check'
     };
-    oA.addClass(classObj[state]);
+    checkbox.addClass(classObj[state]);
 }
 
 function changeOpenDom(node, open) {
-    var oI = node.children('i');
+    var oI = node.children('.tree-switcher');
     var oUl = node.children('ul');
     oI.removeClass('tree-icon-down tree-icon-right');
     oUl.removeClass();
@@ -78,51 +114,6 @@ function reOrderChildren(node, moves) {
             }
         }
     });
-}
-
-// 获取node的dom节点
-function getNodeDom(node) {
-    var children = node.children;
-    var open = !!node.open;
-    var oA = $('<a class="tree-icon"></a>');
-    changeCheckState(oA, node.state);
-    var oSpan = $('<span class="tree-node-name"></span>');
-    oSpan.html(node.name);
-    var oLi = $('<li></li>');
-    oLi.data('id', node.id);
-    oLi.append(oA);
-    oLi.append(oSpan);
-    if (children) {
-        var oUl = getUlDom(children);
-        oLi.prepend('<i class="tree-icon"></i>');
-        oLi.append(oUl);
-        changeOpenDom(oLi, open);
-    }
-    return oLi;
-}
-
-// 获取ul的dom节点
-function getUlDom(nodes, open) {
-    var oUl = $('<ul></ul>');
-    nodes.forEach(function (node) {
-        var oLi = getNodeDom(node);
-        oUl.append(oLi);
-    });
-    return oUl;
-}
-
-// 根据根数据根节点，初始化树组件的dom结构
-function initDom(sharkComponent, targetElement) {
-    var component = $('<div class="shark-d-tree shark-tree"></div>');
-    var children = sharkComponent.topNode.children;
-    if (children) {
-        var oUl = getUlDom(children);
-        component.append(oUl);
-    }
-    if (targetElement) {
-        targetElement.append(component);
-    }
-    sharkComponent.component = component;
 }
 
 var Dom = {
