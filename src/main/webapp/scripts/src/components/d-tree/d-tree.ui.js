@@ -41,20 +41,26 @@ function checkAll(sharkComponent, flag) {
 }
 
 SharkUI.sharkDTree = function (options, targetElement) {
-    var config = {
-        nodes: [],
-        openAll: true,
-        link: true,
-        onNodeChecked: function () { }
-    };
-    SharkUI.extend(config, options);
     // 组件对象
     var sharkComponent = {};
-    // 获取数据根节点
+    var config = {
+        nodes: [], // 树数据
+        openAll: true, // 是否全部展开，默认true
+        link: true, // 父子级节点是否关联，默认为true
+        onNodeChecked: function () { } // check之后的回调
+    };
+    SharkUI.extend(config, options);
+    // 获取经过一系列处理的数据根节点
     sharkComponent.topNode = Data.getTopNode(config.nodes, config.link);
+    // 是否全部展开，如果是则重新处理数据树
     if (config.openAll) {
         Data.openAll(sharkComponent.topNode);
     }
+
+
+
+
+
     // 初始化dom节点
     Dom.initDom(sharkComponent, targetElement);
     // 添加基础方法

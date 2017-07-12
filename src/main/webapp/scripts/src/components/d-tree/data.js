@@ -1,3 +1,68 @@
+// 通过子节点的选中状态来决定父节点的选中状态（假设父节点的checked状态不对，也可以在此修正）
+function setStateByChildNodes(parent, children) {
+    // 子节点的数量
+    var len = children.length;
+    // 子节点的选中数量
+    var checkedCount = 0;
+    // 先将父节点的checked状态设为false，如果子节点全部选中了，再将其设为true
+    parent.checked = false;
+    for (var i = 0; i < len; i++) {
+        var state = children[i].state;
+        // 如果存在子节点处于半选状态，则父节点一定是半选状态，退出循环
+        if (state === 1) {
+            checkedCount = 'half';
+            break;
+        } else if (state === 2) {
+            checkedCount++;
+        }
+    }
+    switch (checkedCount) {
+        case 0:
+            parent.state = 0;
+            break;
+        case len:
+            parent.state = 2;
+            parent.checked = true;
+            break;
+        default:
+            parent.state = 1;
+    }
+}
+
+// 得到node的选中状态(选中/未选中/半选)
+function getNodeState(node, children, link) {
+    // 存在子节点并且父子节点之间有关联关系，由子节点决定父节点的state状态
+    if (children && link) {
+        setStateByChildNodes(node, children);
+    } else {
+        // 不存在子节点或者父子节点之间没有关联关系，由自身的checked状态来决定state状态
+        node.state = node.checked ? 2 : 0;
+    }
+}
+
+// 处理节点，为每个节点加上count属性，父节点id和选中状态 | (做递归处理)
+function handleNode(node, link) {
+    var children = node.children;
+    node.count = 0;
+    children && children.forEach(function (child) {
+        handleNode(child, link);
+        // 将父id存在节点上,方便查找
+        child.parentId = node.id;
+        // 统计子节点数量
+        node.count += child.count + 1;
+    });
+    // 得到当前node的选中状态(选中/未选中/半选中)
+    getNodeState(node, children, link);
+}
+
+// 获取数据根节点
+function getTopNode(treeData, link) {
+    var topNode = { children: treeData };
+    // 处理节点，为每个节点加上count属性，父id和当前选中状态
+    handleNode(topNode, link);
+    return topNode;
+}
+
 // 通过id查找节点
 function getNodeById(node, id) {
     var children = node.children || [];
@@ -11,57 +76,6 @@ function getNodeById(node, id) {
             }
         }
     }
-}
-
-// 通过count来决定元素的选中状态, 父级checked状态不对，可以在此修正
-function setStateByCount(node, children) {
-    node.checked = false;
-    var checkedCount = 0;
-    var len = children.length;
-    for (var i = 0; i < len; i++) {
-        var child = children[i];
-        // 如果是存在子节点是半选状态，则父节点一定是半选状态，没有必要再循环下去，因此退出循环
-        if (child.state === 1) {
-            checkedCount = 'half';
-            break;
-        }
-        if (child.checked) {
-            checkedCount++;
-        }
-    }
-    switch (checkedCount) {
-        case 0:
-            node.state = 0;
-            break;
-        case len:
-            node.state = 2;
-            node.checked = true;
-            break;
-        default:
-            node.state = 1;
-    }
-}
-
-// 得到node的选中状态(选中/未选中/半选)
-function getNodeState(node, children, link) {
-    if (children && children.length && link) { // 存在子节点，由子节点决定state状态
-        setStateByCount(node, children);
-    } else { // 不存在子节点，由自身的checked状态来决定state状态
-        node.state = node.checked ? 2 : 0;
-    }
-}
-
-// 处理节点，为每个节点加上count属性，父节点id和选中状态 | (做递归处理)
-function handleNode(node, link) {
-    var children = node.children || [];
-    node.count = 0;
-    children.forEach(function (child) {
-        handleNode(child, link);
-        child.parentId = node.id;
-        node.count += child.count + 1;
-    });
-    // 得到node的选中状态(选中/未选中/半选)
-    getNodeState(node, children, link);
 }
 
 // 修改子集的选中状态
@@ -80,17 +94,9 @@ function changeParent(newTopNode, id) {
     var node = getNodeById(newTopNode, id);
     if (node) {
         var children = node.children || [];
-        setStateByCount(node, children);
+        setStateByChildNodes(node, children);
         node.parentId && changeParent(newTopNode, node.parentId);
     }
-}
-
-// 获取数据根节点
-function getTopNode(nodes, link) {
-    var topNode = { children: nodes };
-    // 处理节点，为每个节点加上count属性和父节点id和选中状态
-    handleNode(topNode, link);
-    return topNode;
 }
 
 // 修改数据树的选中状态
@@ -193,8 +199,8 @@ var Data = {
     checkAll: checkAll,
     reverseCheck: reverseCheck,
     openAll: openAll,
+    openTo: openTo,
     setChecked: setChecked,
-    getChecked: getChecked,
-    openTo: openTo
+    getChecked: getChecked
 };
 export { Data };
