@@ -202,6 +202,21 @@ function setChecked(newTopNode, idList, link) {
     handleNode(newTopNode, link);
 }
 
+
+function setSelected(newTopNode, idList, multiple) {
+    changeAllSelected(newTopNode);
+    for (var i = 0; i < idList.length; i++) {
+        var id = idList[i];
+        var node = getNodeById(newTopNode, id);
+        if (node) {
+            node.selected = true;
+            if (!multiple) {
+                break;
+            }
+        }
+    }
+}
+
 // 获取选中的id
 function getCheckedItem(node, idList) {
     var children = node.children;
@@ -247,6 +262,7 @@ var TreeData = {
     openTo: openTo,
     setChecked: setChecked,
     getChecked: getChecked,
+    setSelected: setSelected,
     getSelected: getSelected
 };
 export { TreeData };

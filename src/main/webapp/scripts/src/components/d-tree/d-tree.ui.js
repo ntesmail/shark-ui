@@ -100,6 +100,15 @@ SharkUI.sharkDTree = function (options, targetElement) {
         TreeData.setChecked(newTopNode, idList, config.link);
         compareAndRender(sharkComponent, newTopNode);
     };
+
+    // 设置某几个节点为选中的
+    sharkComponent.setSelected = function (idList) {
+        var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
+        TreeData.setSelected(newTopNode, idList, config.multiple);
+        compareAndRender(sharkComponent, newTopNode);
+    }
+
+
     // 展开全部
     sharkComponent.openAll = function () {
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);

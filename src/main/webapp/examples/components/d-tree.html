@@ -88,6 +88,7 @@
         openAll: false,
         selectable: true,
         checkable: false,
+        // multiple: true,
         onNodeChecked: function(node, isChecked) {
             console.log(node, isChecked);
         },
@@ -129,6 +130,11 @@
     document.getElementById('getSelectedBtn').addEventListener('click',function(){
         console.log(dmytree.getSelected());
     });
+
+
+   // setTimeout(function() {
+    //    dmytree.setSelected(['tabs', 'pager']);
+    // }, 2000);
 
 
      //setTimeout(function() {
