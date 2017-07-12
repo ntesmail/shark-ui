@@ -1,30 +1,43 @@
 import $ from 'jquery';
 
 // 展开/收起子树
-function toggleChildTree(node, open) {
-    var switcher = node.children('.tree-switcher');
-    var childTree = node.children('ul');
+function toggleChildTree(treeNode, open) {
+    // 控制展开收起的按钮
+    var switcher = treeNode.children('.tree-switcher');
+    var childTree = treeNode.children('ul');
     switcher.removeClass('tree-icon-down tree-icon-right');
     // 先收起子树，再根据状态选择要不要打开
     childTree.removeClass('tree-open');
-    if (open) {
+    if (open) { // 展开子树并修改按钮状态
         switcher.addClass('tree-icon-down');
         childTree.addClass('tree-open');
-    } else {
+    } else { // 修改按钮状态
         switcher.addClass('tree-icon-right');
     }
 }
 
-// 获取node的dom节点
+// 修改复选框的状态
+function toggleCheckBox(checkbox, state) {
+    checkbox.removeClass('tree-icon-check-empty tree-icon-check-minus tree-icon-check');
+    var classObj = {
+        '0': 'tree-icon-check-empty',
+        '1': 'tree-icon-check-minus',
+        '2': 'tree-icon-check'
+    };
+    checkbox.addClass(classObj[state]);
+}
+
+// 生成树节点的dom
 function getTreeNode(nodeData) {
-    var children = nodeData.children;
-    var checkbox = $('<span class="tree-checkbox tree-icon"></span>');
     var treeNode = $('<li><span class="tree-title tree-node-name">' + nodeData.name + '</span></li>');
-    changeCheckState(checkbox, nodeData.state);
+    var checkbox = $('<span class="tree-checkbox tree-icon"></span>');
+    var children = nodeData.children;
     treeNode.data('id', nodeData.id);
+    toggleCheckBox(checkbox, nodeData.state);
     treeNode.prepend(checkbox);
     if (children) {
         var childTree = getChildTree(children);
+        // 存在子树则在节点前添加展开收起子树的按钮
         treeNode.prepend('<span class="tree-switcher tree-icon"></span>');
         treeNode.append(childTree);
         toggleChildTree(treeNode, nodeData.open);
@@ -32,11 +45,11 @@ function getTreeNode(nodeData) {
     return treeNode;
 }
 
-// 获取子树的dom
-function getChildTree(nodes, open) {
+// 生成子树的dom
+function getChildTree(nodesData, open) {
     var tree = $('<ul></ul>');
-    nodes.forEach(function (node) {
-        var treeNode = getTreeNode(node);
+    nodesData.forEach(function (nodeData) {
+        var treeNode = getTreeNode(nodeData);
         tree.append(treeNode);
     });
     return tree;
@@ -48,50 +61,6 @@ function initDom(topNode) {
     var tree = getChildTree(topNode.children);
     container.append(tree);
     return container;
-}
-
-// 根据得到的差异数组，修改组件
-function modifyComponent(node, walker, patches) {
-    var currentPatches = patches[walker.index];
-    var treeNodes = node.children('ul').children('li');
-    treeNodes.each(function (i, treeNode) {
-        walker.index++;
-        modifyComponent($(treeNode), walker, patches);
-    });
-    currentPatches && applyPatches(node, currentPatches);
-}
-
-// 根据得到的当前节点的差异，修改当前节点
-function applyPatches(node, currentPatches) {
-    currentPatches.forEach(function (currentPatch) {
-        switch (currentPatch.type) {
-            case "REORDER":
-                reOrderChildren(node, currentPatch.moves);
-                break;
-            case "NAME":
-                var title = node.children('.tree-title');
-                title.text(currentPatch.name);
-                break;
-            case "STATE":
-                var checkbox = node.children('.tree-checkbox');
-                changeCheckState(checkbox, currentPatch.state);
-                break;
-            case "OPEN":
-                toggleChildTree(node, currentPatch.open);
-                break;
-        }
-    });
-}
-
-// 修改复选框的状态
-function changeCheckState(checkbox, state) {
-    checkbox.removeClass('tree-icon-check-empty tree-icon-check-minus tree-icon-check');
-    var classObj = {
-        '0': 'tree-icon-check-empty',
-        '1': 'tree-icon-check-minus',
-        '2': 'tree-icon-check'
-    };
-    checkbox.addClass(classObj[state]);
 }
 
 // 重新排序子节点
@@ -115,8 +84,41 @@ function reOrderChildren(node, moves) {
     });
 }
 
+// 根据得到的当前节点的差异，修改当前节点
+function applyPatches(node, currentPatches) {
+    currentPatches.forEach(function (currentPatch) {
+        switch (currentPatch.type) {
+            case "REORDER":
+                reOrderChildren(node, currentPatch.moves);
+                break;
+            case "NAME":
+                var title = node.children('.tree-title');
+                title.text(currentPatch.name);
+                break;
+            case "STATE":
+                var checkbox = node.children('.tree-checkbox');
+                toggleCheckBox(checkbox, currentPatch.state);
+                break;
+            case "OPEN":
+                toggleChildTree(node, currentPatch.open);
+                break;
+        }
+    });
+}
+
+// 根据得到的差异数组，修改组件
+function applyToTree(node, walker, patches) {
+    var currentPatches = patches[walker.index];
+    var treeNodes = node.children('ul').children('li');
+    treeNodes.each(function (i, treeNode) {
+        walker.index++;
+        applyToTree($(treeNode), walker, patches);
+    });
+    currentPatches && applyPatches(node, currentPatches);
+}
+
 var TreeDom = {
     initDom: initDom,
-    modifyComponent: modifyComponent
+    applyToTree: applyToTree
 };
 export { TreeDom };

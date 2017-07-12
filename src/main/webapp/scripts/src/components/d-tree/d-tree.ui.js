@@ -30,7 +30,7 @@ function initEvents(sharkComponent, config) {
 function compareAndRender(sharkComponent, newTopNode) {
     // 得到两棵数据树的差异
     var patches = Diff.diff(sharkComponent.topNode, newTopNode);
-    TreeDom.modifyComponent(sharkComponent.component, { index: 0 }, patches);
+    TreeDom.applyToTree(sharkComponent.component, { index: 0 }, patches);
     sharkComponent.topNode = newTopNode;
 }
 
