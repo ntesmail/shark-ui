@@ -19,7 +19,7 @@ function initDom(sharkComponent, config, targetElement) {
     sharkComponent.component.addClass('shark-selecter');
 }
 
-function changeSelectDom(sharkComponent, node, isChecked) {
+function changeSelectDom1(sharkComponent, node, isChecked) {
     var checkedList = sharkComponent.checkedList;
     var index = -1;
     for (var i = 0; i < checkedList.length; i++) {
@@ -44,15 +44,28 @@ function changeSelectDom(sharkComponent, node, isChecked) {
     }
 }
 
+function changeSelectDom2(sharkComponent, node) {
+    sharkComponent.component.empty();
+    var li = $(`<li style="font-size: 16px;display: inline;">${node.name}</li>`);
+    sharkComponent.component.append(li);
+}
+
 // 初始化下拉列表的的dom
 function initSelectionsDom(sharkComponent, config) {
     var selections = $('<div class="position-absolute" style="display: none;"></div>');
     var options = {
         nodes: config.data,
         onNodeChecked: function (node, isChecked) {
-            changeSelectDom(sharkComponent, node, isChecked);
+            changeSelectDom1(sharkComponent, node, isChecked);
+        },
+        onNodeSelected: function (node, isChecked) {
+            changeSelectDom2(sharkComponent, node);
         }
     };
+    if (!config.multiple) {
+        options.checkable = false;
+        options.selectable = true;
+    }
     selections.tree = SharkUI.sharkDTree(options);
     selections.tree.appendTo(selections);
     sharkComponent.selections = selections;
@@ -131,6 +144,7 @@ SharkUI.sharkSelect = function (options, targetElement) {
         data: null,
         actualKey: 'value',
         displayKey: 'name',
+        multiple: false,
         showSearch: false,
         onSelected: function () { }
     };
