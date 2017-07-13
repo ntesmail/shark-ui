@@ -69,8 +69,8 @@ function initEvents(timepanel) {
         }
         else if (DomHelper.hasClass(target, 'timepanel-list-item')) {
             var tmp;
-            if (SharkUI.isEmpty(timepanel.value)) {
-                tmp = [0, 0, 0]
+            if (SharkUI.isEmpty(timepanel.value) || timepanel.value.length === 0) {
+                tmp = [0, 0, 0];
             }
             else {
                 tmp = [timepanel.value[0], timepanel.value[1], timepanel.value[2]];
@@ -93,10 +93,20 @@ function initEvents(timepanel) {
             if (!SharkUI.isEmpty(timepanel.config.maxTime) && biggerThan(tmp, timepanel.config.maxTime)) {
                 tmp = [timepanel.config.maxTime[0], timepanel.config.maxTime[1], timepanel.config.maxTime[2]];
             }
-
-            timepanel.preValue = timepanel.value;
-            timepanel.value = tmp;
-            timepanel.render()
+            var beforeChangeCb;
+            if (typeof timepanel.config.beforeChange === 'function') {
+                beforeChangeCb = timepanel.config.beforeChange.call(timepanel, tmp);
+            }
+            if (beforeChangeCb === false) {
+                return;
+            }
+            else {
+                timepanel.value = tmp;
+                timepanel.render();
+                if (typeof timepanel.config.onChanged === 'function') {
+                    beforeChangeCb = timepanel.config.onChanged.call(timepanel, timepanel.value);
+                }
+            }
         }
     }
     timepanel.nativeElement.addEventListener('click', eventHandler);
@@ -181,23 +191,9 @@ function renderDom(timepanel) {
     minutesContainer.innerHTML = minutesHtml;
     secondsContainer.innerHTML = secondsHtml;
     // scroll
-    var preHour;
-    var preMinute;
-    var preSecond;
-    if (!SharkUI.isEmpty(timepanel.preValue)) {
-        preHour = timepanel.preValue[0];
-        preMinute = timepanel.preValue[1];
-        preSecond = timepanel.preValue[2];
-    }
-    if (!SharkUI.isEmpty(currentHour) && currentHour !== preHour) {
-        DomHelper.scrollTo(hoursContainer, currentHour * hoursContainer.childNodes.item(currentHour).offsetHeight);
-    }
-    if (!SharkUI.isEmpty(currentMinute) && currentMinute !== preMinute) {
-        DomHelper.scrollTo(minutesContainer, currentMinute * minutesContainer.childNodes.item(currentMinute).offsetHeight);
-    }
-    if (!SharkUI.isEmpty(currentSecond) && currentSecond !== preSecond) {
-        DomHelper.scrollTo(secondsContainer, currentSecond * secondsContainer.childNodes.item(currentSecond).offsetHeight);
-    }
+    DomHelper.scrollTo(hoursContainer, currentHour * hoursContainer.childNodes.item(currentHour).offsetHeight);
+    DomHelper.scrollTo(minutesContainer, currentMinute * minutesContainer.childNodes.item(currentMinute).offsetHeight);
+    DomHelper.scrollTo(secondsContainer, currentSecond * secondsContainer.childNodes.item(currentSecond).offsetHeight);
 
 }
 
@@ -205,8 +201,8 @@ function renderDom(timepanel) {
 function Timepanel(options) {
     this.config = Object.assign({}, {
         initTime: null,
-        maxTime: [20, 20, 20],
-        minTime: [10, 10, 10],
+        maxTime: null,
+        minTime: null,
         beforeChange: function () { },
         onChanged: function () { }
     }, options);
@@ -234,6 +230,7 @@ Timepanel.prototype.setConfig = function (key, value) {
 }
 // 渲染
 Timepanel.prototype.render = function () {
+    console.log('timepanel render');
     renderDom(this);
 }
 // 销毁

@@ -174,8 +174,10 @@ var pickercontainer = `
         <div class="shark-datepicker">
         </div>
         <div class="shark-timepicker">
-            <button class="nowtime">此刻</button>
-            <input class="input-time" readonly="readonly" />
+            <a class="nowtime">当前</a>
+            <div class="input-time-wrap">
+                <input class="input-time" readonly="readonly" />
+            </div>
         </div>
     </div>
 `;

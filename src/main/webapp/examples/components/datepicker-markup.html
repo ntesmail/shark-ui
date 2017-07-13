@@ -1,9 +1,12 @@
 <div id="datepickerContainer">
+    <button onclick="showMydatepickerValue();">showMydatepickerValue</button>
 </div>
 <script type="text/javascript">
     var mydatepicker = SharkUI.sharkDatepicker({
         // format: 'yyyy-MM-dd HH:mm:ss.S'
     });
     mydatepicker.appendTo('#datepickerContainer');
-
+    showMydatepickerValue =function(){
+        console.log(mydatepicker.getValue())
+    }
 </script>

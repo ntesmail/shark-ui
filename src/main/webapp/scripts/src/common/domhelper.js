@@ -91,6 +91,10 @@ function remove(nativeElement) {
 }
 
 function scrollTo(nativeElement, value) {
+    if (nativeElement.requestID) {
+        cancelAnimationFrame(nativeElement.requestID);
+    }
+    nativeElement.isScrolling = true;
     var diff = nativeElement.scrollTop - value;
     var tmp = nativeElement.scrollTop;
     if (diff === 0 || value >= nativeElement.scrollHeight) {
@@ -100,19 +104,19 @@ function scrollTo(nativeElement, value) {
     function scroll() {
         nativeElement.scrollTop = tmp;
         if (diff > 0) {
-            tmp = nativeElement.scrollTop - 20;
+            tmp = nativeElement.scrollTop - Math.abs(diff) / 10;
             if (tmp < value) {
                 tmp = value;
             }
         }
         else {
-            tmp = nativeElement.scrollTop + 20;
+            tmp = nativeElement.scrollTop + Math.abs(diff) / 10;
             if (tmp > value) {
                 tmp = value;
             }
         }
         if (nativeElement.scrollTop !== value) {
-            requestAnimationFrame(scroll);
+            nativeElement.requestID = requestAnimationFrame(scroll);
         }
     }
 }

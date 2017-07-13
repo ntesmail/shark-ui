@@ -30,7 +30,7 @@ function biggerThan(a, b) {
 function initEvents(calendar) {
     var eventHandler = function (evt) {
         var target = evt.target;
-        if (DomHelper.hasClass(target, 'calendar-disabled')) {
+        if (DomHelper.hasClass(target, 'calendar-disabled') || DomHelper.hasClass(target, 'calendar-selected')) {
             return;
         }
         else if (DomHelper.hasClass(target, 'calendar-prev-year')) {
@@ -50,41 +50,36 @@ function initEvents(calendar) {
             calendar.render();
         }
         else if (DomHelper.hasClass(target, 'calendar-day')) {
-            if (DomHelper.hasClass(target, 'calendar-selected')) {
-                console.log('already selected，do nothing');
+            var year = calendar.renderValue.getFullYear();
+            var month = calendar.renderValue.getMonth();
+            var date = parseInt(target.innerText);
+            if (DomHelper.hasClass(target, 'calendar-premonthday')) {
+                --month;
+                if (month === -1) {
+                    --year;
+                    month = 11;
+                }
+            }
+            else if (DomHelper.hasClass(target, 'calendar-nextmonthday')) {
+                ++month;
+                if (month === 12) {
+                    ++year;
+                    month = 0;
+                }
+            }
+            var beforeChangeCb;
+            if (typeof calendar.config.beforeChange === 'function') {
+                beforeChangeCb = calendar.config.beforeChange.call(calendar, new Date(year, month, date, 0, 0, 0, 0));
+            }
+            if (beforeChangeCb === false) {
+                return;
             }
             else {
-                var year = calendar.renderValue.getFullYear();
-                var month = calendar.renderValue.getMonth();
-                var date = parseInt(target.innerText);
-                if (DomHelper.hasClass(target, 'calendar-premonthday')) {
-                    --month;
-                    if (month === -1) {
-                        --year;
-                        month = 11;
-                    }
-                }
-                else if (DomHelper.hasClass(target, 'calendar-nextmonthday')) {
-                    ++month;
-                    if (month === 12) {
-                        ++year;
-                        month = 0;
-                    }
-                }
-                var beforeChangeCb;
-                if (typeof calendar.config.beforeChange === 'function') {
-                    beforeChangeCb = calendar.config.beforeChange.call(calendar, new Date(year, month, date, 0, 0, 0, 0));
-                }
-                if (beforeChangeCb === false) {
-                    return;
-                }
-                else {
-                    calendar.renderValue = new Date(year, month, date, 0, 0, 0, 0);
-                    calendar.value = new Date(year, month, date, 0, 0, 0, 0);
-                    calendar.render();
-                    if (typeof calendar.config.onChanged === 'function') {
-                        beforeChangeCb = calendar.config.onChanged.call(calendar, new Date(year, month, date, 0, 0, 0, 0));
-                    }
+                calendar.renderValue = new Date(year, month, date, 0, 0, 0, 0);
+                calendar.value = new Date(year, month, date, 0, 0, 0, 0);
+                calendar.render();
+                if (typeof calendar.config.onChanged === 'function') {
+                    beforeChangeCb = calendar.config.onChanged.call(calendar, new Date(year, month, date, 0, 0, 0, 0));
                 }
             }
         }
@@ -249,6 +244,7 @@ Calendar.prototype.setConfig = function (key, value) {
 }
 // 渲染
 Calendar.prototype.render = function () {
+    console.log('canlendar render');
     forceRenderValueValid(this);
     renderDom(this, getRenderData(this));
 }
