@@ -107,7 +107,6 @@ function initEvents(sharkComponent, config) {
             selecter.trigger('focusout');
         }
     }));
-
     selecter.on('input', '.select-search', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
         var input = $(this);
         var tmplList = config.data.filter(function (item) {

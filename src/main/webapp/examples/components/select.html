@@ -1,0 +1,25 @@
+<div id="selectContainer">
+</div>
+<script type="text/javascript">
+var myselecter = SharkUI.sharkSelect({
+    actualKey: 'id', //对应data中的value
+    displayKey: 'name', //对应data中的name
+    showSearch: true,
+    data: [{
+        id: '',
+        name: '请选择'
+    }, {
+        id: 1001,
+        name: '一年级'
+    }, {
+        id: 1002,
+        name: '二年级'
+    }],
+    activeStyle: 'point',
+    onSelected: function(value, item) {
+        console.log(value, item);
+    }
+});
+myselecter.appendTo('#selectContainer');
+// myselecter.setValue(1001);
+</script>

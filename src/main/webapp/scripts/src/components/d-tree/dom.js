@@ -46,9 +46,9 @@ function getTreeNode(nodeData, checkable) {
     }
     treeNode.append(title);
     treeNode.data('id', nodeData.id);
-    toggleCheckBox(checkbox, nodeData.state);
     if (checkable) {
         var checkbox = $('<span class="tree-checkbox tree-icon"></span>');
+        toggleCheckBox(checkbox, nodeData.state);
         treeNode.prepend(checkbox);
     }
     if (children) {
@@ -74,13 +74,13 @@ function getChildTree(nodesData, open, checkable) {
 // 根据根数据根节点，初始化树组件的dom结构
 function initDom(topNode, checkable) {
     var container = $('<div class="shark-d-tree shark-tree"></div>');
-    var tree = getChildTree(topNode.children, checkable);
+    var tree = getChildTree(topNode.children, topNode.open, checkable);
     container.append(tree);
     return container;
 }
 
 // 重新排序子节点
-function reOrderChildren(node, moves) {
+function reOrderChildren(node, moves, checkable) {
     moves.forEach(function (move) {
         var childTree = $(node).children('ul');
         var nodeList = childTree.children('li');
@@ -90,7 +90,7 @@ function reOrderChildren(node, moves) {
             treeNode.remove();
         } else if (move.type === 1) {
             var item = move.item;
-            var treeNode = getTreeNode(item);
+            var treeNode = getTreeNode(item, checkable);
             if (index) {
                 nodeList.eq(index - 1).after(treeNode);
             } else {
@@ -101,11 +101,11 @@ function reOrderChildren(node, moves) {
 }
 
 // 根据得到的当前节点的差异，修改当前节点
-function applyPatches(node, currentPatches) {
+function applyPatches(node, currentPatches, checkable) {
     currentPatches.forEach(function (currentPatch) {
         switch (currentPatch.type) {
             case "REORDER":
-                reOrderChildren(node, currentPatch.moves);
+                reOrderChildren(node, currentPatch.moves, checkable);
                 break;
             case "NAME":
                 var title = node.children('.tree-title');
@@ -127,14 +127,14 @@ function applyPatches(node, currentPatches) {
 }
 
 // 根据得到的差异数组，修改组件
-function applyToTree(node, walker, patches) {
+function applyToTree(node, walker, patches, checkable) {
     var currentPatches = patches[walker.index];
     var treeNodes = node.children('ul').children('li');
     treeNodes.each(function (i, treeNode) {
         walker.index++;
-        applyToTree($(treeNode), walker, patches);
+        applyToTree($(treeNode), walker, patches, checkable);
     });
-    currentPatches && applyPatches(node, currentPatches);
+    currentPatches && applyPatches(node, currentPatches, checkable);
 }
 
 var TreeDom = {

@@ -25,24 +25,24 @@ function initEvents(sharkComponent, config) {
             var node = TreeData.selectNode(config.selectable, newTopNode, id, config.multiple);
             config.onNodeSelected.call(sharkComponent, node);
         }
-        compareAndRender(sharkComponent, newTopNode);
+        compareAndRender(sharkComponent, newTopNode, config.checkable);
         // 阻止冒泡
         evt.stopPropagation();
     });
 }
 
 // 比较两棵数据树的差异，并且渲染
-function compareAndRender(sharkComponent, newTopNode) {
+function compareAndRender(sharkComponent, newTopNode, checkable) {
     // 得到两棵数据树的差异
     var patches = Diff.diff(sharkComponent.topNode, newTopNode);
-    TreeDom.applyToTree(sharkComponent.component, { index: 0 }, patches);
+    TreeDom.applyToTree(sharkComponent.component, { index: 0 }, patches, checkable);
     sharkComponent.topNode = newTopNode;
 }
 
-function checkAll(sharkComponent, flag) {
+function checkAll(sharkComponent, flag, config) {
     var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
     TreeData.checkAll(newTopNode, flag);
-    compareAndRender(sharkComponent, newTopNode);
+    compareAndRender(sharkComponent, newTopNode, config.checkable);
 }
 
 SharkUI.sharkDTree = function (options, targetElement) {
@@ -78,45 +78,45 @@ SharkUI.sharkDTree = function (options, targetElement) {
     // reRender方法
     sharkComponent.reRender = function (nodes) {
         var newTopNode = TreeData.getTopNode(nodes, config.link, config.checkable);
-        compareAndRender(sharkComponent, newTopNode);
+        compareAndRender(sharkComponent, newTopNode, config.checkable);
     };
     // 全选
     sharkComponent.checkAll = function () {
-        checkAll(sharkComponent, true);
+        checkAll(sharkComponent, true, config);
     };
     // 全不选
     sharkComponent.checkNo = function () {
-        checkAll(sharkComponent, false);
+        checkAll(sharkComponent, false, config);
     };
     // 反选
     sharkComponent.reverseCheck = function () {
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
         TreeData.reverseCheck(newTopNode, newTopNode);
-        compareAndRender(sharkComponent, newTopNode);
+        compareAndRender(sharkComponent, newTopNode, config.checkable);
     };
     // 设置某几个节点为选中的
     sharkComponent.setChecked = function (idList) {
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
         TreeData.setChecked(newTopNode, idList, config.link);
-        compareAndRender(sharkComponent, newTopNode);
+        compareAndRender(sharkComponent, newTopNode, config.checkable);
     };
     // 设置某几个节点为选中的
     sharkComponent.setSelected = function (idList) {
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
         TreeData.setSelected(newTopNode, idList, config.multiple);
-        compareAndRender(sharkComponent, newTopNode);
+        compareAndRender(sharkComponent, newTopNode, config.checkable);
     }
     // 展开全部
     sharkComponent.openAll = function () {
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
         TreeData.openAll(newTopNode);
-        compareAndRender(sharkComponent, newTopNode);
+        compareAndRender(sharkComponent, newTopNode, config.checkable);
     };
     // 展开某几个节点
     sharkComponent.openTo = function (idList) {
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
         TreeData.openTo(newTopNode, idList);
-        compareAndRender(sharkComponent, newTopNode);
+        compareAndRender(sharkComponent, newTopNode, config.checkable);
     };
     // 获取选中的id列表
     sharkComponent.getChecked = function () {

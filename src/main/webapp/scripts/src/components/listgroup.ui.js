@@ -21,7 +21,11 @@ function render(id) {
 function update(ul, data, actualKey, displayKey) {
     ul.empty();
     $.each(data, function (i, item) {
-        var li = $('<li class="list-group-item" value="' + item[actualKey] + '">' + item[displayKey] + '</li>');
+        var li = $(`
+            <li class="list-group-item shark-tree" value="${item[actualKey]}">
+                <span class="tree-icon tree-icon-check-empty"></span>
+                <span style="font-size: 16px;">${item[displayKey]}</span>
+            </li>`);
         li.data(item);
         ul.append(li);
     });

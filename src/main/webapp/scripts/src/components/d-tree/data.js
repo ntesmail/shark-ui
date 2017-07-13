@@ -45,7 +45,7 @@ function handleNode(node, link, checkable) {
     var children = node.children;
     node.count = 0;
     children && children.forEach(function (child) {
-        handleNode(child, link);
+        handleNode(child, link, checkable);
         // 将父id存在节点上,方便查找
         child.parentId = node.id;
         // 统计子节点数量
