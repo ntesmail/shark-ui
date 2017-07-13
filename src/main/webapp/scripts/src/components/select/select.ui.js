@@ -19,6 +19,32 @@ function initDom(sharkComponent, config, targetElement) {
     sharkComponent.component.addClass('shark-selecter');
 }
 
+function allSelectedSpan(sharkComponent, checked) {
+    sharkComponent.checkedList = [];
+    var list = sharkComponent.selections.tree.topNode.children;
+    if (checked) {
+        list.forEach(function (item) {
+            sharkComponent.checkedList.push(item);
+        });
+    }
+    allSelectedSpanDom(sharkComponent);
+}
+
+function allSelectedSpanDom(sharkComponent) {
+    var checkedList = sharkComponent.checkedList;
+    sharkComponent.component.empty();
+    for (var i = 0; i < checkedList.length; i++) {
+        var li = $(`<li style="font-size: 16px;display: inline;">
+                        ${checkedList[i].name}
+                        <span class="remove">X</span>
+                    </li>`);
+        li.data('node', checkedList[i]);
+        sharkComponent.component.append(li);
+    }
+}
+
+
+
 function changeSelectDom1(sharkComponent, node, isChecked) {
     var checkedList = sharkComponent.checkedList;
     var index = -1;
@@ -34,15 +60,8 @@ function changeSelectDom1(sharkComponent, node, isChecked) {
     if (index !== -1 && !isChecked) {
         checkedList.splice(index, 1);
     }
-    sharkComponent.component.empty();
-    for (var i = 0; i < checkedList.length; i++) {
-        var li = $(`<li style="font-size: 16px;display: inline;">
-                        ${checkedList[i].name}
-                        <span class="remove">X</span>
-                    </li>`);
-        li.data('node', checkedList[i]);
-        sharkComponent.component.append(li);
-    }
+
+    allSelectedSpanDom(sharkComponent);
     var len = sharkComponent.selections.tree.topNode.children.length;
     switch (checkedList.length) {
         case 0:
@@ -151,10 +170,11 @@ function initSelectionsEvents(sharkComponent, config) {
         if (sharkComponent.allState === 2) {
             sharkComponent.selections.tree.checkNo();
             sharkComponent.allState = 0;
-
+            allSelectedSpan(sharkComponent, false);
         } else {
             sharkComponent.selections.tree.checkAll();
             sharkComponent.allState = 2;
+            allSelectedSpan(sharkComponent, true);
         }
         toggleAllState(sharkComponent)
     });
