@@ -17,15 +17,17 @@ function initEvents(sharkComponent, config) {
         var target = $(evt.target);
         if (target.hasClass('tree-switcher')) { // 修改展开收起的状态
             var node = TreeData.changeOpen(newTopNode, id);
+            compareAndRender(sharkComponent, newTopNode, config.checkable);
             config.onExpand.call(sharkComponent, node, node.open);
         } else if (target.hasClass('tree-checkbox') && config.checkable) {  // 修改新的数据树的选中状态
             var node = TreeData.changeChecked(config.checkable, newTopNode, newTopNode, id, config.link);
+            compareAndRender(sharkComponent, newTopNode, config.checkable);
             config.onNodeChecked.call(sharkComponent, node, node.checked);
         } else if (target.hasClass('tree-title') && config.selectable) {
             var node = TreeData.selectNode(config.selectable, newTopNode, id, config.multiple);
+            compareAndRender(sharkComponent, newTopNode, config.checkable);
             config.onNodeSelected.call(sharkComponent, node);
         }
-        compareAndRender(sharkComponent, newTopNode, config.checkable);
         // 阻止冒泡
         evt.stopPropagation();
     });
@@ -97,7 +99,12 @@ SharkUI.sharkDTree = function (options, targetElement) {
     // 设置某几个节点为选中的
     sharkComponent.setChecked = function (idList) {
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
-        TreeData.setChecked(newTopNode, idList, config.link);
+        TreeData.setChecked(newTopNode, idList, config.link, true, config.checkable);
+        compareAndRender(sharkComponent, newTopNode, config.checkable);
+    };
+    sharkComponent.setUnChecked = function (idList) {
+        var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
+        TreeData.setChecked(newTopNode, idList, config.link, false, config.checkable);
         compareAndRender(sharkComponent, newTopNode, config.checkable);
     };
     // 设置某几个节点为选中的

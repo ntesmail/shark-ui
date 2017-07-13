@@ -70,7 +70,7 @@
         nodes: treeData,
         openAll: false,
         selectable: true,
-        checkable: false,
+        // checkable: false,
         // multiple: true,
         onNodeChecked: function(node, isChecked) {
             console.log(node, isChecked);
@@ -115,9 +115,9 @@
     });
 
 
-   // setTimeout(function() {
-    //    dmytree.setSelected(['tabs', 'pager']);
-    // }, 2000);
+    setTimeout(function() {
+        dmytree.setSelected(['tabs', 'pager']);
+     }, 2000);
 
 
      //setTimeout(function() {

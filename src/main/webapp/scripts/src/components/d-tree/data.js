@@ -191,15 +191,14 @@ function reverseCheck(newTopNode, node) {
 }
 
 // 设置选中项
-function setChecked(newTopNode, idList, link) {
-    checkAll(newTopNode, false);
+function setChecked(newTopNode, idList, link, flag, checkable) {
     idList.forEach(function (id) {
         var node = getNodeById(newTopNode, id);
         if (node) {
-            node.checked = true;
+            node.checked = flag;
         }
     });
-    handleNode(newTopNode, link);
+    handleNode(newTopNode, link, checkable);
 }
 
 // 设置选中项
