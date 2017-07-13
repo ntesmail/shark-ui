@@ -25,6 +25,14 @@ function initDom(sharkComponent, config, targetElement) {
         sharkComponent.component = $(targetElement);
     }
     sharkComponent.component.addClass('shark-selecter');
+    // 带搜索框
+    if (config.showSearch) {
+        var search = $('<input value="" class="select-search" />');
+        var span = $('<span class="select-search-mirror"></span>');
+        sharkComponent.component.append(search);
+        sharkComponent.component.append(span);
+        sharkComponent.search = search;
+    }
     return sharkComponent;
 }
 // 初始化下拉列表的的dom
@@ -47,25 +55,34 @@ function initSelectionsEvents(sharkComponent, config) {
         //收起待选列表
         selecter.removeClass('open');
         selections.hide();
+        sharkComponent.search.val('');
+        ListGroup.update(selections, config.data, config.actualKey, config.displayKey);
+        sharkComponent.search.hide();
         selecter.trigger('focusout');
     });
     // 点击除了组件之外的地方，收起下拉列表
     Event.addCloseListener(
-        selections.attr('id'), 
-        [selecter, selections], 
+        selections.attr('id'),
+        [selecter, selections],
         BaseComponent.filterComponentAction(sharkComponent, function () {
             if (!selections.is(':hidden')) {
                 selecter.removeClass('open');
                 selections.hide();
+                if (config.showSearch) {
+                    sharkComponent.search.hide();
+                }
                 selecter.trigger('focusout');
             }
         }
-    ));
+        ));
 }
 // 初始化事件
 function initEvents(sharkComponent, config) {
     var selecter = sharkComponent.component;
     selecter.on('click.selecter', '.selecter', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
+        if (config.showSearch) {
+            sharkComponent.search.show();
+        }
         if (!sharkComponent.selections) {
             // 如果还没有初始化过selections，在这里先初始化
             initSelectionsDom(sharkComponent, config);
@@ -89,6 +106,16 @@ function initEvents(sharkComponent, config) {
             selections.hide();
             selecter.trigger('focusout');
         }
+    }));
+
+    selecter.on('input', '.select-search', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
+        var input = $(this);
+        var tmplList = config.data.filter(function (item) {
+            if (item.name.indexOf(input.val()) !== -1) {
+                return true;
+            }
+        });
+        ListGroup.update(sharkComponent.selections, tmplList, config.actualKey, config.displayKey);
     }));
 }
 // 渲染下拉列表
@@ -124,6 +151,7 @@ SharkUI.sharkSelecter = function (options, targetElement) {
         data: null,
         actualKey: 'value',
         displayKey: 'name',
+        showSearch: false,
         dom: '',
         onSelected: function () { }
     };
