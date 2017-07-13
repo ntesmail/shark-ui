@@ -106,7 +106,7 @@ function initEvents(sharkComponent, config) {
     selecter.on('click.selecter', '.remove', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
         var node = $(evt.currentTarget).parent('li').data('node');
         sharkComponent.selections.tree.setUnChecked([node.id]);
-        changeSelectDom(sharkComponent, node, false);
+        changeSelectDom1(sharkComponent, node, false);
     }))
 }
 
