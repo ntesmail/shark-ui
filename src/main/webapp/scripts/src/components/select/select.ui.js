@@ -36,12 +36,26 @@ function changeSelectDom1(sharkComponent, node, isChecked) {
     }
     sharkComponent.component.empty();
     for (var i = 0; i < checkedList.length; i++) {
-        var li = $(`<li style="font-size: 16px;display: inline;">${checkedList[i].name}
-            <span class="remove">X</span>
-        </li>`);
+        var li = $(`<li style="font-size: 16px;display: inline;">
+                        ${checkedList[i].name}
+                        <span class="remove">X</span>
+                    </li>`);
         li.data('node', checkedList[i]);
         sharkComponent.component.append(li);
     }
+    var len = sharkComponent.selections.tree.topNode.children.length;
+    switch (checkedList.length) {
+        case 0:
+            sharkComponent.allState = 0;
+            break;
+        case len:
+            sharkComponent.allState = 2;
+            break;
+        default:
+            sharkComponent.allState = 1;
+            break;
+    }
+    toggleAllState(sharkComponent);
 }
 
 function changeSelectDom2(sharkComponent, node) {
@@ -52,9 +66,20 @@ function changeSelectDom2(sharkComponent, node) {
     sharkComponent.component.trigger('focusout');
 }
 
+function toggleAllState(sharkComponent) {
+    var checkbox = sharkComponent.selections.find('.check-all');
+    checkbox.removeClass('tree-icon-check-empty tree-icon-check-minus tree-icon-check');
+    var classObj = {
+        '0': 'tree-icon-check-empty',
+        '1': 'tree-icon-check-minus',
+        '2': 'tree-icon-check'
+    };
+    checkbox.addClass(classObj[sharkComponent.allState]);
+}
+
 // 初始化下拉列表的的dom
 function initSelectionsDom(sharkComponent, config) {
-    var selections = $('<div class="position-absolute" style="display: none;"></div>');
+    var selections = $('<div class="position-absolute shark-tree" style="display: none;"></div>');
     selections.attr('id', SharkUI.createUUID());
     var options = {
         nodes: config.data,
@@ -68,10 +93,18 @@ function initSelectionsDom(sharkComponent, config) {
     if (!config.multiple) {
         options.checkable = false;
         options.selectable = true;
+    } else {
+        options.checkable = true;
+        options.selectable = false;
+        var all = $(`<div><span class="tree-title tree-node-name">全部</span></div>`);
+        var checkbox = $('<span class="tree-checkbox tree-icon tree-icon-check-empty check-all"></span>');
+        all.prepend(checkbox);
+        selections.append(all);
     }
     selections.tree = SharkUI.sharkDTree(options);
     selections.tree.appendTo(selections);
     sharkComponent.selections = selections;
+    toggleAllState(sharkComponent)
     $(document.body).append(selections);
 }
 
@@ -114,19 +147,18 @@ function initEvents(sharkComponent, config) {
 function initSelectionsEvents(sharkComponent, config) {
     var selecter = sharkComponent.component;
     var selections = sharkComponent.selections;
-    selections.on('click', '.list-group-item', function (evt) {
-        var item = $(this);
-        //设置值
-        var value = item.data('value');
-        sharkComponent.setValue(value, true);
-        //收起待选列表
-        selecter.removeClass('open');
-        selections.hide();
-        sharkComponent.search.val('');
-        ListGroup.update(selections, config.data, config.actualKey, config.displayKey);
-        sharkComponent.search.hide();
-        selecter.trigger('focusout');
+    selections.on('click', '.check-all', function (evt) {
+        if (sharkComponent.allState === 2) {
+            sharkComponent.selections.tree.checkNo();
+            sharkComponent.allState = 0;
+
+        } else {
+            sharkComponent.selections.tree.checkAll();
+            sharkComponent.allState = 2;
+        }
+        toggleAllState(sharkComponent)
     });
+
     // 点击除了组件之外的地方，收起下拉列表
     Event.addCloseListener(
         selections.attr('id'),
@@ -153,6 +185,7 @@ SharkUI.sharkSelect = function (options, targetElement) {
     };
     SharkUI.extend(config, options);
     var sharkComponent = {};
+    sharkComponent.allState = 0;
     sharkComponent.checkedList = [];
     BaseComponent.addComponentBaseFn(sharkComponent, config);
     initDom(sharkComponent, config, targetElement);
