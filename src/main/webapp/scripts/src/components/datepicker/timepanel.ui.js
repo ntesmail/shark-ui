@@ -230,7 +230,6 @@ Timepanel.prototype.setConfig = function (key, value) {
 }
 // 渲染
 Timepanel.prototype.render = function () {
-    console.log('timepanel render');
     renderDom(this);
 }
 // 销毁

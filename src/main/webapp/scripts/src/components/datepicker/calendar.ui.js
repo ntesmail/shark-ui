@@ -244,7 +244,6 @@ Calendar.prototype.setConfig = function (key, value) {
 }
 // 渲染
 Calendar.prototype.render = function () {
-    console.log('canlendar render');
     forceRenderValueValid(this);
     renderDom(this, getRenderData(this));
 }

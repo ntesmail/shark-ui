@@ -93,8 +93,8 @@ function remove(nativeElement) {
 function scrollTo(nativeElement, value) {
     if (nativeElement.requestID) {
         cancelAnimationFrame(nativeElement.requestID);
+        delete nativeElement.requestID;
     }
-    nativeElement.isScrolling = true;
     var diff = nativeElement.scrollTop - value;
     var tmp = nativeElement.scrollTop;
     if (diff === 0 || value >= nativeElement.scrollHeight) {

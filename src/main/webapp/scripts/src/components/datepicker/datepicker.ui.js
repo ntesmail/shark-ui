@@ -378,6 +378,9 @@ SharkUI.sharkDatepicker = function (options, targetElement) {
         if (sharkComponent.timeinput) {
             sharkComponent.timeinput.off('click');
         }
+        if (sharkComponent.timenowbtn) {
+            sharkComponent.timenowbtn.off('click');
+        }
         if (sharkComponent.timepanel) {
             sharkComponent.timepanel.destroy();
         }
