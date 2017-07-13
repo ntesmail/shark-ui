@@ -48,11 +48,14 @@ function changeSelectDom2(sharkComponent, node) {
     sharkComponent.component.empty();
     var li = $(`<li style="font-size: 16px;display: inline;">${node.name}</li>`);
     sharkComponent.component.append(li);
+    sharkComponent.selections.hide();
+    sharkComponent.component.trigger('focusout');
 }
 
 // 初始化下拉列表的的dom
 function initSelectionsDom(sharkComponent, config) {
     var selections = $('<div class="position-absolute" style="display: none;"></div>');
+    selections.attr('id', SharkUI.createUUID());
     var options = {
         nodes: config.data,
         onNodeChecked: function (node, isChecked) {
