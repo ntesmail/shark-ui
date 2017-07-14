@@ -128,13 +128,13 @@ SharkUI.sharkDTree = function (options, targetElement) {
     // 获取选中的id列表
     sharkComponent.getChecked = function () {
         if (config.checkable) {
-            return TreeData.getNodeNodeList(sharkComponent.topNode, 'checked');
+            return TreeData.getNodeList(sharkComponent.topNode, 'checked');
         }
     };
     // 获取选中的id列表
     sharkComponent.getSelected = function () {
         if (config.selectable) {
-            return TreeData.getNodeNodeList(sharkComponent.topNode, 'selected');
+            return TreeData.getNodeList(sharkComponent.topNode, 'selected');
         }
     }
     // 销毁组件

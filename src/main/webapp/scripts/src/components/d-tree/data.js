@@ -1,3 +1,189 @@
+// 全选
+function checkAll(newTopNode, flag) {
+    newTopNode.checked = flag;
+    changeChildren(newTopNode);
+}
+
+// 修改子集的选中状态
+function changeAllSelected(node) {
+    var children = node.children;
+    children && children.forEach(function (child) {
+        child.selected = false;
+        changeAllSelected(child);
+    });
+}
+
+// 修改数据树的选中状态
+function changeChecked(checkable, newTopNode, node, id, link) {
+    if (checkable) {
+        var node = getNodeById(newTopNode, id);
+        if (node) {
+            // 切换节点checked状态
+            node.checked = !node.checked;
+            node.state = node.checked ? 2 : 0;
+            if (link) {
+                // 子集的checked属性与父级保持一致
+                changeChildren(node);
+                changeParent(newTopNode, node.parentId);
+            }
+        }
+        return node;
+    }
+}
+
+// 修改子集的选中状态
+function changeChildren(node) {
+    var children = node.children || [];
+    var checked = node.checked;
+    children.forEach(function (child) {
+        child.checked = checked;
+        child.state = checked ? 2 : 0;
+        changeChildren(child);
+    });
+}
+
+// 通过id查找节点，并修改节点属性
+function changeNodeAttrById(newTopNode, id, attrName, attrVal) {
+    var node = getNodeById(newTopNode, id);
+    if (node) {
+        node[attrName] = attrVal;
+    }
+}
+
+// 修改数据树的展开和收起
+function changeOpen(newTopNode, id) {
+    var node = getNodeById(newTopNode, id);
+    node.open = !node.open;
+    return node;
+}
+
+// 修改父集的选中状态
+function changeParent(newTopNode, id) {
+    var node = getNodeById(newTopNode, id);
+    if (node) {
+        setStateByChildren(node);
+        node.parentId && changeParent(newTopNode, node.parentId);
+    }
+}
+
+// 通过id查找节点
+function getNodeById(node, id) {
+    var children = node.children || [];
+    if (node.id === id) {
+        return node;
+    } else {
+        for (var i = 0; i < children.length; i++) {
+            var node = getNodeById(children[i], id);
+            if (node) {
+                return node;
+            }
+        }
+    }
+}
+
+// 根据某种状态获取节点id列表
+function getNodeList(nodeTree, key, nodeList) {
+    var children = nodeTree.children || [];
+    nodeList = nodeList || [];
+    children.forEach(function (childTree) {
+        getNodeList(childTree, key, nodeList);
+    });
+    if (nodeTree.id && nodeTree[key]) {
+        nodeList.push(nodeTree);
+    }
+    return nodeList;
+}
+
+// 得到node的选中状态(选中/未选中/半选)
+function getNodeState(node, link) {
+    // 存在子节点并且父子节点之间有关联关系，由子节点决定父节点的state状态
+    if (node.children && link) {
+        setStateByChildren(node);
+    } else {
+        // 不存在子节点或者父子节点之间没有关联关系，由自身的checked状态来决定state状态
+        node.state = node.checked ? 2 : 0;
+    }
+}
+
+// 获取数据根节点
+function getTopNode(treeData, config) {
+    var topNode = { children: treeData };
+    // 处理节点，为每个节点加上count属性，父id和当前选中状态
+    handleNode(topNode, config);
+    return topNode;
+}
+
+// 处理节点，为每个节点加上count属性，父节点id和选中状态 | (做递归处理)
+function handleNode(node, config) {
+    var children = node.children;
+    node.count = 0;
+    children && children.forEach(function (child) {
+        handleNode(child, config);
+        // 将父id存在节点上,方便查找
+        child.parentId = node.id;
+        // 统计子节点数量
+        node.count += child.count + 1;
+    });
+    if (config.checkable) {
+        // 得到当前node的选中状态(选中/未选中/半选中)
+        getNodeState(node, config.link);
+    }
+}
+
+// 全部展开（递归展开）
+function openAll(node) {
+    var children = node.children;
+    if (children) {
+        node.open = true;
+        children.forEach(function (child) {
+            openAll(child);
+        });
+    }
+}
+
+// 打开某几个节点
+function openTo(newTopNode, idList) {
+    idList.forEach(function (id) {
+        changeNodeAttrById(newTopNode, id, 'open', true);
+    });
+}
+
+// 反选
+function reverseCheck(newTopNode, node) {
+    var children = node.children || [];
+    children.forEach(function (child) {
+        if (!child.children) {
+            child.checked = !child.checked;
+            child.state = child.checked ? 2 : 0;
+        } else {
+            reverseCheck(newTopNode, child);
+        }
+    });
+    changeParent(newTopNode, node.id);
+}
+
+// 修改数据节点的选中
+function selectNode(selectable, newTopNode, id, multiple) {
+    if (selectable) {
+        if (!multiple) {
+            changeAllSelected(newTopNode);
+        }
+        var node = getNodeById(newTopNode, id);
+        if (node) {
+            node.selected = true;
+        }
+        return node;
+    }
+}
+
+// 设置选中项
+function setChecked(newTopNode, idList, flag, config) {
+    idList.forEach(function (id) {
+        changeNodeAttrById(newTopNode, id, 'checked', flag);
+    });
+    handleNode(newTopNode, config);
+}
+
 // 通过子节点的选中状态来决定父节点的选中状态（假设父节点的checked状态不对，也可以在此修正）
 function setStateByChildren(parent) {
     var children = parent.children;
@@ -30,181 +216,6 @@ function setStateByChildren(parent) {
     }
 }
 
-// 得到node的选中状态(选中/未选中/半选)
-function getNodeState(node, link) {
-    // 存在子节点并且父子节点之间有关联关系，由子节点决定父节点的state状态
-    if (node.children && link) {
-        setStateByChildren(node);
-    } else {
-        // 不存在子节点或者父子节点之间没有关联关系，由自身的checked状态来决定state状态
-        node.state = node.checked ? 2 : 0;
-    }
-}
-
-// 处理节点，为每个节点加上count属性，父节点id和选中状态 | (做递归处理)
-function handleNode(node, config) {
-    var children = node.children;
-    node.count = 0;
-    children && children.forEach(function (child) {
-        handleNode(child, config);
-        // 将父id存在节点上,方便查找
-        child.parentId = node.id;
-        // 统计子节点数量
-        node.count += child.count + 1;
-    });
-    if (config.checkable) {
-        // 得到当前node的选中状态(选中/未选中/半选中)
-        getNodeState(node, config.link);
-    }
-}
-
-// 获取数据根节点
-function getTopNode(treeData, config) {
-    var topNode = { children: treeData };
-    // 处理节点，为每个节点加上count属性，父id和当前选中状态
-    handleNode(topNode, config);
-    return topNode;
-}
-
-// 通过id查找节点
-function getNodeById(node, id) {
-    var children = node.children || [];
-    if (node.id === id) {
-        return node;
-    } else {
-        for (var i = 0; i < children.length; i++) {
-            var node = getNodeById(children[i], id);
-            if (node) {
-                return node;
-            }
-        }
-    }
-}
-
-// 修改子集的选中状态
-function changeChildren(node) {
-    var children = node.children || [];
-    var checked = node.checked;
-    children.forEach(function (child) {
-        child.checked = checked;
-        child.state = checked ? 2 : 0;
-        changeChildren(child);
-    });
-}
-
-// 修改父集的选中状态
-function changeParent(newTopNode, id) {
-    var node = getNodeById(newTopNode, id);
-    if (node) {
-        setStateByChildren(node);
-        node.parentId && changeParent(newTopNode, node.parentId);
-    }
-}
-
-// 修改数据树的选中状态
-function changeChecked(checkable, newTopNode, node, id, link) {
-    if (checkable) {
-        var node = getNodeById(newTopNode, id);
-        if (node) {
-            // 切换节点checked状态
-            node.checked = !node.checked;
-            node.state = node.checked ? 2 : 0;
-            if (link) {
-                // 子集的checked属性与父级保持一致
-                changeChildren(node);
-                changeParent(newTopNode, node.parentId);
-            }
-        }
-        return node;
-    }
-}
-
-// 修改子集的选中状态
-function changeAllSelected(node) {
-    var children = node.children;
-    children && children.forEach(function (child) {
-        child.selected = false;
-        changeAllSelected(child);
-    });
-}
-
-// 修改数据节点的选中
-function selectNode(selectable, newTopNode, id, multiple) {
-    if (selectable) {
-        if (!multiple) {
-            changeAllSelected(newTopNode);
-        }
-        var node = getNodeById(newTopNode, id);
-        if (node) {
-            node.selected = true;
-        }
-        return node;
-    }
-}
-
-// 修改数据树的展开和收起
-function changeOpen(newTopNode, id) {
-    var node = getNodeById(newTopNode, id);
-    node.open = !node.open;
-    return node;
-}
-
-// 全部展开（递归展开）
-function openAll(node) {
-    var children = node.children;
-    if (children) {
-        node.open = true;
-        children.forEach(function (child) {
-            openAll(child);
-        });
-    }
-}
-
-
-
-// 全选
-function checkAll(newTopNode, flag) {
-    newTopNode.checked = flag;
-    changeChildren(newTopNode);
-}
-
-// 反选
-function reverseCheck(newTopNode, node) {
-    var children = node.children || [];
-    children.forEach(function (child) {
-        if (!child.children) {
-            child.checked = !child.checked;
-            child.state = child.checked ? 2 : 0;
-        } else {
-            reverseCheck(newTopNode, child);
-        }
-    });
-    changeParent(newTopNode, node.id);
-}
-
-// 通过id查找节点，并修改节点属性
-function changeNodeAttrById(newTopNode, id, attrName, attrVal) {
-    var node = getNodeById(newTopNode, id);
-    if (node) {
-        node[attrName] = attrVal;
-    }
-}
-
-// 设置选中项
-function setChecked(newTopNode, idList, flag, config) {
-    idList.forEach(function (id) {
-        changeNodeAttrById(newTopNode, id, 'checked', flag);
-    });
-    handleNode(newTopNode, config);
-}
-
-// 打开某几个节点
-function openTo(newTopNode, idList) {
-    idList.forEach(function (id) {
-        changeNodeAttrById(newTopNode, id, 'open', true);
-    });
-}
-
 // 设置选中项
 function setSelected(newTopNode, idList, multiple) {
     // 单选
@@ -219,30 +230,17 @@ function setSelected(newTopNode, idList, multiple) {
     });
 }
 
-// 根据某种状态获取节点id列表
-function getNodeNodeList(nodeTree, key, nodeList) {
-    var children = nodeTree.children || [];
-    nodeList = nodeList || [];
-    children.forEach(function (childTree) {
-        getNodeNodeList(childTree, key, nodeList);
-    });
-    if (nodeTree.id && nodeTree[key]) {
-        nodeList.push(nodeTree.id);
-    }
-    return nodeList;
-}
-
 var TreeData = {
-    getTopNode: getTopNode,
     changeChecked: changeChecked,
-    selectNode: selectNode,
     changeOpen: changeOpen,
     checkAll: checkAll,
-    reverseCheck: reverseCheck,
+    getNodeList: getNodeList,
+    getTopNode: getTopNode,
     openAll: openAll,
     openTo: openTo,
+    reverseCheck: reverseCheck,
+    selectNode: selectNode,
     setChecked: setChecked,
-    setSelected: setSelected,
-    getNodeNodeList: getNodeNodeList
+    setSelected: setSelected
 };
 export { TreeData };
