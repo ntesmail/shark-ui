@@ -37,6 +37,28 @@ function checkParent(topNode, id) {
     }
 }
 
+// 不能选中（节点本身）
+function disabledAll(node) {
+    var children = node.children;
+    node.disabled = true;
+    if (children) {
+        children.forEach(function (child) {
+            disabledAll(child);
+        });
+    }
+}
+
+// checbox不能点
+function disableCheckboxAll(node) {
+    var children = node.children;
+    node.disabledCheckbox = true;
+    if (children) {
+        children.forEach(function (child) {
+            disableCheckboxAll(child);
+        });
+    }
+}
+
 // 通过id查找节点
 function getNodeById(node, id) {
     var children = node.children || [];
@@ -220,6 +242,29 @@ function setSelected(topNode, idList, replace, config) {
     });
 }
 
+function setDisabled(topNode, idList) {
+    idList.forEach(function (id) {
+        var node = getNodeById(id);
+        if (node) {
+            node.disabled = true;
+        }
+    });
+}
+
+// 设置某些节点为disabled
+function setDisabled(topNode, idList) {
+    idList.forEach(function (id) {
+        changeNodeAttrById(topNode, id, 'disabled', true);
+    });
+}
+
+// 设置某些checkbox为disabled
+function setDisabledCheckBox(topNode, idList) {
+    idList.forEach(function (id) {
+        changeNodeAttrById(topNode, id, 'disabledCheckbox', true);
+    });
+}
+
 // 切换数据节点的选中状态
 function toggleCheck(topNode, id, config) {
     var node = reverseAttrById(topNode, id, "checked");
@@ -246,6 +291,10 @@ var TreeData = {
     selectNode: selectNode,
     setChecked: setChecked,
     setSelected: setSelected,
-    toggleCheck: toggleCheck
+    toggleCheck: toggleCheck,
+    disabledAll: disabledAll,
+    disableCheckboxAll: disableCheckboxAll,
+    setDisabled: setDisabled,
+    setDisabledCheckBox: setDisabledCheckBox
 };
 export { TreeData };

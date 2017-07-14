@@ -20,11 +20,11 @@ function initEvents(sharkComponent, config) {
             var node = TreeData.changeOpen(newTopNode, id);
             compareAndRender(sharkComponent, newTopNode, config.checkable);
             config.onExpand.call(sharkComponent, node, node.open);
-        } else if (target.hasClass('tree-checkbox') && config.checkable) {  // 修改新的数据树的选中状态
+        } else if (!target.hasClass('disabled') && target.hasClass('tree-checkbox') && config.checkable) {  // 修改新的数据树的选中状态
             var node = TreeData.toggleCheck(newTopNode, id, config);
             compareAndRender(sharkComponent, newTopNode, config.checkable);
             config.onNodeChecked.call(sharkComponent, node, node.checked);
-        } else if (target.hasClass('tree-title') && config.selectable) {
+        } else if (!target.hasClass('disabled') && target.hasClass('tree-title') && config.selectable) {
             var node = TreeData.toggleSelect(newTopNode, id, config);
             compareAndRender(sharkComponent, newTopNode, config.checkable);
             config.onNodeSelected.call(sharkComponent, node, node.selected);
@@ -56,6 +56,7 @@ SharkUI.sharkDTree = function (options, targetElement) {
         openAll: true, // 是否全部展开，默认true
         link: true, // 父子级节点是否关联，默认为true
         selectable: false,
+        disabled: false,
         multiple: false,
         checkable: true,
         onExpand: function () { },
@@ -70,6 +71,13 @@ SharkUI.sharkDTree = function (options, targetElement) {
     // 是否全部展开，如果是则重新处理数据树
     if (config.openAll) {
         TreeData.openAll(sharkComponent.topNode);
+    }
+    // 全部不能选
+    if (config.disabled) {
+        TreeData.disabledAll(sharkComponent.topNode);
+    }
+    if (config.disableCheckbox) {
+        TreeData.disableCheckboxAll(sharkComponent.topNode);
     }
     // 初始化dom节点
     sharkComponent.component = TreeDom.initDom(sharkComponent.topNode, config.checkable);
@@ -126,6 +134,19 @@ SharkUI.sharkDTree = function (options, targetElement) {
         TreeData.openTo(newTopNode, idList, autoOpenParent);
         compareAndRender(sharkComponent, newTopNode, config.checkable);
     };
+
+    sharkComponent.setDisabled = function(idList) {
+        var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
+        TreeData.setDisabled(newTopNode, idList);
+        compareAndRender(sharkComponent, newTopNode, config.checkable);
+    };
+
+    sharkComponent.setDisabledCheckBox = function(idList) {
+        var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
+        TreeData.setDisabledCheckBox(newTopNode, idList);
+        compareAndRender(sharkComponent, newTopNode, config.checkable);
+    };
+
     // 获取选中的id列表
     sharkComponent.getChecked = function () {
         if (config.checkable) {

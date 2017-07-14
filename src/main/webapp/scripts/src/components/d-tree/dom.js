@@ -41,6 +41,9 @@ function getTreeNode(nodeData, checkable) {
     var treeNode = $('<li></li>');
     var title = $('<span class="tree-title tree-node-name">' + nodeData.name + '</span>');
     var children = nodeData.children;
+    if (nodeData.disabled) {
+        title.addClass('disabled');
+    }
     if (nodeData.selected) {
         title.addClass('tree-node-selected');
     }
@@ -49,6 +52,9 @@ function getTreeNode(nodeData, checkable) {
     if (checkable) {
         var checkbox = $('<span class="tree-checkbox tree-icon"></span>');
         toggleCheckBox(checkbox, nodeData.state);
+        if (nodeData.disabledCheckbox) {
+            checkbox.addClass('disabled');
+        }
         treeNode.prepend(checkbox);
     }
     if (children) {
@@ -122,8 +128,32 @@ function applyPatches(node, currentPatches, checkable) {
             case "OPEN":
                 toggleChildTree(node, currentPatch.open);
                 break;
+            case "DISABLED":
+                var title = node.children('.tree-title');
+                disabledNode(title, currentPatch.disabled);
+                break;
+            case "DISABLEDCHECKBOX":
+                var checkbox = node.children('.tree-checkbox');
+                disabledCheckbox(checkbox, currentPatch.disabledCheckbox);
+                break;
         }
     });
+}
+
+
+function disabledNode(title, disabled) {
+    title.removeClass('disabled');
+    if (disabled) {
+        title.addClass('disabled');
+    }
+
+}
+
+function disabledCheckbox(checkbox, disabledCheckbox) {
+    checkbox.removeClass('disabled');
+    if (disabledCheckbox) {
+        checkbox.addClass('disabled');
+    }
 }
 
 // 根据得到的差异数组，修改组件

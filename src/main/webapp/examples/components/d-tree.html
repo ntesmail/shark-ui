@@ -70,6 +70,8 @@
         nodes: treeData,
         openAll: false,
         selectable: true,
+        // disabled: true,
+        // disableCheckbox: true,
          //checkable: false,
         // multiple: true,
         onNodeChecked: function(node, isChecked) {
@@ -100,20 +102,19 @@
     document.getElementById('openAllBtn').addEventListener('click',function(){
         dmytree.openAll();
     });
-
     document.getElementById('openAllBtn').addEventListener('click',function(){
         dmytree.openAll();
     });
-
     document.getElementById('getCheckedBtn').addEventListener('click',function(){
         console.log(dmytree.getChecked());
     });
-
-
     document.getElementById('getSelectedBtn').addEventListener('click',function(){
         console.log(dmytree.getSelected());
     });
 
+    dmytree.setDisabled(['popover']);
+
+     dmytree.setDisabledCheckBox(['dropdown']);
 
    // setTimeout(function() {
         //dmytree.setSelected(['tabs', 'pager'], true);
@@ -124,9 +125,10 @@
     //   dmytree.setChecked(['modal', 'pager']);
     //}, 2000);
 
- setTimeout(function() {
-      dmytree.openTo(['autocomplete'], true);
- }, 2000);
+  //setTimeout(function() {
+       //dmytree.openTo(['autocomplete'], true);
+  //}, 2000);
+
 
     
 

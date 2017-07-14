@@ -105,6 +105,12 @@ function diffProps(oldNode, newNode, currentPatch) {
         if (oldNode.selected !== newNode.selected) {
             currentPatch.push({ type: "SELECTED", selected: newNode.selected });
         }
+        if (oldNode.disabled !== newNode.disabled) {
+            currentPatch.push({ type: "DISABLED", disabled: newNode.disabled });
+        }
+        if (oldNode.disabledCheckbox !== newNode.disabledCheckbox) {
+            currentPatch.push({ type: "DISABLEDCHECKBOX", disabledCheckbox: newNode.disabledCheckbox });
+        }
     }
 }
 
