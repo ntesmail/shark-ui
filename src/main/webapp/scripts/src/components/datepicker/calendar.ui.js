@@ -224,9 +224,7 @@ function Calendar(options) {
     this.nativeElement = DomHelper.parseToHTML(templateFun.apply())[0];
     document.body.appendChild(this.nativeElement);
     initEvents(this);
-    this.value = this.config.initDate;
-    this.renderValue = SharkUI.isEmpty(this.value) ? new Date() : new Date(this.value);
-    this.render();
+    this.setValue(this.config.initDate);
 }
 // 获取值
 Calendar.prototype.getValue = function () {
@@ -234,8 +232,14 @@ Calendar.prototype.getValue = function () {
 }
 // 设置值
 Calendar.prototype.setValue = function (date) {
-    this.value = new Date(date);
-    this.renderValue = new Date(date);
+    if (SharkUI.isEmpty(date)) {
+        this.value = null;
+        this.renderValue = new Date();
+    }
+    else {
+        this.value = new Date(date);
+        this.renderValue = new Date(date);
+    }
     this.render();
 }
 Calendar.prototype.setConfig = function (key, value) {

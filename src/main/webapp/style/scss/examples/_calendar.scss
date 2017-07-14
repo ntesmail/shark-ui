@@ -174,13 +174,13 @@
     }
 }
 
-.shark-picker-container {
+.shark-pickercontainer {
     position: absolute;
     left: 0;
     top: 0;
     display: none;
     background-color: #ffffff;
-    .shark-timepicker {
+    .shark-timewrap{
         border: 1px solid #acacac;
         padding: 10px 0;
         text-align: center;

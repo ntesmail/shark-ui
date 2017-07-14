@@ -12,10 +12,8 @@ import '../../common/date';
 import { Calendar } from './calendar.ui';
 import { Timepanel } from './timepanel.ui';
 // input模板
-var templateInput = Templates.input;
-var templateContainer = Templates.pickercontainer;
-var templateInputFun = Templates.templateAoT(templateInput);
-var templateContainerFun = Templates.templateAoT(templateContainer);
+var templateDatetimepicker = Templates.datetimepicker;
+var templateDatetimepickerFun = Templates.templateAoT(templateDatetimepicker);
 
 function equalArray(a, b) {
     if (a.length !== b.length) {
@@ -87,46 +85,51 @@ function fullArray2Date(array) {
 function initDom(sharkComponent, config, targetElement) {
     if (!targetElement) {
         sharkComponent.createType = 'construct';
-        var fun = config.dom ? Templates.templateAoT(config.dom) : templateInputFun;
+        var fun = config.dom ? Templates.templateAoT(config.dom) : templateDatetimepickerFun;
         var html = fun.apply(config);
         sharkComponent.component = $(html);
     } else {
         sharkComponent.createType = 'normal';
         sharkComponent.component = $(targetElement);
     }
-    sharkComponent.component.addClass('shark-datapicker');
+    sharkComponent.valueinput = sharkComponent.component.find('input');
+    sharkComponent.clearbtn = sharkComponent.component.find('.clear');
+    sharkComponent.component.addClass('shark-datetimepicker');
     return sharkComponent;
 }
 // 初始化事件
 function initEvents(sharkComponent, config) {
-    var datepicker = sharkComponent.component;
-    datepicker.on('click.datepicker', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
+    sharkComponent.valueinput.on('click.datepicker', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
         if (!sharkComponent.isOpen) {
             sharkComponent.show();
         }
     }));
+    sharkComponent.clearbtn.on('click.datepicker', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
+        sharkComponent.setValue(null, true);
+    }));
 }
 // 渲染最外层容器
 function initContainer() {
-    var container = $('<div class="shark-picker-container"></div>');
+    var container = $('<div class="shark-pickercontainer"></div>');
     $(document.body).append(container);
     container.attr('id', SharkUI.createUUID());
     return container;
 }
 // 渲染时间选择面板
 function initTimepanel(sharkComponent, config) {
-    // timepickerwrap 容器
+    // timewrap 容器
     // timepanel 时间选择器面板
     // timeinput 时间输入框
-    sharkComponent.timepickerwrap = $(`
-        <div class="shark-timepicker">
+    // timenowbtn 此刻按钮
+    var timewrap = $(`
+        <div class="shark-timewrap">
             <a class="nowtime">当前</a>
             <div class="input-time-wrap">
                 <input class="input-time" readonly="readonly" />
             </div>
         </div>
     `);
-    sharkComponent.container.append(sharkComponent.timepickerwrap);
+    sharkComponent.container.append(timewrap);
     sharkComponent.timepanel = new Timepanel({
         initTime: date2TimeArray(config.initDate),
         beforeChange: function () { },
@@ -136,12 +139,15 @@ function initTimepanel(sharkComponent, config) {
             sharkComponent.value[3] = time[0];
             sharkComponent.value[4] = time[1];
             sharkComponent.value[5] = time[2];
-            triggerChanged(sharkComponent);
+            renderValue(sharkComponent);
+            if (typeof sharkComponent.getConfig().onChanged === 'function') {
+                sharkComponent.getConfig().onChanged.call(sharkComponent, sharkComponent.getValue(), sharkComponent.value);
+            }
         }
     });
-    sharkComponent.timepickerwrap.find('.input-time-wrap').append(sharkComponent.timepanel.nativeElement);
-    sharkComponent.timeinput = sharkComponent.timepickerwrap.find('.input-time');
-    sharkComponent.timenowbtn = sharkComponent.timepickerwrap.find('.nowtime');
+    timewrap.find('.input-time-wrap').append(sharkComponent.timepanel.nativeElement);
+    sharkComponent.timeinput = timewrap.find('.input-time');
+    sharkComponent.timenowbtn = timewrap.find('.nowtime');
     sharkComponent.timeinput.on('click', function () {
         if ($(sharkComponent.timepanel.nativeElement).is(':hidden')) {
             $(sharkComponent.timepanel.nativeElement).show();
@@ -152,19 +158,19 @@ function initTimepanel(sharkComponent, config) {
         }
     });
     sharkComponent.timenowbtn.on('click', function () {
-        sharkComponent.setValue(new Date());
+        sharkComponent.setValue(new Date(), true);
     });
     rederTimedom(sharkComponent);
 }
 // 渲染日期选择面板
 function initCalendar(sharkComponent, config) {
-    // calendarpickerwrap 容器
+    // calendarwrap 容器
     // container 日期选择器面板
-    sharkComponent.calendarpickerwrap = $(`
+    var calendarwrap = $(`
         <div class="shark-datepicker">
         </div>
     `);
-    sharkComponent.container.append(sharkComponent.calendarpickerwrap);
+    sharkComponent.container.append(calendarwrap);
     sharkComponent.calendar = new Calendar({
         initDate: config.initDate,
         maxDate: config.maxDate,
@@ -174,10 +180,14 @@ function initCalendar(sharkComponent, config) {
             sharkComponent.value[0] = date.getFullYear();
             sharkComponent.value[1] = date.getMonth();
             sharkComponent.value[2] = date.getDate();
-            triggerChanged(sharkComponent);
+            renderValue(sharkComponent);
+            checkMaxMinTime(sharkComponent);
+            if (typeof sharkComponent.getConfig().onChanged === 'function') {
+                sharkComponent.getConfig().onChanged.call(sharkComponent, sharkComponent.getValue(), sharkComponent.value);
+            }
         }
     });
-    sharkComponent.calendarpickerwrap.append(sharkComponent.calendar.nativeElement);
+    calendarwrap.append(sharkComponent.calendar.nativeElement);
 }
 // 渲染datetimepicker面板
 function initDatetimepicker(sharkComponent, config) {
@@ -195,14 +205,6 @@ function initDatetimepicker(sharkComponent, config) {
     );
     sharkComponent.isCalendarInit = true;
 }
-// 选择日历、时间后的回调
-function triggerChanged(sharkComponent) {
-    renderValue(sharkComponent);
-    checkMaxMinTime(sharkComponent);
-    if (typeof sharkComponent.getConfig().onChanged === 'function') {
-        sharkComponent.getConfig().onChanged.call(sharkComponent, sharkComponent.getValue(), sharkComponent.value);
-    }
-}
 // 把值渲染到dom
 function rederTimedom(sharkComponent) {
     if (sharkComponent.timeinput) {
@@ -212,15 +214,18 @@ function rederTimedom(sharkComponent) {
         if (!SharkUI.isEmpty(selectedHour) && !SharkUI.isEmpty(selectedMinute) && !SharkUI.isEmpty(selectedSecond)) {
             sharkComponent.timeinput.val(new Date(0, 0, 0, selectedHour, selectedMinute, selectedSecond).Format(sharkComponent.getConfig().format.split(' ')[1]));
         }
+        else {
+            sharkComponent.timeinput.val('');
+        }
     }
 }
 function renderValue(sharkComponent) {
     rederTimedom(sharkComponent);
     if (sharkComponent.isValid()) {
-        sharkComponent.component.val(sharkComponent.getValue().Format(sharkComponent.getConfig().format));
+        sharkComponent.valueinput.val(sharkComponent.getValue().Format(sharkComponent.getConfig().format));
     }
     else {
-        sharkComponent.component.val('');
+        sharkComponent.valueinput.val('');
     }
 }
 // 初始化，改变最大/小值，日历选中值，外部调用setValue时，更新时间的最大最小值
@@ -327,16 +332,29 @@ SharkUI.sharkDatepicker = function (options, targetElement) {
             return null;
         }
     };
-    sharkComponent.setValue = function (datetime) {
+    sharkComponent.setValue = function (datetime, needCb) {
         this.value = date2FullArray(datetime, this.enableTypes);
         if (this.calendar) {
-            this.calendar.setValue(new Date(datetime));
+            if (!SharkUI.isEmpty(datetime)) {
+                this.calendar.setValue(new Date(datetime));
+            }
+            else {
+                this.calendar.setValue(null);
+            }
         }
         if (this.enableTypes.hour && this.timepanel) {
-            this.timepanel.setValue([new Date(datetime).getHours(), new Date(datetime).getMinutes(), new Date(datetime).getSeconds()]);
+            if (!SharkUI.isEmpty(datetime)) {
+                this.timepanel.setValue([new Date(datetime).getHours(), new Date(datetime).getMinutes(), new Date(datetime).getSeconds()]);
+            }
+            else {
+                this.timepanel.setValue(null);
+            }
         }
         renderValue(sharkComponent);
         checkMaxMinTime(sharkComponent);
+        if (needCb && typeof config.onChanged === 'function') {
+            config.onChanged.call(this, this.getValue(), this.value);
+        }
     };
     sharkComponent.setConfig = function (key, value) {
         config[key] = value;

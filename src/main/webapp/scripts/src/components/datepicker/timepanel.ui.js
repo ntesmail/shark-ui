@@ -191,10 +191,15 @@ function renderDom(timepanel) {
     minutesContainer.innerHTML = minutesHtml;
     secondsContainer.innerHTML = secondsHtml;
     // scroll
-    DomHelper.scrollTo(hoursContainer, currentHour * hoursContainer.childNodes.item(currentHour).offsetHeight);
-    DomHelper.scrollTo(minutesContainer, currentMinute * minutesContainer.childNodes.item(currentMinute).offsetHeight);
-    DomHelper.scrollTo(secondsContainer, currentSecond * secondsContainer.childNodes.item(currentSecond).offsetHeight);
-
+    if (currentHour) {
+        DomHelper.scrollTo(hoursContainer, currentHour * hoursContainer.childNodes.item(0).offsetHeight);
+    }
+    if (currentMinute) {
+        DomHelper.scrollTo(minutesContainer, currentMinute * minutesContainer.childNodes.item(0).offsetHeight);
+    }
+    if (currentSecond) {
+        DomHelper.scrollTo(secondsContainer, currentSecond * secondsContainer.childNodes.item(0).offsetHeight);
+    }
 }
 
 // 日历组件
@@ -212,8 +217,7 @@ function Timepanel(options) {
     this.secondsContainer = this.nativeElement.querySelector('.timepanel-list-seconds');
     document.body.appendChild(this.nativeElement);
     initEvents(this);
-    this.value = this.config.initTime;
-    this.render();
+    this.setValue(this.config.initTime);
 }
 // 获取值
 Timepanel.prototype.getValue = function () {
