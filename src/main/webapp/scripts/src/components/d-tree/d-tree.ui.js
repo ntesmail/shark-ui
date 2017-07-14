@@ -1,6 +1,7 @@
 /**
  * @author lq
  * @description d-tree插件
+ * selectable和checkable与数据树无关，只在dom操作中体现
  */
 import $ from 'jquery';
 import { SharkUI } from '../../common/core';

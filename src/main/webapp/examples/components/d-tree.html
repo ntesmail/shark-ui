@@ -69,7 +69,7 @@
     var dmytree = SharkUI.sharkDTree({
         nodes: treeData,
         openAll: false,
-        selectable: true,
+        // selectable: true,
          //checkable: false,
         // multiple: true,
         onNodeChecked: function(node, isChecked) {
@@ -120,9 +120,9 @@
       }, 2000);
 
 
-     //setTimeout(function() {
-     // dmytree.setChecked(['modal', 'pager']);
-     // }, 2000);
+     setTimeout(function() {
+      dmytree.setChecked(['modal', 'pager']);
+      }, 2000);
 
 
     // setTimeout(function() {
