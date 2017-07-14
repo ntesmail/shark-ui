@@ -7,7 +7,7 @@ function changeNodeAttrById(topNode, id, attrName, attrVal) {
 
 // 修改数据树的展开和收起
 function changeOpen(topNode, id) {
-    return reverseAttrById(topNode, id, "open");
+    return reverseAttrById(topNode, id, 'open');
 }
 
 // 全选/全不选
@@ -248,7 +248,7 @@ function setSelected(topNode, idList, replace, config) {
 
 // 切换数据节点的选中状态
 function toggleCheck(topNode, id, config) {
-    var node = reverseAttrById(topNode, id, "checked");
+    var node = reverseAttrById(topNode, id, 'checked');
     if (node) {
         setCheckState(node, false);
         // 修改其父子节点选中的状态
