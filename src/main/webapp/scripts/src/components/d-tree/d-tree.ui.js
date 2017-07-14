@@ -24,7 +24,7 @@ function initEvents(sharkComponent, config) {
             compareAndRender(sharkComponent, newTopNode, config.checkable);
             config.onNodeChecked.call(sharkComponent, node, node.checked);
         } else if (target.hasClass('tree-title') && config.selectable) {
-            var node = TreeData.selectNode(config.selectable, newTopNode, id, config.multiple);
+            var node = TreeData.selectNode(newTopNode, id, config);
             compareAndRender(sharkComponent, newTopNode, config.checkable);
             config.onNodeSelected.call(sharkComponent, node);
         }

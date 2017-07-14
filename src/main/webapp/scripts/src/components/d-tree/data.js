@@ -1,20 +1,3 @@
-// 全选/全不选
-function checkAll(topNode, flag) {
-    // 修改顶层树节点的状态
-    topNode.checked = flag;
-    // 子节点的状态由父节点决定
-    checkChildren(topNode);
-}
-
-// 修改子集的选中状态
-function changeAllSelected(node) {
-    var children = node.children;
-    children && children.forEach(function (child) {
-        child.selected = false;
-        changeAllSelected(child);
-    });
-}
-
 // 修改数据树的选中状态
 function changeChecked(checkable, newTopNode, node, id, link) {
     if (checkable) {
@@ -31,6 +14,14 @@ function changeChecked(checkable, newTopNode, node, id, link) {
         }
         return node;
     }
+}
+
+// 全选/全不选
+function checkAll(topNode, flag) {
+    // 修改顶层树节点的状态
+    topNode.checked = flag;
+    // 子节点的状态由父节点决定
+    checkChildren(topNode);
 }
 
 // 修改子集的选中状态
@@ -50,6 +41,7 @@ function changeNodeAttrById(newTopNode, id, attrName, attrVal) {
     if (node) {
         node[attrName] = attrVal;
     }
+    return node;
 }
 
 // 修改数据树的展开和收起
@@ -153,17 +145,22 @@ function reverseCheck(newTopNode, node) {
     checkParent(newTopNode, node.id);
 }
 
+// 将所有节点的selected设为false
+function selectNo(node) {
+    var children = node.children || [];
+    node.selected = false;
+    children.forEach(function (child) {
+        selectNo(child);
+    });
+}
+
 // 修改数据节点的选中
-function selectNode(selectable, newTopNode, id, multiple) {
-    if (selectable) {
-        if (!multiple) {
-            changeAllSelected(newTopNode);
+function selectNode(topNode, id, config) {
+    if (config.selectable) {
+        if (!config.multiple) {
+            selectNo(topNode);
         }
-        var node = getNodeById(newTopNode, id);
-        if (node) {
-            node.selected = true;
-        }
-        return node;
+        return changeNodeAttrById(topNode, id, 'selected', true);
     }
 }
 
@@ -210,16 +207,16 @@ function setCheckState(parent, link) {
 }
 
 // 设置选中项
-function setSelected(newTopNode, idList, multiple) {
+function setSelected(topNode, idList, multiple) {
     // 单选
     if (!multiple) {
-        changeAllSelected(newTopNode);
+        selectNo(topNode);
         if (idList.length) {
             idList = idList.slice(0, 1);
         }
     }
     idList.forEach(function (id) {
-        changeNodeAttrById(newTopNode, id, 'selected', true);
+        changeNodeAttrById(topNode, id, 'selected', true);
     });
 }
 
