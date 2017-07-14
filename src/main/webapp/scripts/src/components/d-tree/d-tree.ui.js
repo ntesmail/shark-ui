@@ -120,10 +120,10 @@ SharkUI.sharkDTree = function (options, targetElement) {
         TreeData.openAll(newTopNode);
         compareAndRender(sharkComponent, newTopNode, config.checkable);
     };
-    // 展开某几个节点
-    sharkComponent.openTo = function (idList) {
+    // 展开某几个节点(autoOpenParent:打开子节点后是否自动打开父节点)
+    sharkComponent.openTo = function (idList, autoOpenParent) {
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
-        TreeData.openTo(newTopNode, idList);
+        TreeData.openTo(newTopNode, idList, autoOpenParent);
         compareAndRender(sharkComponent, newTopNode, config.checkable);
     };
     // 获取选中的id列表

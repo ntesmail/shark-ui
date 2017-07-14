@@ -100,10 +100,17 @@ function openAll(node) {
 }
 
 // 打开某几个节点
-function openTo(topNode, idList) {
+function openTo(topNode, idList, autoOpenParent) {
     idList.forEach(function (id) {
-        changeNodeAttrById(topNode, id, 'open', true);
+        openNode(topNode, id, autoOpenParent);
     });
+}
+
+function openNode(topNode, id, autoOpenParent) {
+    var node = changeNodeAttrById(topNode, id, 'open', true);
+    if (autoOpenParent && node.parentId) {
+        openNode(topNode, node.parentId, autoOpenParent);
+    }
 }
 
 // 通过id查找节点，并将特定属性值取反
