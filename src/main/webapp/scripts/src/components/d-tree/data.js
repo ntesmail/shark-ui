@@ -1,19 +1,3 @@
-// 修改数据树的选中状态
-function changeCheck(topNode, id, config) {
-    var node = getNodeById(topNode, id);
-    if (node) {
-        // 切换节点checked状态
-        node.checked = !node.checked;
-        setCheckState(node, false);
-        if (config.link) {
-            // 子集的checked属性与父级保持一致
-            checkChildren(node);
-            checkParent(topNode, node.parentId);
-        }
-    }
-    return node;
-}
-
 // 全选/全不选
 function checkAll(topNode, flag) {
     // 修改顶层树节点的状态
@@ -32,7 +16,7 @@ function checkChildren(parent) {
     });
 }
 
-// 通过id查找节点，并修改节点属性
+// 通过id查找节点，并修改节点属性值为穿入值
 function changeNodeAttrById(topNode, id, attrName, attrVal) {
     var node = getNodeById(topNode, id);
     node && (node[attrName] = attrVal);
@@ -41,9 +25,7 @@ function changeNodeAttrById(topNode, id, attrName, attrVal) {
 
 // 修改数据树的展开和收起
 function changeOpen(topNode, id) {
-    var node = getNodeById(topNode, id);
-    node && (node.open = !node.open);
-    return node;
+    return reverseAttrById(topNode, id, "open");
 }
 
 // 修改父集的选中状态
@@ -70,7 +52,7 @@ function getNodeById(node, id) {
     }
 }
 
-// 根据某种状态获取节点id列表
+// 根据某种状态获取节点列表
 function getNodeList(nodeTree, key, nodeList) {
     var children = nodeTree.children || [];
     nodeList = nodeList || [];
@@ -124,6 +106,15 @@ function openTo(topNode, idList) {
     });
 }
 
+// 通过id查找节点，并将特定属性值取反
+function reverseAttrById(topNode, id, attrName) {
+    var node = getNodeById(topNode, id);
+    if (node) {
+        node[attrName] = !node[attrName];
+    }
+    return node;
+}
+
 // 反选
 function reverseCheck(topNode, node) {
     var children = node.children || [];
@@ -155,11 +146,10 @@ function setChecked(topNode, idList, flag, config) {
     handleNode(topNode, config);
 }
 
-// 设置选中状态 decideByChildren:父节点的状态是否由由子节点决定
+// 设置选中状态 (decideByChildren:父节点的状态是否由由子节点决定)
 function setCheckState(node, decideByChildren) {
     var children = node.children;
     if (decideByChildren && children) {
-        // 子节点的数量
         var len = children.length;
         // 子节点的选中数量
         var checkedCount = 0;
@@ -177,7 +167,7 @@ function setCheckState(node, decideByChildren) {
             case 0:
                 node.state = 0;
                 break;
-            case len:
+            case len: // 子节点的数量
                 node.state = 2;
                 break;
             default:
@@ -203,8 +193,21 @@ function setSelected(topNode, idList, config) {
     });
 }
 
+// 切换数据节点的选中状态
+function toggleCheck(topNode, id, config) {
+    var node = reverseAttrById(topNode, id, "checked");
+    if (node) {
+        setCheckState(node, false);
+        // 修改其父子节点选中的状态
+        if (config.link) {
+            checkChildren(node);
+            checkParent(topNode, node.parentId);
+        }
+    }
+    return node;
+}
+
 var TreeData = {
-    changeCheck: changeCheck,
     changeOpen: changeOpen,
     checkAll: checkAll,
     getNodeList: getNodeList,
@@ -214,6 +217,7 @@ var TreeData = {
     reverseCheck: reverseCheck,
     selectNode: selectNode,
     setChecked: setChecked,
-    setSelected: setSelected
+    setSelected: setSelected,
+    toggleCheck: toggleCheck
 };
 export { TreeData };

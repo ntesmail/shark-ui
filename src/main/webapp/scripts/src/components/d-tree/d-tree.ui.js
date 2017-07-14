@@ -21,7 +21,7 @@ function initEvents(sharkComponent, config) {
             compareAndRender(sharkComponent, newTopNode, config.checkable);
             config.onExpand.call(sharkComponent, node, node.open);
         } else if (target.hasClass('tree-checkbox') && config.checkable) {  // 修改新的数据树的选中状态
-            var node = TreeData.changeCheck(newTopNode, id, config);
+            var node = TreeData.toggleCheck(newTopNode, id, config);
             compareAndRender(sharkComponent, newTopNode, config.checkable);
             config.onNodeChecked.call(sharkComponent, node, node.checked);
         } else if (target.hasClass('tree-title') && config.selectable) {
