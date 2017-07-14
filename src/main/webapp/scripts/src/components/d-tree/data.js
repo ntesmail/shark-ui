@@ -190,7 +190,7 @@ function setCheckState(node, decideByChildren) {
     }
 }
 
-
+// 切换选中状态（节点本身）
 function toggleSelect(topNode, id, config) {
     // 如果是单选，先将所有节点置为未选中状态
     if (!config.multiple) {
@@ -201,7 +201,7 @@ function toggleSelect(topNode, id, config) {
     return node;
 }
 
-// 修改数据节点的选中
+// 修改数据节点的选中（节点本身）
 function selectNode(topNode, id, config) {
     // 如果是单选，先将所有节点置为未选中状态
     if (!config.multiple) {
@@ -210,7 +210,7 @@ function selectNode(topNode, id, config) {
     return changeNodeAttrById(topNode, id, 'selected', true);
 }
 
-// 设置选中项
+// 设置选中项（节点本身）
 function setSelected(topNode, idList, replace, config) {
     if (replace) {
         selectAll(topNode, false);
