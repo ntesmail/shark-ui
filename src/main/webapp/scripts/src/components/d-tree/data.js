@@ -1,3 +1,15 @@
+// 通过id查找节点，并修改节点属性值为穿入值
+function changeNodeAttrById(topNode, id, attrName, attrVal) {
+    var node = getNodeById(topNode, id);
+    node && (node[attrName] = attrVal);
+    return node;
+}
+
+// 修改数据树的展开和收起
+function changeOpen(topNode, id) {
+    return reverseAttrById(topNode, id, "open");
+}
+
 // 全选/全不选
 function checkAll(topNode, flag) {
     // 修改顶层树节点的状态
@@ -14,18 +26,6 @@ function checkChildren(parent) {
         setCheckState(child, false);
         checkChildren(child);
     });
-}
-
-// 通过id查找节点，并修改节点属性值为穿入值
-function changeNodeAttrById(topNode, id, attrName, attrVal) {
-    var node = getNodeById(topNode, id);
-    node && (node[attrName] = attrVal);
-    return node;
-}
-
-// 修改数据树的展开和收起
-function changeOpen(topNode, id) {
-    return reverseAttrById(topNode, id, "open");
 }
 
 // 修改父集的选中状态
@@ -121,18 +121,19 @@ function openAll(node) {
     }
 }
 
-// 打开某几个节点
-function openTo(topNode, idList, autoOpenParent) {
-    idList.forEach(function (id) {
-        openNode(topNode, id, autoOpenParent);
-    });
-}
-
+// 展开某个节点
 function openNode(topNode, id, autoOpenParent) {
     var node = changeNodeAttrById(topNode, id, 'open', true);
     if (autoOpenParent && node.parentId) {
         openNode(topNode, node.parentId, autoOpenParent);
     }
+}
+
+// 展开某几个节点
+function openTo(topNode, idList, autoOpenParent) {
+    idList.forEach(function (id) {
+        openNode(topNode, id, autoOpenParent);
+    });
 }
 
 // 通过id查找节点，并将特定属性值取反
@@ -212,15 +213,18 @@ function setCheckState(node, decideByChildren) {
     }
 }
 
-// 切换选中状态（节点本身）
-function toggleSelect(topNode, id, config) {
-    // 如果是单选，先将所有节点置为未选中状态
-    if (!config.multiple) {
-        selectAll(topNode, false);
-    }
-    var node = getNodeById(topNode, id);
-    node.selected = !node.selected;
-    return node;
+// 设置某些节点为disabled
+function setDisabled(topNode, idList) {
+    idList.forEach(function (id) {
+        changeNodeAttrById(topNode, id, 'disabled', true);
+    });
+}
+
+// 设置某些checkbox为disabled
+function setDisabledCheckBox(topNode, idList) {
+    idList.forEach(function (id) {
+        changeNodeAttrById(topNode, id, 'disabledCheckbox', true);
+    });
 }
 
 // 修改数据节点的选中（节点本身）
@@ -242,29 +246,6 @@ function setSelected(topNode, idList, replace, config) {
     });
 }
 
-function setDisabled(topNode, idList) {
-    idList.forEach(function (id) {
-        var node = getNodeById(id);
-        if (node) {
-            node.disabled = true;
-        }
-    });
-}
-
-// 设置某些节点为disabled
-function setDisabled(topNode, idList) {
-    idList.forEach(function (id) {
-        changeNodeAttrById(topNode, id, 'disabled', true);
-    });
-}
-
-// 设置某些checkbox为disabled
-function setDisabledCheckBox(topNode, idList) {
-    idList.forEach(function (id) {
-        changeNodeAttrById(topNode, id, 'disabledCheckbox', true);
-    });
-}
-
 // 切换数据节点的选中状态
 function toggleCheck(topNode, id, config) {
     var node = reverseAttrById(topNode, id, "checked");
@@ -279,22 +260,33 @@ function toggleCheck(topNode, id, config) {
     return node;
 }
 
+// 切换选中状态（节点本身）
+function toggleSelect(topNode, id, config) {
+    // 如果是单选，先将所有节点置为未选中状态
+    if (!config.multiple) {
+        selectAll(topNode, false);
+    }
+    var node = getNodeById(topNode, id);
+    node.selected = !node.selected;
+    return node;
+}
+
 var TreeData = {
     changeOpen: changeOpen,
     checkAll: checkAll,
+    disabledAll: disabledAll,
+    disableCheckboxAll: disableCheckboxAll,
     getNodeList: getNodeList,
     getTopNode: getTopNode,
     openAll: openAll,
     openTo: openTo,
     reverseCheck: reverseCheck,
-    toggleSelect: toggleSelect,
     selectNode: selectNode,
     setChecked: setChecked,
+    setDisabled: setDisabled,
+    setDisabledCheckBox: setDisabledCheckBox,
     setSelected: setSelected,
     toggleCheck: toggleCheck,
-    disabledAll: disabledAll,
-    disableCheckboxAll: disableCheckboxAll,
-    setDisabled: setDisabled,
-    setDisabledCheckBox: setDisabledCheckBox
+    toggleSelect: toggleSelect
 };
 export { TreeData };
