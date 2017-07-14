@@ -1,19 +1,17 @@
 // 修改数据树的选中状态
-function changeChecked(checkable, newTopNode, node, id, link) {
-    if (checkable) {
-        var node = getNodeById(newTopNode, id);
-        if (node) {
-            // 切换节点checked状态
-            node.checked = !node.checked;
-            node.state = node.checked ? 2 : 0;
-            if (link) {
-                // 子集的checked属性与父级保持一致
-                checkChildren(node);
-                checkParent(newTopNode, node.parentId);
-            }
+function changeCheck(topNode, id, config) {
+    var node = getNodeById(topNode, id);
+    if (node) {
+        // 切换节点checked状态
+        node.checked = !node.checked;
+        node.state = node.checked ? 2 : 0;
+        if (config.link) {
+            // 子集的checked属性与父级保持一致
+            checkChildren(node);
+            checkParent(topNode, node.parentId);
         }
-        return node;
     }
+    return node;
 }
 
 // 全选/全不选
@@ -36,8 +34,8 @@ function checkChildren(node) {
 }
 
 // 通过id查找节点，并修改节点属性
-function changeNodeAttrById(newTopNode, id, attrName, attrVal) {
-    var node = getNodeById(newTopNode, id);
+function changeNodeAttrById(topNode, id, attrName, attrVal) {
+    var node = getNodeById(topNode, id);
     if (node) {
         node[attrName] = attrVal;
     }
@@ -45,18 +43,20 @@ function changeNodeAttrById(newTopNode, id, attrName, attrVal) {
 }
 
 // 修改数据树的展开和收起
-function changeOpen(newTopNode, id) {
-    var node = getNodeById(newTopNode, id);
-    node.open = !node.open;
+function changeOpen(topNode, id) {
+    var node = getNodeById(topNode, id);
+    if (node) {
+        node.open = !node.open;
+    }
     return node;
 }
 
 // 修改父集的选中状态
-function checkParent(newTopNode, id) {
-    var node = getNodeById(newTopNode, id);
+function checkParent(topNode, id) {
+    var node = getNodeById(topNode, id);
     if (node) {
         setCheckState(node, true);
-        node.parentId && checkParent(newTopNode, node.parentId);
+        node.parentId && checkParent(topNode, node.parentId);
     }
 }
 
@@ -107,10 +107,8 @@ function handleNode(node, config) {
         // 统计子节点数量
         node.count += child.count + 1;
     });
-    if (config.checkable) {
-        // 设置node的选中状态(选中/未选中/半选中)
-        setCheckState(node, config.link);
-    }
+    // 设置node的选中状态(选中/未选中/半选中)
+    setCheckState(node, config.link);
 }
 
 // 全部展开（递归展开）
@@ -125,24 +123,24 @@ function openAll(node) {
 }
 
 // 打开某几个节点
-function openTo(newTopNode, idList) {
+function openTo(topNode, idList) {
     idList.forEach(function (id) {
-        changeNodeAttrById(newTopNode, id, 'open', true);
+        changeNodeAttrById(topNode, id, 'open', true);
     });
 }
 
 // 反选
-function reverseCheck(newTopNode, node) {
+function reverseCheck(topNode, node) {
     var children = node.children || [];
     children.forEach(function (child) {
         if (!child.children) {
             child.checked = !child.checked;
             child.state = child.checked ? 2 : 0;
         } else {
-            reverseCheck(newTopNode, child);
+            reverseCheck(topNode, child);
         }
     });
-    checkParent(newTopNode, node.id);
+    checkParent(topNode, node.id);
 }
 
 // 将所有节点的selected设为false
@@ -154,22 +152,12 @@ function selectNo(node) {
     });
 }
 
-// 修改数据节点的选中
-function selectNode(topNode, id, config) {
-    if (config.selectable) {
-        if (!config.multiple) {
-            selectNo(topNode);
-        }
-        return changeNodeAttrById(topNode, id, 'selected', true);
-    }
-}
-
 // 设置选中项
-function setChecked(newTopNode, idList, flag, config) {
+function setChecked(topNode, idList, flag, config) {
     idList.forEach(function (id) {
-        changeNodeAttrById(newTopNode, id, 'checked', flag);
+        changeNodeAttrById(topNode, id, 'checked', flag);
     });
-    handleNode(newTopNode, config);
+    handleNode(topNode, config);
 }
 
 // 设置选中状态
@@ -206,22 +194,23 @@ function setCheckState(parent, link) {
     }
 }
 
-// 设置选中项
-function setSelected(topNode, idList, multiple) {
-    // 单选
-    if (!multiple) {
+// 修改数据节点的选中
+function selectNode(topNode, id, config) {
+    if (!config.multiple) {
         selectNo(topNode);
-        if (idList.length) {
-            idList = idList.slice(0, 1);
-        }
     }
+    return changeNodeAttrById(topNode, id, 'selected', true);
+}
+
+// 设置选中项
+function setSelected(topNode, idList, config) {
     idList.forEach(function (id) {
-        changeNodeAttrById(topNode, id, 'selected', true);
+        selectNode(topNode, id, config);
     });
 }
 
 var TreeData = {
-    changeChecked: changeChecked,
+    changeCheck: changeCheck,
     changeOpen: changeOpen,
     checkAll: checkAll,
     getNodeList: getNodeList,
