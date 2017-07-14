@@ -139,7 +139,11 @@ function selectAll(node, flag) {
 }
 
 // 设置选中项
-function setChecked(topNode, idList, flag, config) {
+function setChecked(topNode, idList, flag, replace, config) {
+    // 如果是替换，则将原来选中的值全部置空
+    if (replace) {
+        checkAll(topNode, false);
+    }
     idList.forEach(function (id) {
         changeNodeAttrById(topNode, id, 'checked', flag);
     });
@@ -181,13 +185,18 @@ function setCheckState(node, decideByChildren) {
 
 // 修改数据节点的选中
 function selectNode(topNode, id, config) {
-    // 先将所有节点置为未选中状态
-    !config.multiple && (selectAll(topNode, false));
+    // 如果是单选，先将所有节点置为未选中状态
+    if (!config.multiple) {
+        selectAll(topNode, false);
+    }
     return changeNodeAttrById(topNode, id, 'selected', true);
 }
 
 // 设置选中项
-function setSelected(topNode, idList, config) {
+function setSelected(topNode, idList, replace, config) {
+    if (replace) {
+        selectAll(topNode, false);
+    }
     idList.forEach(function (id) {
         selectNode(topNode, id, config);
     });

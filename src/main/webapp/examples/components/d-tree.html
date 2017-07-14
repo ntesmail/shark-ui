@@ -25,7 +25,8 @@
         }, {
             id: 'dropdown',
             name: 'dropdown组件',
-            checked: true
+            checked: true,
+            selected: true
         }, {
             id: 'fileupload',
             name: 'fileupload组件'
@@ -68,10 +69,10 @@
 
     var dmytree = SharkUI.sharkDTree({
         nodes: treeData,
-        openAll: false,
-        // selectable: true,
+        // openAll: false,
+        selectable: true,
          //checkable: false,
-        // multiple: true,
+        multiple: true,
         onNodeChecked: function(node, isChecked) {
             console.log(node, isChecked);
         },
@@ -116,13 +117,13 @@
 
 
     setTimeout(function() {
-        dmytree.setSelected(['tabs', 'pager']);
-      }, 2000);
+        dmytree.setSelected(['tabs', 'pager'], true);
+    }, 2000);
 
 
-     setTimeout(function() {
-      dmytree.setChecked(['modal', 'pager']);
-      }, 2000);
+    //setTimeout(function() {
+    //   dmytree.setChecked(['modal', 'pager']);
+    //}, 2000);
 
 
     // setTimeout(function() {
