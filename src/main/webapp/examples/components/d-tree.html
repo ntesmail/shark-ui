@@ -69,10 +69,10 @@
     var dmytree = SharkUI.sharkDTree({
         nodes: treeData,
         openAll: false,
-        selectable: true,
+        selectable: false,
         // disabled: true,
         // disableCheckbox: true,
-         //checkable: false,
+        checkable: false,
         // multiple: true,
         onNodeChecked: function(node, isChecked) {
             console.log(node, isChecked);
@@ -112,27 +112,10 @@
         console.log(dmytree.getSelected());
     });
 
-    dmytree.setDisabled(['popover']);
+    dmytree.setChecked(['modal', 'pager']);
 
-     dmytree.setDisabledCheckBox(['dropdown']);
-
-   // setTimeout(function() {
-        //dmytree.setSelected(['tabs', 'pager'], true);
-    //}, 2000);
-
-
-    //setTimeout(function() {
-    //   dmytree.setChecked(['modal', 'pager']);
-    //}, 2000);
-
-  //setTimeout(function() {
-       //dmytree.openTo(['autocomplete'], true);
-  //}, 2000);
-
-
-    
-
-    
-    
-
+    // dmytree.setDisabled(['popover']);
+    // dmytree.setDisabledCheckBox(['dropdown']);
+    // dmytree.setSelected(['tabs', 'pager'], true);
+    // dmytree.openTo(['autocomplete'], true);
 </script>
