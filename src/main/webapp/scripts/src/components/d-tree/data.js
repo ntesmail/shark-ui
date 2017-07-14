@@ -1,5 +1,6 @@
 // 通过子节点的选中状态来决定父节点的选中状态（假设父节点的checked状态不对，也可以在此修正）
-function setStateByChildNodes(parent, children) {
+function setStateByChildren(parent) {
+    var children = parent.children;
     // 子节点的数量
     var len = children.length;
     // 子节点的选中数量
@@ -30,10 +31,10 @@ function setStateByChildNodes(parent, children) {
 }
 
 // 得到node的选中状态(选中/未选中/半选)
-function getNodeState(node, children, link) {
+function getNodeState(node, link) {
     // 存在子节点并且父子节点之间有关联关系，由子节点决定父节点的state状态
-    if (children && link) {
-        setStateByChildNodes(node, children);
+    if (node.children && link) {
+        setStateByChildren(node);
     } else {
         // 不存在子节点或者父子节点之间没有关联关系，由自身的checked状态来决定state状态
         node.state = node.checked ? 2 : 0;
@@ -41,27 +42,27 @@ function getNodeState(node, children, link) {
 }
 
 // 处理节点，为每个节点加上count属性，父节点id和选中状态 | (做递归处理)
-function handleNode(node, link, checkable) {
+function handleNode(node, config) {
     var children = node.children;
     node.count = 0;
     children && children.forEach(function (child) {
-        handleNode(child, link, checkable);
+        handleNode(child, config);
         // 将父id存在节点上,方便查找
         child.parentId = node.id;
         // 统计子节点数量
         node.count += child.count + 1;
     });
-    if (checkable) {
+    if (config.checkable) {
         // 得到当前node的选中状态(选中/未选中/半选中)
-        getNodeState(node, children, link);
+        getNodeState(node, config.link);
     }
 }
 
 // 获取数据根节点
-function getTopNode(treeData, link, checkable) {
+function getTopNode(treeData, config) {
     var topNode = { children: treeData };
     // 处理节点，为每个节点加上count属性，父id和当前选中状态
-    handleNode(topNode, link, checkable);
+    handleNode(topNode, config);
     return topNode;
 }
 
@@ -95,8 +96,7 @@ function changeChildren(node) {
 function changeParent(newTopNode, id) {
     var node = getNodeById(newTopNode, id);
     if (node) {
-        var children = node.children || [];
-        setStateByChildNodes(node, children);
+        setStateByChildren(node);
         node.parentId && changeParent(newTopNode, node.parentId);
     }
 }
@@ -160,15 +160,7 @@ function openAll(node) {
     }
 }
 
-// 打开某几个节点
-function openTo(newTopNode, idList) {
-    idList.forEach(function (id) {
-        var node = getNodeById(newTopNode, id);
-        if (node && node.children) {
-            node.open = true;
-        }
-    });
-}
+
 
 // 全选
 function checkAll(newTopNode, flag) {
@@ -190,50 +182,54 @@ function reverseCheck(newTopNode, node) {
     changeParent(newTopNode, node.id);
 }
 
+// 通过id查找节点，并修改节点属性
+function changeNodeAttrById(newTopNode, id, attrName, attrVal) {
+    var node = getNodeById(newTopNode, id);
+    if (node) {
+        node[attrName] = attrVal;
+    }
+}
+
 // 设置选中项
-function setChecked(newTopNode, idList, link, flag, checkable) {
+function setChecked(newTopNode, idList, flag, config) {
     idList.forEach(function (id) {
-        var node = getNodeById(newTopNode, id);
-        if (node) {
-            node.checked = flag;
-        }
+        changeNodeAttrById(newTopNode, id, 'checked', flag);
     });
-    handleNode(newTopNode, link, checkable);
+    handleNode(newTopNode, config);
+}
+
+// 打开某几个节点
+function openTo(newTopNode, idList) {
+    idList.forEach(function (id) {
+        changeNodeAttrById(newTopNode, id, 'open', true);
+    });
 }
 
 // 设置选中项
 function setSelected(newTopNode, idList, multiple) {
-    changeAllSelected(newTopNode);
-    for (var i = 0; i < idList.length; i++) {
-        var id = idList[i];
-        var node = getNodeById(newTopNode, id);
-        if (node) {
-            node.selected = true;
-            if (!multiple) {
-                break;
-            }
+    // 单选
+    if (!multiple) {
+        changeAllSelected(newTopNode);
+        if (idList.length) {
+            idList = idList.slice(0, 1);
         }
     }
-}
-
-// 根据某种状态获取节点id列表
-function getNodeItem(node, key, idList) {
-    var children = node.children;
-    children && children.forEach(function (child) {
-        getNodeItem(child, key, idList);
+    idList.forEach(function (id) {
+        changeNodeAttrById(newTopNode, id, 'selected', true);
     });
-    if (node.id && node[key]) {
-        idList.push(node.id);
-    }
 }
 
 // 根据某种状态获取节点id列表
-function getNodeIdList(topNode, key, flag) {
-    var idList = [];
-    if (flag) {
-        getNodeItem(topNode, key, idList);
+function getNodeNodeList(nodeTree, key, nodeList) {
+    var children = nodeTree.children || [];
+    nodeList = nodeList || [];
+    children.forEach(function (childTree) {
+        getNodeNodeList(childTree, key, nodeList);
+    });
+    if (nodeTree.id && nodeTree[key]) {
+        nodeList.push(nodeTree.id);
     }
-    return idList;
+    return nodeList;
 }
 
 var TreeData = {
@@ -247,6 +243,6 @@ var TreeData = {
     openTo: openTo,
     setChecked: setChecked,
     setSelected: setSelected,
-    getNodeIdList: getNodeIdList
+    getNodeNodeList: getNodeNodeList
 };
 export { TreeData };

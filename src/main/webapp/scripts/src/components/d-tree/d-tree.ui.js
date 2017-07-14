@@ -65,7 +65,7 @@ SharkUI.sharkDTree = function (options, targetElement) {
     // 添加基础方法
     BaseComponent.addComponentBaseFn(sharkComponent, config);
     // 获取经过一系列处理的数据根节点
-    sharkComponent.topNode = TreeData.getTopNode(config.nodes, config.link, config.checkable);
+    sharkComponent.topNode = TreeData.getTopNode(config.nodes, config);
     // 是否全部展开，如果是则重新处理数据树
     if (config.openAll) {
         TreeData.openAll(sharkComponent.topNode);
@@ -79,7 +79,7 @@ SharkUI.sharkDTree = function (options, targetElement) {
     initEvents(sharkComponent, config);
     // reRender方法
     sharkComponent.reRender = function (nodes) {
-        var newTopNode = TreeData.getTopNode(nodes, config.link, config.checkable);
+        var newTopNode = TreeData.getTopNode(nodes, config);
         compareAndRender(sharkComponent, newTopNode, config.checkable);
     };
     // 全选
@@ -99,12 +99,12 @@ SharkUI.sharkDTree = function (options, targetElement) {
     // 设置某几个节点为选中的
     sharkComponent.setChecked = function (idList) {
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
-        TreeData.setChecked(newTopNode, idList, config.link, true, config.checkable);
+        TreeData.setChecked(newTopNode, idList, true, config);
         compareAndRender(sharkComponent, newTopNode, config.checkable);
     };
     sharkComponent.setUnChecked = function (idList) {
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
-        TreeData.setChecked(newTopNode, idList, config.link, false, config.checkable);
+        TreeData.setChecked(newTopNode, idList, false, config);
         compareAndRender(sharkComponent, newTopNode, config.checkable);
     };
     // 设置某几个节点为选中的
@@ -127,11 +127,15 @@ SharkUI.sharkDTree = function (options, targetElement) {
     };
     // 获取选中的id列表
     sharkComponent.getChecked = function () {
-        return TreeData.getNodeIdList(sharkComponent.topNode, 'checked', config.checkable);
+        if (config.checkable) {
+            return TreeData.getNodeNodeList(sharkComponent.topNode, 'checked');
+        }
     };
     // 获取选中的id列表
     sharkComponent.getSelected = function () {
-        return TreeData.getNodeIdList(sharkComponent.topNode, 'selected', config.selectable);
+        if (config.selectable) {
+            return TreeData.getNodeNodeList(sharkComponent.topNode, 'selected');
+        }
     }
     // 销毁组件
     sharkComponent.destroy = function () {
