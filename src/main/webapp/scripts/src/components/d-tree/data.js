@@ -190,6 +190,17 @@ function setCheckState(node, decideByChildren) {
     }
 }
 
+
+function toggleSelect(topNode, id, config) {
+    // 如果是单选，先将所有节点置为未选中状态
+    if (!config.multiple) {
+        selectAll(topNode, false);
+    }
+    var node = getNodeById(topNode, id);
+    node.selected = !node.selected;
+    return node;
+}
+
 // 修改数据节点的选中
 function selectNode(topNode, id, config) {
     // 如果是单选，先将所有节点置为未选中状态
@@ -231,6 +242,7 @@ var TreeData = {
     openAll: openAll,
     openTo: openTo,
     reverseCheck: reverseCheck,
+    toggleSelect: toggleSelect,
     selectNode: selectNode,
     setChecked: setChecked,
     setSelected: setSelected,

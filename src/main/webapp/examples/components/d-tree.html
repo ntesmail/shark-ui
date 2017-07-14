@@ -71,15 +71,15 @@
         openAll: false,
         selectable: true,
          //checkable: false,
-        multiple: true,
+        // multiple: true,
         onNodeChecked: function(node, isChecked) {
             console.log(node, isChecked);
         },
         onExpand: function(node, isExpandd) {
             console.log(node, isExpandd);
         },
-        onNodeSelected: function(node) {
-            console.log(node);
+        onNodeSelected: function(node, selected) {
+            console.log(node, selected);
         }
        // link: false
     });
