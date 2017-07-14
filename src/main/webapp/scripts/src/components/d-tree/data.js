@@ -1,7 +1,9 @@
-// 全选
-function checkAll(newTopNode, flag) {
-    newTopNode.checked = flag;
-    changeChildren(newTopNode);
+// 全选/全不选
+function checkAll(topNode, flag) {
+    // 修改顶层树节点的状态
+    topNode.checked = flag;
+    // 子节点的状态由父节点决定
+    checkChildren(topNode);
 }
 
 // 修改子集的选中状态
@@ -23,8 +25,8 @@ function changeChecked(checkable, newTopNode, node, id, link) {
             node.state = node.checked ? 2 : 0;
             if (link) {
                 // 子集的checked属性与父级保持一致
-                changeChildren(node);
-                changeParent(newTopNode, node.parentId);
+                checkChildren(node);
+                checkParent(newTopNode, node.parentId);
             }
         }
         return node;
@@ -32,13 +34,13 @@ function changeChecked(checkable, newTopNode, node, id, link) {
 }
 
 // 修改子集的选中状态
-function changeChildren(node) {
+function checkChildren(node) {
     var children = node.children || [];
     var checked = node.checked;
     children.forEach(function (child) {
         child.checked = checked;
         child.state = checked ? 2 : 0;
-        changeChildren(child);
+        checkChildren(child);
     });
 }
 
@@ -58,11 +60,11 @@ function changeOpen(newTopNode, id) {
 }
 
 // 修改父集的选中状态
-function changeParent(newTopNode, id) {
+function checkParent(newTopNode, id) {
     var node = getNodeById(newTopNode, id);
     if (node) {
-        setStateByChildren(node);
-        node.parentId && changeParent(newTopNode, node.parentId);
+        setCheckState(node, true);
+        node.parentId && checkParent(newTopNode, node.parentId);
     }
 }
 
@@ -94,17 +96,6 @@ function getNodeList(nodeTree, key, nodeList) {
     return nodeList;
 }
 
-// 得到node的选中状态(选中/未选中/半选)
-function getNodeState(node, link) {
-    // 存在子节点并且父子节点之间有关联关系，由子节点决定父节点的state状态
-    if (node.children && link) {
-        setStateByChildren(node);
-    } else {
-        // 不存在子节点或者父子节点之间没有关联关系，由自身的checked状态来决定state状态
-        node.state = node.checked ? 2 : 0;
-    }
-}
-
 // 获取数据根节点
 function getTopNode(treeData, config) {
     var topNode = { children: treeData };
@@ -125,8 +116,8 @@ function handleNode(node, config) {
         node.count += child.count + 1;
     });
     if (config.checkable) {
-        // 得到当前node的选中状态(选中/未选中/半选中)
-        getNodeState(node, config.link);
+        // 设置node的选中状态(选中/未选中/半选中)
+        setCheckState(node, config.link);
     }
 }
 
@@ -159,7 +150,7 @@ function reverseCheck(newTopNode, node) {
             reverseCheck(newTopNode, child);
         }
     });
-    changeParent(newTopNode, node.id);
+    checkParent(newTopNode, node.id);
 }
 
 // 修改数据节点的选中
@@ -184,35 +175,37 @@ function setChecked(newTopNode, idList, flag, config) {
     handleNode(newTopNode, config);
 }
 
-// 通过子节点的选中状态来决定父节点的选中状态（假设父节点的checked状态不对，也可以在此修正）
-function setStateByChildren(parent) {
+// 设置选中状态
+function setCheckState(parent, link) {
     var children = parent.children;
-    // 子节点的数量
-    var len = children.length;
-    // 子节点的选中数量
-    var checkedCount = 0;
-    // 先将父节点的checked状态设为false，如果子节点全部选中了，再将其设为true
-    parent.checked = false;
-    for (var i = 0; i < len; i++) {
-        var state = children[i].state;
-        // 如果存在子节点处于半选状态，则父节点一定是半选状态，退出循环
-        if (state === 1) {
-            checkedCount = 'half';
-            break;
-        } else if (state === 2) {
-            checkedCount++;
+    if (children && link) {
+        // 子节点的数量
+        var len = children.length;
+        // 子节点的选中数量
+        var checkedCount = 0;
+        for (var i = 0; i < len; i++) {
+            var state = children[i].state;
+            // 如果存在子节点处于半选状态，则父节点一定是半选状态，退出循环
+            if (state === 1) {
+                checkedCount = 'half';
+                break;
+            } else if (state === 2) {
+                checkedCount++;
+            }
         }
-    }
-    switch (checkedCount) {
-        case 0:
-            parent.state = 0;
-            break;
-        case len:
-            parent.state = 2;
-            parent.checked = true;
-            break;
-        default:
-            parent.state = 1;
+        switch (checkedCount) {
+            case 0:
+                parent.state = 0;
+                break;
+            case len:
+                parent.state = 2;
+                break;
+            default:
+                parent.state = 1;
+        }
+        parent.checked = (parent.state === 2 ? true : false);
+    } else {
+        parent.state = parent.checked ? 2 : 0;
     }
 }
 
