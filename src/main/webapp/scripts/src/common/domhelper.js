@@ -62,7 +62,10 @@ function getClassList(nativeElement) {
 
 function addClass(nativeElement, className) {
     var classList = getClassList(nativeElement);
-    classList.push(className);
+    var index = classList.indexOf(className);
+    if (index === -1) {
+        classList.push(className);
+    }
     nativeElement.className = classList.join(' ');
 }
 
@@ -91,6 +94,9 @@ function remove(nativeElement) {
 }
 
 function scrollTo(nativeElement, value) {
+    if (typeof value !== 'number') {
+        return;
+    }
     if (nativeElement.requestID) {
         cancelAnimationFrame(nativeElement.requestID);
         delete nativeElement.requestID;

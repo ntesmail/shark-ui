@@ -169,17 +169,11 @@ var timepanel = `
     </div>
 `;
 
-var pickercontainer = `
-    <div class="shark-picker-container">
-        <div class="shark-datepicker">
-        </div>
-        <div class="shark-timepicker">
-            <a class="nowtime">当前</a>
-            <div class="input-time-wrap">
-                <input class="input-time" readonly="readonly" />
-            </div>
-        </div>
-    </div>
+var datetimepicker = `
+    <div class="shark-datetimepicker">
+        <input type="text" />
+        <a class="clear">X</a>
+    <div>
 `;
 
 
@@ -220,7 +214,7 @@ function template2html(template, data) {
 var Templates = {
     calendar: calendar,
     timepanel: timepanel,
-    pickercontainer: pickercontainer,
+    datetimepicker: datetimepicker,
     input: input,
     fileupload: fileupload,
     listgroup: listgroup,
