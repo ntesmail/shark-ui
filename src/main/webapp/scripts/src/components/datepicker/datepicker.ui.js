@@ -360,9 +360,9 @@ SharkUI.sharkDatepicker = function (options, targetElement) {
     };
     sharkComponent.setConfig = function (key, value) {
         config[key] = value;
-        if (key === 'maxDate' || key === 'minDate') {
-            sharkComponent.calendar.setConfig(key, value);
-            checkMaxMinTime(sharkComponent);
+        if ((key === 'maxDate' || key === 'minDate') && this.calendar) {
+            this.calendar.setConfig(key, value);
+            checkMaxMinTime(this);
         }
     };
     // show/hide/destroy
