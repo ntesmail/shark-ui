@@ -116,9 +116,9 @@ SharkUI.sharkDTree = function (options, targetElement) {
         compareAndRender(sharkComponent, newTopNode, config);
     };
     // 设置某几个节点为不选中的
-    sharkComponent.setUnChecked = function (idList) {
+    sharkComponent.setUnChecked = function (idList, replace) {
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
-        TreeData.setChecked(newTopNode, idList, false, config);
+        TreeData.setChecked(newTopNode, idList, false, replace, config);
         compareAndRender(sharkComponent, newTopNode, config);
     };
     // 设置某几个节点为选中的
