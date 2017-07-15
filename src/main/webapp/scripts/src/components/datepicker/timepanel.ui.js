@@ -217,16 +217,39 @@ function Timepanel(options) {
     this.secondsContainer = this.nativeElement.querySelector('.timepanel-list-seconds');
     document.body.appendChild(this.nativeElement);
     initEvents(this);
-    this.setValue(this.config.initTime);
+    this.setValue(this.config.initTime, true);
 }
 // 获取值
 Timepanel.prototype.getValue = function () {
     return this.value;
 }
 // 设置值
-Timepanel.prototype.setValue = function (time) {
-    this.value = time;
-    this.render();
+Timepanel.prototype.setValue = function (time, forceRender) {
+    if (SharkUI.isEmpty(this.value) && SharkUI.isEmpty(time)) {
+        this.value = null;
+        if (forceRender) {
+            this.render();
+        }
+    }
+    else if (!SharkUI.isEmpty(this.value) && SharkUI.isEmpty(time)) {
+        this.value = null;
+        this.render();
+    }
+    else if (SharkUI.isEmpty(this.value) && !SharkUI.isEmpty(time)) {
+        this.value = time;
+        this.render();
+    }
+    else {
+        if (equal(this.value, time)) {
+            if (forceRender) {
+                this.render();
+            }
+        }
+        else {
+            this.value = time;
+            this.render();
+        }
+    }
 }
 Timepanel.prototype.setConfig = function (key, value) {
     this.config[key] = value;

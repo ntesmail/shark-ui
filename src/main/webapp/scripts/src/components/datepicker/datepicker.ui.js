@@ -130,8 +130,9 @@ function initTimepanel(sharkComponent, config) {
         </div>
     `);
     sharkComponent.container.append(timewrap);
+    var curDate = sharkComponent.getValue();
     sharkComponent.timepanel = new Timepanel({
-        initTime: date2TimeArray(config.initDate),
+        initTime: curDate ? date2TimeArray(curDate) : date2TimeArray(config.initDate),
         beforeChange: function () { },
         maxTime: getNeedMaxTime(sharkComponent),
         minTime: getNeedMinTime(sharkComponent),
@@ -171,8 +172,9 @@ function initCalendar(sharkComponent, config) {
         </div>
     `);
     sharkComponent.container.append(calendarwrap);
+    var curDate = sharkComponent.getValue();
     sharkComponent.calendar = new Calendar({
-        initDate: config.initDate,
+        initDate: curDate ? curDate : config.initDate,
         maxDate: config.maxDate,
         minDate: config.minDate,
         beforeChange: config.beforeChange,

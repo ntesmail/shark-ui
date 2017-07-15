@@ -224,23 +224,47 @@ function Calendar(options) {
     this.nativeElement = DomHelper.parseToHTML(templateFun.apply())[0];
     document.body.appendChild(this.nativeElement);
     initEvents(this);
-    this.setValue(this.config.initDate);
+    this.setValue(this.config.initDate, true);
 }
 // 获取值
 Calendar.prototype.getValue = function () {
     return this.value;
 }
 // 设置值
-Calendar.prototype.setValue = function (date) {
-    if (SharkUI.isEmpty(date)) {
+Calendar.prototype.setValue = function (date, forceRender) {
+    if (SharkUI.isEmpty(this.value) && SharkUI.isEmpty(date)) {
         this.value = null;
         this.renderValue = new Date();
+        if (forceRender) {
+            this.render();
+        }
     }
-    else {
+    else if (!SharkUI.isEmpty(this.value) && SharkUI.isEmpty(date)) {
+        this.value = null;
+        this.renderValue = new Date();
+        this.render();
+    }
+    else if (SharkUI.isEmpty(this.value) && !SharkUI.isEmpty(date)) {
         this.value = new Date(date);
         this.renderValue = new Date(date);
+        this.render();
     }
-    this.render();
+    else {
+        if (
+            this.value.getFullYear() === new Date(date).getFullYear() &&
+            this.value.getMonth() === new Date(date).getMonth() &&
+            this.value.getDate() === new Date(date).getDate()
+        ) {
+            if (forceRender) {
+                this.render();
+            }
+        }
+        else {
+            this.value = new Date(date);
+            this.renderValue = new Date(date);
+            this.render();
+        }
+    }
 }
 Calendar.prototype.setConfig = function (key, value) {
     this.config[key] = value;
