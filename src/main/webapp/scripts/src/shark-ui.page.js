@@ -10,6 +10,7 @@ import './components/popover.ui';
 import './components/modal.ui';
 import './components/multi-select.ui';
 import './components/toastr.ui';
+import './components/notify.ui';
 import './components/d-tree/d-tree.ui';
 import './components/select/select.ui';
 

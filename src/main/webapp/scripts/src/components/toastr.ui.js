@@ -12,7 +12,7 @@ var container; // toastr的父容器
 var toastrArr = [];
 // 创建父容器
 function initContainer() {
-    container = $('<div class="toastr-container" style="position:fixed;"></div>');
+    container = $('<div class="toastr-container"></div>');
     $(document.body).append(container);
 }
 //初始化toastr的dom

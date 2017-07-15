@@ -137,6 +137,15 @@ var toastr = `
         <% } %>
     </div>
 `;
+var notify = `
+    <div class="notify notify-<%= this.type %>">
+        <p class="notify-message"><%= this.title %></p>
+        <p class="notify-desc">
+            <%= this.desc %>
+        </p>
+        <a class="notify-close"></a>
+    </div>
+`;
 
 var calendar = `
     <div class="shark-calendar">
@@ -232,6 +241,7 @@ var Templates = {
     tabs: tabs,
     templateAoT: templateAoT,
     template2html: template2html,
-    toastr: toastr
+    toastr: toastr,
+    notify: notify
 };
 export { Templates };
