@@ -13,7 +13,7 @@ function changeOpen(topNode, id, config) {
 // 全选/全不选
 function checkAll(topNode, flag) {
     // 修改顶层树节点的状态
-    topNode.checked = flag;
+    topNode.__checked = flag;
     // 子节点的状态由父节点决定
     checkChildren(topNode);
 }
@@ -22,7 +22,7 @@ function checkAll(topNode, flag) {
 function checkChildren(parent) {
     var children = parent.children || [];
     children.forEach(function (child) {
-        child.checked = parent.checked;
+        child.__checked = parent.__checked;
         setCheckState(child, false);
         checkChildren(child);
     });
@@ -33,7 +33,7 @@ function checkParent(topNode, id, config) {
     var node = getNodeById(topNode, id, config);
     if (node) {
         setCheckState(node, true);
-        node.parentId && checkParent(topNode, node.parentId, config);
+        node.pid && checkParent(topNode, node.pid, config);
     }
 }
 
@@ -101,8 +101,6 @@ function handleNode(node, config) {
     node.__count = 0;
     children && children.forEach(function (child) {
         handleNode(child, config);
-        // 将父id存在节点上,方便查找
-        child.parentId = node[config.actualKey];
         // 统计子节点数量
         node.__count += child.__count + 1;
     });
@@ -124,8 +122,8 @@ function openAll(node) {
 // 展开某个节点
 function openNode(topNode, id, autoOpenParent, config) {
     var node = changeNodeAttrByKey(topNode, id, 'open', true, config);
-    if (autoOpenParent && node.parentId) {
-        openNode(topNode, node.parentId, autoOpenParent, config);
+    if (autoOpenParent && node.pid) {
+        openNode(topNode, node.pid, autoOpenParent, config);
     }
 }
 
@@ -150,7 +148,7 @@ function reverseCheck(topNode, node, config) {
     var children = node.children || [];
     children.forEach(function (child) {
         if (!child.children) {
-            child.checked = !child.checked;
+            child.__checked = !child.__checked;
             setCheckState(child, false);
         } else {
             reverseCheck(topNode, child, config);
@@ -162,7 +160,7 @@ function reverseCheck(topNode, node, config) {
 // 全选/全不选
 function selectAll(node, flag) {
     var children = node.children || [];
-    node.selected = flag;
+    node.__selected = flag;
     children.forEach(function (child) {
         selectAll(child);
     });
@@ -175,7 +173,7 @@ function setChecked(topNode, idList, flag, replace, config) {
         checkAll(topNode, false);
     }
     idList.forEach(function (id) {
-        changeNodeAttrByKey(topNode, id, 'checked', flag, config);
+        changeNodeAttrByKey(topNode, id, '__checked', flag, config);
     });
     handleNode(topNode, config);
 }
@@ -188,7 +186,7 @@ function setCheckState(node, decideByChildren) {
         // 子节点的选中数量
         var checkedCount = 0;
         for (var i = 0; i < len; i++) {
-            var state = children[i].state;
+            var state = children[i].__state;
             // 如果存在子节点处于半选状态，则父节点一定是半选状态，退出循环
             if (state === 1) {
                 checkedCount = 'half';
@@ -199,17 +197,17 @@ function setCheckState(node, decideByChildren) {
         }
         switch (checkedCount) {
             case 0:
-                node.state = 0;
+                node.__state = 0;
                 break;
             case len: // 子节点的数量
-                node.state = 2;
+                node.__state = 2;
                 break;
             default:
-                node.state = 1;
+                node.__state = 1;
         }
-        node.checked = (node.state === 2 ? true : false);
+        node.__checked = (node.__state === 2 ? true : false);
     } else {
-        node.state = node.checked ? 2 : 0;
+        node.__state = node.__checked ? 2 : 0;
     }
 }
 
@@ -233,7 +231,7 @@ function selectNode(topNode, id, config) {
     if (!config.multiple) {
         selectAll(topNode, false);
     }
-    return changeNodeAttrByKey(topNode, id, 'selected', true, config);
+    return changeNodeAttrByKey(topNode, id, '__selected', true, config);
 }
 
 // 设置选中项（节点本身）
@@ -248,13 +246,13 @@ function setSelected(topNode, idList, replace, config) {
 
 // 切换数据节点的选中状态
 function toggleCheck(topNode, id, config) {
-    var node = reverseAttrById(topNode, id, 'checked', config);
+    var node = reverseAttrById(topNode, id, '__checked', config);
     if (node) {
         setCheckState(node, false);
         // 修改其父子节点选中的状态
         if (config.link) {
             checkChildren(node);
-            checkParent(topNode, node.parentId, config);
+            checkParent(topNode, node.pid, config);
         }
     }
     return node;
@@ -267,7 +265,7 @@ function toggleSelect(topNode, id, config) {
         selectAll(topNode, false);
     }
     var node = getNodeById(topNode, id, config);
-    node.selected = !node.selected;
+    node.__selected = !node.__selected;
     return node;
 }
 

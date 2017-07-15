@@ -8,50 +8,72 @@
 <button id="getSelectedBtn" class="btn btn-primary">获取选中项</button>
 
 <script type="text/javascript">
-    var treeData = [{
-        key: 'all',
-        value: '所有组件',
-        children: [{
-            key: 'autocomplete',
-            value: 'autocomplete组件',
-            children: [{
-                key: 'autocomplete1',
-                value: 'autocomplete组件1'
-            },{
-                key: 'autocomplete2',
-                value: 'autocomplete组件2'
-            }]
-        }, {
-            key: 'dropdown',
-            value: 'dropdown组件',
-            checked: true,
-            selected: true
-        }, {
-            key: 'fileupload',
-            value: 'fileupload组件'
-        }, {
-            key: 'modal',
-            value: 'modal组件'
-        }, {
-            key: 'pager',
-            value: 'pager组件'
-        }, {
-            key: 'popover',
-            value: 'popover组件'
-        }, {
-            key: 'selecter',
-            value: 'selecter组件'
-        }, {
-            key: 'tabs',
-            value: 'tabs组件'
-        }, {
-            key: 'toastr',
-            value: 'toastr组件'
-        }, {
-            key: 'tree',
-            value: 'tree组件'
-        }]
-    }];
+    var treeData = [
+    {
+        id: 'all',
+        value: '所有组件'
+    },
+    {
+        id: 'autocomplete',
+        value: 'autocomplete组件',
+        pid: 'all'
+    },
+    {
+        id: 'autocomplete1',
+        value: 'autocomplete组件1',
+        pid: 'autocomplete'
+    },
+    {
+        id: 'autocomplete2',
+        value: 'autocomplete组件2',
+        pid: 'autocomplete'
+    },
+    {
+        id: 'dropdown',
+        value: 'dropdown组件',
+        pid: 'all'
+    },
+    {
+        id: 'fileupload',
+        value: 'fileupload组件',
+        pid: 'all'
+    },
+    {
+        id: 'modal',
+        value: 'modal组件',
+        pid: 'all'
+    },
+    {
+        id: 'pager',
+        value: 'pager组件',
+        pid: 'all'
+    },
+    {
+        id: 'popover',
+        value: 'popover组件',
+        pid: 'all'
+    },
+    {
+        id: 'selecter',
+        value: 'selecter组件',
+        pid: 'all'
+    },
+    {
+        id: 'tabs',
+        value: 'tabs组件',
+        pid: 'all'
+    },
+    {
+        id: 'toastr',
+        value: 'toastr组件',
+        pid: 'all'
+    },
+    {
+        id: 'tree',
+        value: 'tree组件',
+        pid: 'all'
+    }
+    ];
 
     var newTreeData = [{
         key: '3',
@@ -68,10 +90,12 @@
 
     var dmytree = SharkUI.sharkDTree({
         nodes: treeData,
+        checked: ['autocomplete', 'autocomplete2'],
+        selected: ['tabs', 'toastr', 'tree'],
         // openAll: false,
-        actualKey: 'key',
+        actualKey: 'id',
         displayKey: 'value',
-        // selectable: false,
+        selectable: true,
         // disabled: true,
         // disableCheckbox: true,
         // checkable: false,
@@ -114,7 +138,7 @@
         console.log(dmytree.getSelected());
     });
 
-    dmytree.setChecked(['modal', 'pager']);
+    // dmytree.setChecked(['modal', 'pager']);
 
     // dmytree.setDisabled(['popover']);
     // dmytree.setDisabledCheckBox(['dropdown']);

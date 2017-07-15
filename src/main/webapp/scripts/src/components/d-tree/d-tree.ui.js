@@ -5,6 +5,7 @@
  */
 import $ from 'jquery';
 import { SharkUI } from '../../common/core';
+import { TransTree } from '../../common/trans-tree';
 import { BaseComponent } from '../../common/base';
 import { Diff } from './diff';
 import { TreeData } from './data';
@@ -20,11 +21,10 @@ function initEvents(sharkComponent, config) {
             var node = TreeData.changeOpen(newTopNode, id, config);
             compareAndRender(sharkComponent, newTopNode, config);
             config.onExpand.call(sharkComponent, node, node.open);
-
         } else if (!target.hasClass('disabled') && target.hasClass('tree-checkbox') && config.checkable) {  // 修改新的数据树的选中状态
             var node = TreeData.toggleCheck(newTopNode, id, config);
             compareAndRender(sharkComponent, newTopNode, config);
-            config.onNodeChecked.call(sharkComponent, node, node.checked);
+            config.onNodeChecked.call(sharkComponent, node, node.__checked);
         } else if (!target.hasClass('disabled') && target.hasClass('tree-title') && config.selectable) {
             var node = TreeData.toggleSelect(newTopNode, id, config);
             compareAndRender(sharkComponent, newTopNode, config);
@@ -49,40 +49,11 @@ function checkAll(sharkComponent, flag, config) {
     compareAndRender(sharkComponent, newTopNode, config);
 }
 
-SharkUI.sharkDTree = function (options, targetElement) {
-    // 组件对象
+function internalDTree(topNode, config, targetElement) {
     var sharkComponent = {};
-    var config = {
-        nodes: [], // 树数据
-        actualKey: 'id',
-        displayKey: 'name',
-        openAll: true, // 是否全部展开，默认true
-        link: true, // 父子级节点是否关联，默认为true
-        selectable: false, // 节点是否可选中，默认为false
-        disabled: false, // 节点是否禁用，默认为false
-        multiple: false, // 节点是否可多选，默认为true
-        checkable: true, // 是否有checkbox，默认为true
-        onExpand: function () { }, // 节点展开时的回调
-        onNodeChecked: function () { }, // 节点选中的回调
-        onNodeSelected: function () { } // checkbox选中的回调
-    };
-    SharkUI.extend(config, options);
+    sharkComponent.topNode = topNode;
     // 添加基础方法
     BaseComponent.addComponentBaseFn(sharkComponent, config);
-    // 获取经过一系列处理的数据根节点
-    sharkComponent.topNode = TreeData.getTopNode(config.nodes, config);
-    // 是否全部展开，如果是，重新处理数据树
-    if (config.openAll) {
-        TreeData.openAll(sharkComponent.topNode);
-    }
-    // 节点全部不能选
-    if (config.disabled) {
-        TreeData.disabledAll(sharkComponent.topNode);
-    }
-    // checkbox全部不能选
-    if (config.disableCheckbox) {
-        TreeData.disableCheckboxAll(sharkComponent.topNode);
-    }
     // 初始化dom节点
     sharkComponent.component = TreeDom.initDom(sharkComponent.topNode, config);
     if (targetElement) {
@@ -154,13 +125,13 @@ SharkUI.sharkDTree = function (options, targetElement) {
     // 获取选中的id列表
     sharkComponent.getChecked = function () {
         if (config.checkable) {
-            return TreeData.getNodeList(sharkComponent.topNode, 'checked', [], config);
+            return TreeData.getNodeList(sharkComponent.topNode, '__checked', [], config);
         }
     };
     // 获取选中的id列表
     sharkComponent.getSelected = function () {
         if (config.selectable) {
-            return TreeData.getNodeList(sharkComponent.topNode, 'selected', [], config);
+            return TreeData.getNodeList(sharkComponent.topNode, '__selected', [], config);
         }
     }
     // 销毁组件
@@ -170,3 +141,51 @@ SharkUI.sharkDTree = function (options, targetElement) {
     };
     return sharkComponent;
 }
+
+SharkUI.sharkDTree = function (options, targetElement) {
+    var config = {
+        nodes: [], // 树数据
+        actualKey: 'id',
+        displayKey: 'name',
+        actualKey: 'pid',
+        openAll: true, // 是否全部展开，默认true
+        link: true, // 父子级节点是否关联，默认为true
+        selectable: false, // 节点是否可选中，默认为false
+        disabled: false, // 节点是否禁用，默认为false
+        multiple: false, // 节点是否可多选，默认为true
+        checkable: true, // 是否有checkbox，默认为true
+        onExpand: function () { }, // 节点展开时的回调
+        onNodeChecked: function () { }, // 节点选中的回调
+        onNodeSelected: function () { } // checkbox选中的回调
+    };
+    SharkUI.extend(config, options);
+    var treeList = TransTree.transTree(config.nodes);
+    // 获取经过一系列处理的数据根节点(加上了count,修改了checked和state)
+    var topNode = TreeData.getTopNode(treeList, config);
+    // 默认情况下checked的节点
+    if (config.checkable && config.checked) {
+        TreeData.setChecked(topNode, config.checked, true, false, config);
+    }
+    // 默认情况下selected的节点
+    if (config.selectable && config.selected) {
+        TreeData.setSelected(topNode, config.selected, false, config);
+    }
+    // 是否全部展开，如果是，重新处理数据树
+    if (config.openAll) {
+        TreeData.openAll(topNode);
+    }
+    // 节点全部不能选
+    if (config.disabled) {
+        TreeData.disabledAll(topNode);
+    }
+    // checkbox全部不能选
+    if (config.disableCheckbox) {
+        TreeData.disableCheckboxAll(topNode);
+    }
+    return internalDTree(topNode, config, targetElement);
+};
+
+var DTree = {
+    internalDTree: internalDTree
+};
+export { DTree };

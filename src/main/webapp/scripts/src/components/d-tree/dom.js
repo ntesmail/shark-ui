@@ -25,7 +25,7 @@ function toggleCheckBox(checkbox, state) {
             '1': 'tree-icon-check-minus',
             '2': 'tree-icon-check'
         };
-        checkbox.addClass(classObj[state]);
+        checkbox.addClass(classObj[state] || 'tree-icon-check-empty');
     }
 }
 
@@ -47,14 +47,15 @@ function getTreeNode(nodeData, config) {
     if (nodeData.disabled) {
         title.addClass('disabled');
     }
-    if (config.selectable && nodeData.selected) {
+    if (config.selectable && nodeData.__selected) {
         title.addClass('tree-node-selected');
     }
     treeNode.append(title);
     treeNode.data('id', nodeData[config.actualKey]);
+
     if (config.checkable) {
         var checkbox = $('<span class="tree-checkbox tree-icon"></span>');
-        toggleCheckBox(checkbox, nodeData.state);
+        toggleCheckBox(checkbox, nodeData.__state);
         if (nodeData.disabledCheckbox) {
             checkbox.addClass('disabled');
         }
@@ -122,10 +123,10 @@ function applyPatches(node, currentPatches, config) {
                 title.text(currentPatch[config.displayKey]);
                 break;
             case "STATE":
-                toggleCheckBox(checkbox, currentPatch.state);
+                toggleCheckBox(checkbox, currentPatch.__state);
                 break;
             case "SELECTED":
-                toggleSelected(title, currentPatch.selected, config);
+                toggleSelected(title, currentPatch.__selected, config);
                 break;
             case "OPEN":
                 toggleChildTree(node, currentPatch.open);

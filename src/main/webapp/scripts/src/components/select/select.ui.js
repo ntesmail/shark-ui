@@ -6,6 +6,7 @@ import $ from 'jquery';
 import { SharkUI } from '../../common/core';
 import { BaseComponent } from '../../common/base';
 import { Event } from '../../common/event';
+import { TreeData } from '../d-tree/data';
 import { SelectData } from './data';
 import { SelectDom } from './dom';
 
@@ -65,8 +66,8 @@ SharkUI.sharkSelect = function (options, targetElement) {
     SharkUI.extend(config, options);
     BaseComponent.addComponentBaseFn(sharkComponent, config);
     // 首先整理数据
-
-
+    var topNode = TreeData.getTopNode(config.data, { link: true });
+    
 
 
     sharkComponent.component = SelectDom.initDom(sharkComponent, config);

@@ -96,14 +96,14 @@ function diffProps(oldNode, newNode, currentPatch) {
         if (oldNode.name !== newNode.name) {
             currentPatch.push({ type: "NAME", name: newNode.name });
         }
-        if (oldNode.state !== newNode.state) {
-            currentPatch.push({ type: "STATE", state: newNode.state });
+        if (oldNode.__state !== newNode.__state) {
+            currentPatch.push({ type: "STATE", __state: newNode.__state });
         }
         if (oldNode.open !== newNode.open) {
             currentPatch.push({ type: "OPEN", open: newNode.open });
         }
-        if (oldNode.selected !== newNode.selected) {
-            currentPatch.push({ type: "SELECTED", selected: newNode.selected });
+        if (oldNode.__selected !== newNode.__selected) {
+            currentPatch.push({ type: "SELECTED", __selected: newNode.__selected });
         }
         if (oldNode.disabled !== newNode.disabled) {
             currentPatch.push({ type: "DISABLED", disabled: newNode.disabled });
