@@ -16,14 +16,26 @@ function initDom(checkedList, config) {
         selecter.addClass('selecter-multiple');
         // 存放选中项的容器
         var selectedConent = $('<ul class="selecter-items"></ul>');
-        setSelected(selectedConent, checkedList, config);
+        setSelectedMultiple(selectedConent, checkedList, config);
+    } else {
+        selecter.addClass('selecter-single');
+        var selectedConent = $('<span class="selected"></span>');
+        setSelectedSingle(selectedConent, checkedList, config);
     }
     selecter.append(selectedConent);
     return selecter;
 }
 
+function setSelectedSingle(selectedConent, checkedList, config) {
+    if(checkedList.length) {
+        selectedConent.html(checkedList[0][config.displayKey]);
+    } else {
+        selectedConent.empty();
+    }
+}
+
 // 设置选中项
-function setSelected(selectedConent, checkedList, config) {
+function setSelectedMultiple(selectedConent, checkedList, config) {
     selectedConent.empty();
     for (var i = 0; i < checkedList.length; i++) {
         var selecterItem = $(`<li class="selecter-item">${checkedList[i][config.displayKey]}</li>`);
@@ -34,7 +46,7 @@ function setSelected(selectedConent, checkedList, config) {
 function allSelectedSpanDom(sharkComponent, config) {
     var checkedList = sharkComponent.checkedList;
     var selectedConent = sharkComponent.component.children('.selecter-items');
-    setSelected(selectedConent, checkedList, config);
+    setSelectedMultiple(selectedConent, checkedList, config);
 }
 
 function changeSelectDom1(sharkComponent, node, isChecked, config) {
