@@ -94,7 +94,7 @@ function initDom(sharkComponent, config, targetElement) {
     }
     sharkComponent.valueinput = sharkComponent.component.find('input');
     sharkComponent.clearbtn = sharkComponent.component.find('.clear');
-    sharkComponent.component.addClass('shark-datetimepicker');
+    sharkComponent.component.addClass('shark-datetimepicker datetimepicker');
     return sharkComponent;
 }
 // 初始化事件
@@ -110,7 +110,7 @@ function initEvents(sharkComponent, config) {
 }
 // 渲染最外层容器
 function initContainer() {
-    var container = $('<div class="shark-pickercontainer"></div>');
+    var container = $('<div class="pickercontainer"></div>');
     $(document.body).append(container);
     container.attr('id', SharkUI.createUUID());
     return container;
@@ -122,7 +122,7 @@ function initTimepanel(sharkComponent, config) {
     // timeinput 时间输入框
     // timenowbtn 此刻按钮
     var timewrap = $(`
-        <div class="shark-timewrap">
+        <div class="timewrap">
             <a class="nowtime">当前</a>
             <div class="input-time-wrap">
                 <input class="input-time" readonly="readonly" />
@@ -167,7 +167,7 @@ function initCalendar(sharkComponent, config) {
     // calendarwrap 容器
     // container 日期选择器面板
     var calendarwrap = $(`
-        <div class="shark-datepicker">
+        <div class="calendarwrap">
         </div>
     `);
     sharkComponent.container.append(calendarwrap);
