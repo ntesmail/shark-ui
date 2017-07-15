@@ -85,7 +85,7 @@ function compareChildren(oldChildren, newChildren, index, patches, currentPatch,
     var currentNodeIndex = index;
     oldChildren && oldChildren.forEach(function (child, i) {
         var newChild = newChildren[i];
-        currentNodeIndex = (leftNode && leftNode.count) ? currentNodeIndex + leftNode.count + 1 : currentNodeIndex + 1;
+        currentNodeIndex = (leftNode && leftNode.__count) ? currentNodeIndex + leftNode.__count + 1 : currentNodeIndex + 1;
         compareNode(child, newChild, currentNodeIndex, patches, config);
         leftNode = child;
     });

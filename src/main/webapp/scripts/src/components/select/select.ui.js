@@ -64,6 +64,11 @@ SharkUI.sharkSelect = function (options, targetElement) {
     };
     SharkUI.extend(config, options);
     BaseComponent.addComponentBaseFn(sharkComponent, config);
+    // 首先整理数据
+
+
+
+
     sharkComponent.component = SelectDom.initDom(sharkComponent, config);
     sharkComponent.allState = 0;
     sharkComponent.checkedList = [];

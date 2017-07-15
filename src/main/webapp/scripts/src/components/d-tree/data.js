@@ -98,13 +98,13 @@ function getTopNode(treeData, config) {
 // 处理节点，为每个节点加上count属性，父节点id和选中状态 | (做递归处理)
 function handleNode(node, config) {
     var children = node.children;
-    node.count = 0;
+    node.__count = 0;
     children && children.forEach(function (child) {
         handleNode(child, config);
         // 将父id存在节点上,方便查找
         child.parentId = node[config.actualKey];
         // 统计子节点数量
-        node.count += child.count + 1;
+        node.__count += child.__count + 1;
     });
     // 设置node的选中状态(选中/未选中/半选中)
     setCheckState(node, config.link);
