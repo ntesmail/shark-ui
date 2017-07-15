@@ -4,7 +4,7 @@
 var myselecter = SharkUI.sharkSelect({
      actualKey: 'id', //对应data中的value
      displayKey: 'name', //对应data中的name
-     multiple: true,
+    // multiple: true,
      checked: [1001],
      selected: 1002,
      data: [{
@@ -17,8 +17,11 @@ var myselecter = SharkUI.sharkSelect({
          id: 1002,
          name: '二年级'
      }],
-     onSelected: function(value, item) {
-         console.log(value, item);
+     onSelected: function(node, isChecked) {
+         console.log(node, isChecked, 1111);
+     },
+     onChecked: function(node, isChecked) {
+         console.log(node, isChecked, 1111);
      }
  });
 myselecter.appendTo('#selectContainer');

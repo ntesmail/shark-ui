@@ -81,7 +81,7 @@ function getNodeList(nodeTree, key, nodeList, config) {
     children.forEach(function (childTree) {
         getNodeList(childTree, key, nodeList, config);
     });
-    if (nodeTree[config.actualKey] && nodeTree[key]) {
+    if (nodeTree[config.actualKey] !== undefined && nodeTree[key]) {
         nodeList.push(nodeTree);
     }
     return nodeList;

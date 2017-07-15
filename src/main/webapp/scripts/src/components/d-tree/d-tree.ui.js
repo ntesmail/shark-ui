@@ -28,7 +28,7 @@ function initEvents(sharkComponent, config) {
         } else if (!target.hasClass('disabled') && target.hasClass('tree-title') && config.selectable) {
             var node = TreeData.toggleSelect(newTopNode, id, config);
             compareAndRender(sharkComponent, newTopNode, config);
-            config.onNodeSelected.call(sharkComponent, node, node.selected);
+            config.onNodeSelected.call(sharkComponent, node, node.__selected);
         }
         // 阻止冒泡
         evt.stopPropagation();
