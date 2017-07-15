@@ -148,7 +148,7 @@ var notify = `
 `;
 
 var calendar = `
-    <div class="shark-calendar">
+    <div class="shark-calendar calendar">
         <div class="calendar-montharea">
             <a class="calendar-prev-year"></a>
             <a class="calendar-prev-month"></a>
@@ -174,7 +174,7 @@ var calendar = `
 `;
 
 var timepanel = `
-    <div class="shark-timepanel">
+    <div class="shark-timepanel timepanel">
         <div class="timepanel-list timepanel-list-hours"></div>
         <div class="timepanel-list timepanel-list-minutes"></div>
         <div class="timepanel-list timepanel-list-seconds"></div>
@@ -182,10 +182,10 @@ var timepanel = `
 `;
 
 var datetimepicker = `
-    <div class="shark-datetimepicker">
+    <div class="shark-datetimepicker datetimepicker">
         <input type="text" />
         <a class="clear">X</a>
-    <div>
+    </div>
 `;
 
 
