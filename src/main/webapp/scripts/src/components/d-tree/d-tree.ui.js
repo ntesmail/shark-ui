@@ -150,10 +150,10 @@ SharkUI.sharkDTree = function (options, targetElement) {
         parentActualKey: 'pid',
         openAll: true, // 是否全部展开，默认true
         link: true, // 父子级节点是否关联，默认为true
+        checkable: true, // 是否有checkbox，默认为true
         selectable: false, // 节点是否可选中，默认为false
         disabled: false, // 节点是否禁用，默认为false
         multiple: false, // 节点是否可多选，默认为true
-        checkable: true, // 是否有checkbox，默认为true
         onExpand: function () { }, // 节点展开时的回调
         onNodeChecked: function () { }, // 节点选中的回调
         onNodeSelected: function () { } // checkbox选中的回调

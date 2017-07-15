@@ -61,8 +61,11 @@ SharkUI.sharkSelect = function (options, targetElement) {
         data: null,
         actualKey: 'value',
         displayKey: 'name',
+        checked: [], // 多选时使用
+        selected: null, // 单选时使用
         multiple: false,
-        onSelected: function () { }
+        onSelected: function () { },
+        onChecked: function () { }
     };
     SharkUI.extend(config, options);
     BaseComponent.addComponentBaseFn(sharkComponent, config);
@@ -72,21 +75,23 @@ SharkUI.sharkSelect = function (options, targetElement) {
         actualKey: config.actualKey,
         displayKey: config.displayKey,
         checkable: config.multiple,
-        selectable: !config.multiple,
-        checked: config.checked
+        selectable: !config.multiple
     };
     var topNode = TreeData.getTopNode(config.data, treeConfig);
-    if (config.multiple && config.checked) {
-        TreeData.setChecked(topNode, config.checked, true, false, config);
-        sharkComponent.checkedList = TreeData.getNodeList(topNode, '__checked', [], treeConfig);
-    }
-    if (!config.multiple && config.checked) {
-        TreeData.setSelected(topNode, config.checked, true, config);
+    // 单选
+    if (!config.multiple && config.selected) {
+        TreeData.setSelected(topNode, [config.selected], true, treeConfig);
         sharkComponent.checkedList = TreeData.getNodeList(topNode, '__selected', [], treeConfig);
     }
-    TreeData.setCheckState(topNode, true);
+    // 多选
+    if (config.multiple && config.checked.length) {
+        TreeData.setChecked(topNode, config.checked, true, false, treeConfig);
+        sharkComponent.checkedList = TreeData.getNodeList(topNode, '__checked', [], treeConfig);
+    }
+    
     sharkComponent.allState = topNode.__state;
     sharkComponent.topNode = topNode;
+
     // 初始化dom
     sharkComponent.component = SelectDom.initDom(sharkComponent.checkedList, config);
     initEvents(sharkComponent, config, treeConfig);
