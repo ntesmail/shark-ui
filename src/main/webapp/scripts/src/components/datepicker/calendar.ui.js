@@ -186,7 +186,7 @@ function renderDom(calendar, renderData) {
         html = html + `<span class="calendar-day${additionClass}">${item[2]}</span>`;
     });
     var nativeElement = calendar.nativeElement;
-    nativeElement.querySelector('.calendar-weekday-wrap').innerHTML = html;
+    nativeElement.querySelector('.calendar-day-wrap').innerHTML = html;
     nativeElement.querySelector('.calendar-current-year').value = renderData.year;
     nativeElement.querySelector('.calendar-current-month').value = renderData.month + 1;
     DomHelper.removeClass(nativeElement.querySelector('.calendar-next-year'), 'calendar-disabled');
