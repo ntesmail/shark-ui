@@ -1,0 +1,41 @@
+//List Groups
+.list-group {
+  position: absolute;
+  display: none;
+  min-width: $list-min-width;
+  padding: 0;
+  font-size: $font-size-base;
+  color: $body-color;
+  text-align: left;
+  cursor: pointer;
+  background-color: $list-bg;
+  background-clip: padding-box;
+  border: $list-border;
+  box-shadow: $list-box-shadow;
+  
+}
+
+.list-group .list-group-item {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: $list-single-li-padding-y $list-single-li-padding-x;
+  white-space: nowrap;
+  &:hover {
+    background: $list-li-hover-bg;
+  }
+  &.active::before {
+    position: absolute;
+    left: 0;
+    display: inline-block;
+    width: $list-single-li-padding-x;
+    text-align: center;
+    content: "";
+  }
+  &.multiple {
+    padding: $list-multiple-li-padding-y $list-multiple-li-padding-x;
+  }
+  &.multiple.active::before {
+    display: none;
+  }
+}

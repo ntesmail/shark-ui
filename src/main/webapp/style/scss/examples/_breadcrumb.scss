@@ -1,0 +1,21 @@
+.breadcrumb {
+  color: $breadcrumb-color;
+  font-size: $breadcrumb-font-size;
+  line-height: $line-height-base;
+  font-family: PingFangSC-Regular;
+  a {
+    color: $breadcrumb-link-color;
+  }
+  &>span:last-child {
+    .breadcrumb-tag {
+      color: $breadcrumb-tag-last-color;
+    }
+    .breadcrumb-separator {
+      display: none;
+    }
+  }
+}
+
+.breadcrumb-separator {
+  padding: $breadcrumb-separator-padding;
+}

@@ -130,9 +130,12 @@ var confirm = `
 </div>
 `;
 var toastr = `
-<div class="shark-toastr toastr toastr-<%= this.type %>">
-    <div><%= this.content %></div>
-</div>
+    <div class="toastr toastr-<%= this.type %>">
+        <a class="toastr-message <% if(this.contentLink){ %>toastr-message-link<% } %>" href="javascript:void(0);"><%= this.content %></a>
+        <% if(this.closeText) { %>
+            <a class="toastr-close" href="javascript:void(0);"><%= this.closeText %></a>
+        <% } %>
+    </div>
 `;
 
 var calendar = `

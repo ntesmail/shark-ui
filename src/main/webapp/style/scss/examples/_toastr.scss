@@ -1,0 +1,86 @@
+.toastr-container {
+  font-size: 12px;
+  position: fixed;
+  z-index: 1010;
+  width: 100%;
+  top: 16px;
+  left: 0;
+  pointer-events: none;
+}
+
+.toastr {
+  position: relative;
+  display: block;
+  margin: 8px auto;
+  overflow: hidden;
+  animation-duration: .3s;
+  animation-play-state: running;
+  text-align: center;
+  max-width: $toastr-max-width;
+  padding: $toastr-padding;
+  border-radius: $border-radius;
+  background: $toastr-bg-color;
+  font-size: $toastr-font-size;
+  color: $toastr-font-color;
+  line-height: $line-height-base;
+  @include border-radius($toastr-border-radius);
+  @include box-shadow($toastr-box-shadow);
+}
+
+.toastr-message {
+  margin: 0;
+  line-height: 16px;
+  &:before {
+    position: absolute;
+    line-height: 1;
+    margin-left: -20px;
+    font-size: $alert-icon-font-size-sm;
+  }
+}
+
+@keyframes ToastrMoveIn {
+  0% {
+    transform: translate(0, -16px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes ToastrMoveOut {
+  0% {
+    opacity: 1;
+    max-height: 150px;
+  }
+  100% {
+    opacity: 0;
+    max-height: 0;
+  }
+}
+
+.toastr-success {
+  .toastr-message {
+    &:before {
+      content: "●";
+      color: $toastr-success-color;
+    }
+  }
+}
+
+.toastr-error {
+  .toastr-message {
+    &:before {
+      content: "●";
+      color: $toastr-error-color;
+    }
+  }
+}
+
+.toastr-warning {
+  .toastr-message {
+    &:before {
+      content: "●";
+      color: $toastr-warning-color;
+    }
+  }
+}

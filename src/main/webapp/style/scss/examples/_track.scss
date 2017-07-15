@@ -1,0 +1,29 @@
+//track 模块路径组件  ol.track
+
+.track {
+  padding: $track-padding-y $track-padding-x;
+  font-size: 0;
+  background: $track-bg;
+
+  li {
+    display: inline-block;
+    font-size: $track-font-size;
+    color: $track-pre-color;
+
+    &:last-child {
+      color: $track-current-color;
+    }
+
+    &:not(:first-child) {
+      &:before {
+        display: inline-block;
+        padding: 0 $track-path-space;
+        content: $track-split-content;
+      }
+    }
+
+    a {
+      color: inherit;
+    }
+  }
+}

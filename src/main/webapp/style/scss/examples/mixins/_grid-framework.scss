@@ -1,0 +1,16 @@
+// Framework grid generation
+//
+// Used only by Bootstrap to generate the correct number of grid classes given
+// any value of `$grid-columns`.
+
+@mixin make-grid-columns($columns: $grid-columns) {
+  @for $i from 1 through $columns {
+    .col-#{$i} {
+      float: left;
+      width: percentage($i / $columns);
+    }
+    .col-offset-#{$i} {
+      margin-left: percentage($i / $columns);
+    }
+  }
+}

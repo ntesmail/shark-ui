@@ -1,0 +1,99 @@
+//tree   ul.shark-tree
+.tree {
+  margin: 0;
+  padding: 8px;
+  font-size: 0;
+
+  * {
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    margin: 8px 0;
+    outline: 0;
+    label {
+      display: block;
+      height: 24px;
+      line-height: 24px;
+    }
+    ul {
+      display: none;
+      &.tree-open {
+        display: block;
+      }
+    }
+  }
+
+  .tree-icon,
+  .tree-node-name {
+    display: inline-block;
+    cursor: pointer;
+  }
+
+  .tree-icon {
+    float: left;
+    width: $tree-icon-size;
+    height: $tree-icon-size;
+    font-size: $tree-font-size;
+    vertical-align: top;
+    background-size: 100% 100%;
+    position: relative;
+    top: 5px;
+  }
+
+  .tree-node-name {
+    // display: block;
+    color: $tree-color;
+    overflow: hidden;
+    font-size: $tree-font-size;
+    line-height: $tree-icon-size;
+    padding: 5px;
+    border-radius: 4px;
+    transition: all .3s;
+    &:hover {
+      background-color: $tree-background-color-hover;
+    }
+  }
+  .tree-icon-check,
+  .tree-icon-check-empty,
+  .tree-icon-check-minus {
+    margin: 0 5px;
+  }
+
+  &.disabled {
+    .tree-icon,
+    .tree-node-name {
+      color: $tree-disable-color;
+      cursor: not-allowed;
+      &:hover {
+        background-color: #fff;
+      }
+    }
+  }
+
+  .tree-icon-check {
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAMFBMVEUAAACIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIhjDG72AAAAD3RSTlMA5jtT4A+fSklAG/FeMSxlVxwlAAAASUlEQVQI12PAAhr/A8HHBgYGIRCPSYCB4QNY/AOEwbwAylAMgDBYncFSTBPYEsAMXmGTAIjiJzuhurgOwLWDSITJhWC7CuB2AwDh2iJE/F97swAAAABJRU5ErkJggg==");
+  }
+
+  .tree-icon-check-empty {
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAD1BMVEUAAACIiIiIiIiIiIiIiIhTGFtKAAAABHRSTlMAS+fkeQRH8QAAACdJREFUCNdjwAKEXIDASYCBQRHEY1RgYHAAiztQiwE3GWqXswDcbgATkwfuFORrngAAAABJRU5ErkJggg==");
+  }
+
+  .tree-icon-check-minus {
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAD1BMVEUAAACIiIiIiIiIiIiIiIhTGFtKAAAABHRSTlMA5UxJT3aN7AAAACxJREFUCNdjwAIMXYDA0YCBQQjEYxJgYHAAizvgZ4gAdQk4EKMYbjLCLhgAAGMgCR1GQI2wAAAAAElFTkSuQmCC");
+  }
+
+  .tree-icon-right {
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAIVBMVEUAAACIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIgnTYS+AAAAC3RSTlMABrWdsJmqkwh6eVcUOkAAAAAxSURBVAjXY0ACXA1QBrsiTChIAMpghQuZwISYHWFCZnAGQgqhGKEdYSDCCs4GBmQAABs+A/AaJMGkAAAAAElFTkSuQmCC");
+  }
+
+  .tree-icon-down {
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAFVBMVEUAAACIiIiIiIiIiIiIiIiIiIiIiIgPEjmxAAAAB3RSTlMAOzXjztlpaXfY9gAAACtJREFUCNdjIAmwCIBIFQYGJkMGKKEsAMJgHkQAxAUJgITMDKEaVQWItAEApMYCb1YUXYwAAAAASUVORK5CYII=");
+  }
+
+  .tree-node-selected {
+    // color: $tree-selected-color;
+    background-color: $tree-selected-bg;
+  }
+}

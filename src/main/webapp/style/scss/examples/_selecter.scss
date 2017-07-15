@@ -1,0 +1,126 @@
+.selecter {
+  position: relative;
+  height: $selecter-height;
+  color: $seleter-color;
+  background-color: $seleter-background-color;
+  border: 1px solid $seleter-border-color;
+  border-radius: $seleter-border-radius;
+  font-size: $select-font-size;
+  vertical-align: middle;
+  cursor: pointer;
+  transition: $selecter-transition;
+  &:hover {
+    border-color: $seleter-border-color-hover;
+  }
+  
+  &.active {
+    border-color: $seleter-border-color-hover;
+    @include box-shadow($selecter-box-shadow);
+  }
+
+  &.disabled {
+    background-color: $seleter-background-color-disabled;
+    cursor: not-allowed;
+    &:hover {
+      border-color: $seleter-border-color;
+    }
+  }
+
+  // 带搜索下拉
+  &.selecter-search {
+    .search-wrap {
+      .selecter-input {
+        display: block;
+        width: 100%;
+        border: none;
+        outline: none;
+        line-height: $selecter-input-line-height;
+        color: $seleter-selected-color;
+        // Placeholder
+        &::placeholder {
+          color: $seleter-color;
+          // Override Firefox's unusual default opacity; see https://github.com/twbs/bootstrap/pull/11526.
+          opacity: 1;
+        }
+      }
+    }
+  }
+  
+  .selected {
+    color: $seleter-selected-color;
+  }
+
+}
+
+%selecter-caret {
+    display: inline-block;
+    position: absolute;
+    top: 50%;
+    margin-top: -2px;
+    width: 0;
+    height: 0;
+    vertical-align: middle;
+    border: $seleter-caret-border-width solid transparent;
+    border-top-color: $seleter-color;
+    content: " ";
+}
+
+//没边框
+.selecter-noborder,
+.selecter-noborder.active,
+ .selecter-noborder:hover {
+  border-color: transparent;
+  @include box-shadow(none);
+}
+.selecter-noborder{
+  padding: $seleter-noborder-padding;
+  &:after {
+    @extend %selecter-caret;
+    margin-left: 4px;
+  }
+  &.active {    
+    .selected{
+      color: $seleter-noborder-selected-color;
+    }
+  }
+}
+
+// 单选下拉
+.selecter-single {
+  padding: $selecter-padding;
+
+  &:after {
+    @extend %selecter-caret;
+    right: 10px;
+  }
+}
+
+// 多选下拉
+.selecter-multiple {
+  padding: $selecter-multiple-padding;
+  min-height: $selecter-multiple-min-height;
+  height: auto;
+  max-height: $selecter-multiple-max-height;
+  overflow-y: auto;
+
+  .selecter-items {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    .selecter-item {
+      display: inline-block;
+      height: $selecter-item-height;
+      line-height: $selecter-item-height;
+      padding: $seleter-item-padding;
+      color: $selecter-item-color;
+      background-color: $selecter-item-background-color;
+      border-radius: $seleter-item-border-radius;
+    }
+  }
+  
+  &.selecter-search {
+    .search-wrap {
+      display: inline-block;
+    }
+  }
+}

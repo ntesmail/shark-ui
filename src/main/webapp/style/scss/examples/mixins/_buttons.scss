@@ -1,0 +1,37 @@
+// Button variants
+
+@mixin button-variant($color, $border-color, $background-color, $background-color-hover, $background-color-active) {
+  & {
+    color: $color;
+    border-color: $border-color;
+    background-color: $background-color;
+  }
+
+  &:hover {
+    background-color: $background-color-hover;
+  }
+
+  &.active,
+  &:active {
+    background-color: $background-color-active;
+  }
+}
+
+// Button disabled
+@mixin button-variant-disabled($color, $border-color, $background-color) {
+  &.disabled,
+  &:disabled {
+    color: $color;
+    border-color: $border-color;
+    background-color: $background-color;
+  }
+}
+
+// Button sizes
+@mixin button-size($btn-height, $padding-y, $padding-x, $font-size, $line-height, $border-radius) {
+  height: $btn-height;
+  padding: $padding-y $padding-x;
+  font-size: $font-size;
+  line-height: $line-height;
+  @include border-radius($border-radius);
+}

@@ -1,0 +1,13 @@
+//Caret
+
+.caret {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  vertical-align: middle;
+  border: {
+    top: $caret-border-width-y solid #9b9b9b;
+    right: $caret-border-width-x solid transparent;
+    left: $caret-border-width-x solid transparent;
+  }
+}
