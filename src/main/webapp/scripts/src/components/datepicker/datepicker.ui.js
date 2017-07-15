@@ -287,10 +287,10 @@ function checkMaxMinTime(sharkComponent) {
 SharkUI.sharkDatepicker = function (options, targetElement) {
     /*********默认参数配置*************/
     var config = {
-        format: 'yyyy-MM-dd HH:mm:ss',
-        initDate: new Date('2017-07-05 10:10:10'), //new Date('2017-07-09 10:10:10')
-        maxDate: new Date('2017-07-18 08:08:08'), //new Date('2017-07-08 08:08:08')
-        minDate: new Date('2017-07-05 05:05:05'), //new Date('2017-07-05 05:05:05')
+        format: 'yyyy-MM-dd',//'yyyy-MM-dd HH:mm:ss'
+        initDate: null,
+        maxDate: null,
+        minDate: null,
         beforeChange: function () {
         },
         onChanged: function () {
