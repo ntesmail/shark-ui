@@ -1,12 +1,33 @@
 import $ from 'jquery';
 import { Templates } from '../../common/templates';
 import { DomHelper } from '../../common/domhelper';
+import { DTree } from '../d-tree/d-tree.ui';
+
 // selecter模板
 var templateSelecter = Templates.selecter;
 var templateSelecterFun = Templates.templateAoT(templateSelecter);
 
-function changeSelectDom1(sharkComponent, node, isChecked) {
+
+// 初始化selecter的dom
+function initDom(checkedItems, config) {
+    var component = $(templateSelecterFun.apply(config));
+    component.addClass('shark-selecter');
+    // 多选
+    if (config.multiple) {
+        component.addClass('selecter-multiple');
+        var selecterItems = $('<ul class="selecter-items"></ul>');
+        for (var i = 0; i < checkedItems.length; i++) {
+            var selecterItem = $(`<li class="selecter-item">${checkedItems[i][config.displayKey]}</li>`);
+            selecterItems.append(selecterItem);
+        }
+    }
+    component.append(selecterItems);
+    return component;
+}
+
+function changeSelectDom1(sharkComponent, node, isChecked, config) {
     var checkedList = sharkComponent.checkedList;
+    console.log(checkedList);
     var index = -1;
     for (var i = 0; i < checkedList.length; i++) {
         if (node.id === checkedList[i].id) {
@@ -20,8 +41,7 @@ function changeSelectDom1(sharkComponent, node, isChecked) {
     if (index !== -1 && !isChecked) {
         checkedList.splice(index, 1);
     }
-
-    allSelectedSpanDom(sharkComponent);
+    allSelectedSpanDom(sharkComponent, config);
     var len = sharkComponent.selections.tree.topNode.children.length;
     switch (checkedList.length) {
         case 0:
@@ -45,40 +65,28 @@ function changeSelectDom2(sharkComponent, node) {
     sharkComponent.component.trigger('focusout');
 }
 
-// 初始化selecter的dom
-function initDom(sharkComponent, config) {
-    var component = $(templateSelecterFun.apply(config));
-    component.addClass('shark-selecter');
-    return component;
-}
-
 // 初始化下拉列表的的dom
-function initSelectionsDom(sharkComponent, config) {
+function initSelectionsDom(sharkComponent, config, treeConfig) {
     var selections = $('<div class="position-absolute shark-tree" style="display: none;"></div>');
     selections.attr('id', SharkUI.createUUID());
-    var options = {
-        nodes: config.data,
-        actualKey: config.actualKey,
-        displayKey: config.displayKey,
-        onNodeChecked: function (node, isChecked) {
-            changeSelectDom1(sharkComponent, node, isChecked);
-        },
-        onNodeSelected: function (node, isChecked) {
-            changeSelectDom2(sharkComponent, node);
-        }
+    treeConfig.onNodeChecked = function (node, isChecked) {
+        changeSelectDom1(sharkComponent, node, isChecked, config);
+    };
+    treeConfig.onNodeSelected = function (node, isChecked) {
+        changeSelectDom2(sharkComponent, node);
     };
     if (!config.multiple) {
-        options.checkable = false;
-        options.selectable = true;
+        treeConfig.checkable = false;
+        treeConfig.selectable = true;
     } else {
-        options.checkable = true;
-        options.selectable = false;
+        treeConfig.checkable = true;
+        treeConfig.selectable = false;
         var all = $(`<div><span class="tree-title tree-node-name">全部</span></div>`);
         var checkbox = $('<span class="tree-checkbox tree-icon tree-icon-check-empty check-all"></span>');
         all.prepend(checkbox);
         selections.append(all);
     }
-    selections.tree = SharkUI.sharkDTree(options);
+    selections.tree = DTree.internalDTree(sharkComponent.topNode, treeConfig);
     selections.tree.appendTo(selections);
     sharkComponent.selections = selections;
     toggleAllState(sharkComponent)
@@ -96,16 +104,13 @@ function toggleAllState(sharkComponent) {
     checkbox.addClass(classObj[sharkComponent.allState]);
 }
 
-function allSelectedSpanDom(sharkComponent) {
+function allSelectedSpanDom(sharkComponent, config) {
     var checkedList = sharkComponent.checkedList;
-    sharkComponent.component.empty();
+    var selecterItems = sharkComponent.component.children('.selecter-items');
+    selecterItems.empty();
     for (var i = 0; i < checkedList.length; i++) {
-        var li = $(`<li style="font-size: 16px;display: inline;">
-                        ${checkedList[i].name}
-                        <span class="remove">X</span>
-                    </li>`);
-        li.data('node', checkedList[i]);
-        sharkComponent.component.append(li);
+        var selecterItem = $(`<li class="selecter-item">${checkedList[i][config.displayKey]}</li>`);
+        selecterItems.append(selecterItem);
     }
 }
 

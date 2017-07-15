@@ -11,12 +11,12 @@ import { SelectData } from './data';
 import { SelectDom } from './dom';
 
 // 初始化事件
-function initEvents(sharkComponent, config) {
+function initEvents(sharkComponent, config, treeConfig) {
     var selecter = sharkComponent.component;
     selecter.on('click.selecter', '.selecter', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
         if (!sharkComponent.selections) {
             // 如果还没有初始化过selections，在这里先初始化
-            SelectDom.initSelectionsDom(sharkComponent, config);
+            SelectDom.initSelectionsDom(sharkComponent, config, treeConfig);
             initSelectionsEvents(sharkComponent, config);
         }
         SelectDom.toggleSelections(sharkComponent);
@@ -42,7 +42,7 @@ function initSelectionsEvents(sharkComponent, config) {
             sharkComponent.allState = 2;
             SelectData.allSelectedSpan(sharkComponent, true);
         }
-        SelectDom.allSelectedSpanDom(sharkComponent);
+        SelectDom.allSelectedSpanDom(sharkComponent, config);
         SelectDom.toggleAllState(sharkComponent)
     });
     // 点击除了组件之外的地方，收起下拉列表
@@ -56,6 +56,7 @@ function initSelectionsEvents(sharkComponent, config) {
 
 SharkUI.sharkSelect = function (options, targetElement) {
     var sharkComponent = {};
+    sharkComponent.checkedList = [];
     var config = {
         data: null,
         actualKey: 'value',
@@ -66,13 +67,17 @@ SharkUI.sharkSelect = function (options, targetElement) {
     SharkUI.extend(config, options);
     BaseComponent.addComponentBaseFn(sharkComponent, config);
     // 首先整理数据
-    var topNode = TreeData.getTopNode(config.data, { link: true });
-    
+    var treeConfig = { link: true, actualKey: config.actualKey, displayKey: config.displayKey, checkable: config.multiple, checked: config.checked };
+    var topNode = TreeData.getTopNode(config.data, treeConfig);
+    if (config.multiple && config.checked) {
+        TreeData.setChecked(topNode, config.checked, true, false, config);
+        sharkComponent.checkedList = TreeData.getNodeList(topNode, '__checked', [], treeConfig);
+    }
+    TreeData.setCheckState(topNode, true);
+    sharkComponent.allState = topNode.__state;
+    sharkComponent.topNode = topNode;
+    sharkComponent.component = SelectDom.initDom(sharkComponent.checkedList, config);
 
-
-    sharkComponent.component = SelectDom.initDom(sharkComponent, config);
-    sharkComponent.allState = 0;
-    sharkComponent.checkedList = [];
-    initEvents(sharkComponent, config);
+    initEvents(sharkComponent, config, treeConfig);
     return sharkComponent;
 }

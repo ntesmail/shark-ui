@@ -285,6 +285,7 @@ var TreeData = {
     setDisabledCheckBox: setDisabledCheckBox,
     setSelected: setSelected,
     toggleCheck: toggleCheck,
-    toggleSelect: toggleSelect
+    toggleSelect: toggleSelect,
+    setCheckState: setCheckState
 };
 export { TreeData };
