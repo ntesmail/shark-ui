@@ -17,9 +17,10 @@ function initEvents(sharkComponent, config) {
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
         var target = $(evt.target);
         if (target.hasClass('tree-switcher')) { // 修改展开收起的状态
-            var node = TreeData.changeOpen(newTopNode, id);
+            var node = TreeData.changeOpen(newTopNode, id, config);
             compareAndRender(sharkComponent, newTopNode, config);
             config.onExpand.call(sharkComponent, node, node.open);
+
         } else if (!target.hasClass('disabled') && target.hasClass('tree-checkbox') && config.checkable) {  // 修改新的数据树的选中状态
             var node = TreeData.toggleCheck(newTopNode, id, config);
             compareAndRender(sharkComponent, newTopNode, config);
@@ -37,7 +38,7 @@ function initEvents(sharkComponent, config) {
 // 比较两棵数据树的差异，并且渲染
 function compareAndRender(sharkComponent, newTopNode, config) {
     // 得到两棵数据树的差异
-    var patches = Diff.diff(sharkComponent.topNode, newTopNode);
+    var patches = Diff.diff(sharkComponent.topNode, newTopNode, config);
     TreeDom.applyToTree(sharkComponent.component, { index: 0 }, patches, config);
     sharkComponent.topNode = newTopNode;
 }
@@ -53,6 +54,8 @@ SharkUI.sharkDTree = function (options, targetElement) {
     var sharkComponent = {};
     var config = {
         nodes: [], // 树数据
+        actualKey: 'id',
+        displayKey: 'name',
         openAll: true, // 是否全部展开，默认true
         link: true, // 父子级节点是否关联，默认为true
         selectable: false, // 节点是否可选中，默认为false
@@ -103,7 +106,7 @@ SharkUI.sharkDTree = function (options, targetElement) {
     // 反选
     sharkComponent.reverseCheck = function () {
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
-        TreeData.reverseCheck(newTopNode, newTopNode);
+        TreeData.reverseCheck(newTopNode, newTopNode, config);
         compareAndRender(sharkComponent, newTopNode, config);
     };
     // 设置某几个节点为选中的(replace，替换掉原来的选中值)
@@ -139,25 +142,25 @@ SharkUI.sharkDTree = function (options, targetElement) {
     // 设置某几个节点为禁用的
     sharkComponent.setDisabled = function (idList) {
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
-        TreeData.setDisabled(newTopNode, idList);
+        TreeData.setDisabled(newTopNode, idList, config);
         compareAndRender(sharkComponent, newTopNode, config);
     };
     // 设置某几个checkbox为禁用的
     sharkComponent.setDisabledCheckBox = function (idList) {
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
-        TreeData.setDisabledCheckBox(newTopNode, idList);
+        TreeData.setDisabledCheckBox(newTopNode, idList, config);
         compareAndRender(sharkComponent, newTopNode, config);
     };
     // 获取选中的id列表
     sharkComponent.getChecked = function () {
         if (config.checkable) {
-            return TreeData.getNodeList(sharkComponent.topNode, 'checked');
+            return TreeData.getNodeList(sharkComponent.topNode, 'checked', [], config);
         }
     };
     // 获取选中的id列表
     sharkComponent.getSelected = function () {
         if (config.selectable) {
-            return TreeData.getNodeList(sharkComponent.topNode, 'selected');
+            return TreeData.getNodeList(sharkComponent.topNode, 'selected', [], config);
         }
     }
     // 销毁组件

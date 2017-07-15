@@ -9,70 +9,72 @@
 
 <script type="text/javascript">
     var treeData = [{
-        id: 'all',
-        name: '所有组件',
+        key: 'all',
+        value: '所有组件',
         children: [{
-            id: 'autocomplete',
-            name: 'autocomplete组件',
+            key: 'autocomplete',
+            value: 'autocomplete组件',
             children: [{
-                id: 'autocomplete1',
-                name: 'autocomplete组件1'
+                key: 'autocomplete1',
+                value: 'autocomplete组件1'
             },{
-                id: 'autocomplete2',
-                name: 'autocomplete组件2'
+                key: 'autocomplete2',
+                value: 'autocomplete组件2'
             }]
         }, {
-            id: 'dropdown',
-            name: 'dropdown组件',
+            key: 'dropdown',
+            value: 'dropdown组件',
             checked: true,
             selected: true
         }, {
-            id: 'fileupload',
-            name: 'fileupload组件'
+            key: 'fileupload',
+            value: 'fileupload组件'
         }, {
-            id: 'modal',
-            name: 'modal组件'
+            key: 'modal',
+            value: 'modal组件'
         }, {
-            id: 'pager',
-            name: 'pager组件'
+            key: 'pager',
+            value: 'pager组件'
         }, {
-            id: 'popover',
-            name: 'popover组件'
+            key: 'popover',
+            value: 'popover组件'
         }, {
-            id: 'selecter',
-            name: 'selecter组件'
+            key: 'selecter',
+            value: 'selecter组件'
         }, {
-            id: 'tabs',
-            name: 'tabs组件'
+            key: 'tabs',
+            value: 'tabs组件'
         }, {
-            id: 'toastr',
-            name: 'toastr组件'
+            key: 'toastr',
+            value: 'toastr组件'
         }, {
-            id: 'tree',
-            name: 'tree组件'
+            key: 'tree',
+            value: 'tree组件'
         }]
     }];
 
     var newTreeData = [{
-        id: '3',
-        name: '3',
+        key: '3',
+        value: '3',
         checked: false
     }, {
-        id: '4',
-        name: '4',
+        key: '4',
+        value: '4',
         checked: true
     }, {
-        id: '1',
-        name: '45'
+        key: '1',
+        value: '45'
     }];
 
     var dmytree = SharkUI.sharkDTree({
         nodes: treeData,
-        openAll: false,
-        selectable: false,
+        // openAll: false,
+        actualKey: 'key',
+        displayKey: 'value',
+        // selectable: false,
         // disabled: true,
         // disableCheckbox: true,
-        checkable: false,
+        // checkable: false,
         // multiple: true,
         onNodeChecked: function(node, isChecked) {
             console.log(node, isChecked);

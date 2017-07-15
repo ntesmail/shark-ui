@@ -42,7 +42,7 @@ function toggleSelected(title, selected, config) {
 // 生成树节点的dom
 function getTreeNode(nodeData, config) {
     var treeNode = $('<li></li>');
-    var title = $('<span class="tree-title tree-node-name">' + nodeData.name + '</span>');
+    var title = $('<span class="tree-title tree-node-name">' + nodeData[config.displayKey] + '</span>');
     var children = nodeData.children;
     if (nodeData.disabled) {
         title.addClass('disabled');
@@ -51,7 +51,7 @@ function getTreeNode(nodeData, config) {
         title.addClass('tree-node-selected');
     }
     treeNode.append(title);
-    treeNode.data('id', nodeData.id);
+    treeNode.data('id', nodeData[config.actualKey]);
     if (config.checkable) {
         var checkbox = $('<span class="tree-checkbox tree-icon"></span>');
         toggleCheckBox(checkbox, nodeData.state);
@@ -119,7 +119,7 @@ function applyPatches(node, currentPatches, config) {
                 reOrderChildren(node, currentPatch.moves, config);
                 break;
             case "NAME":
-                title.text(currentPatch.name);
+                title.text(currentPatch[config.displayKey]);
                 break;
             case "STATE":
                 toggleCheckBox(checkbox, currentPatch.state);

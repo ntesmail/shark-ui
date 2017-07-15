@@ -1,22 +1,22 @@
 // 将数组转成 key : index 形式的字符串
-function changeArrToKeyIndex(list) {
+function changeArrToKeyIndex(list, config) {
     var keyIndex = {};
     list.forEach(function (item, i) {
-        var itemKey = item.id;
+        var itemKey = item[config.actualKey];
         keyIndex[itemKey] = i;
     });
     return keyIndex;
 }
 
 // 数组对比
-function listDiff(oldList, newList) {
-    var oldKeyIndex = changeArrToKeyIndex(oldList);
-    var newKeyIndex = changeArrToKeyIndex(newList);
+function listDiff(oldList, newList, config) {
+    var oldKeyIndex = changeArrToKeyIndex(oldList, config);
+    var newKeyIndex = changeArrToKeyIndex(newList, config);
     var moves = [];
     var children = [];
     // 首先新老对比,检查相对于新集,老集是否有元素被删除
     oldList.forEach(function (item) {
-        var itemKey = item.id;
+        var itemKey = item[config.actualKey];
         if (!newKeyIndex.hasOwnProperty(itemKey)) {
             children.push(null);
         } else {
@@ -35,9 +35,9 @@ function listDiff(oldList, newList) {
     }
     var j = 0;
     newList.forEach(function (item, i) {
-        var itemKey = item.id;
+        var itemKey = item[config.actualKey];
         var tempItem = tempList[j];
-        var tempItemKey = tempItem && tempItem.id;
+        var tempItemKey = tempItem && tempItem[config.actualKey];
         if (tempItem) {
             if (itemKey === tempItemKey) {
                 j++;
@@ -45,7 +45,7 @@ function listDiff(oldList, newList) {
                 if (!oldKeyIndex.hasOwnProperty(itemKey)) {
                     insert(i, item);
                 } else {
-                    var nextItemKey = tempList[j + 1].id;
+                    var nextItemKey = tempList[j + 1][config.actualKey];
                     if (nextItemKey === itemKey) {
                         remove(i);
                         tempList.splice(j, 1);
@@ -74,8 +74,8 @@ function listDiff(oldList, newList) {
 }
 
 // 对比同一父节点下子节点的差异
-function compareChildren(oldChildren, newChildren, index, patches, currentPatch) {
-    var diffs = listDiff(oldChildren, newChildren);
+function compareChildren(oldChildren, newChildren, index, patches, currentPatch, config) {
+    var diffs = listDiff(oldChildren, newChildren, config);
     newChildren = diffs.children;
     if (diffs.moves.length) {
         var reorderPatch = { type: "REORDER", moves: diffs.moves };
@@ -86,7 +86,7 @@ function compareChildren(oldChildren, newChildren, index, patches, currentPatch)
     oldChildren && oldChildren.forEach(function (child, i) {
         var newChild = newChildren[i];
         currentNodeIndex = (leftNode && leftNode.count) ? currentNodeIndex + leftNode.count + 1 : currentNodeIndex + 1;
-        compareNode(child, newChild, currentNodeIndex, patches);
+        compareNode(child, newChild, currentNodeIndex, patches, config);
         leftNode = child;
     });
 }
@@ -115,11 +115,11 @@ function diffProps(oldNode, newNode, currentPatch) {
 }
 
 // 对比两个相同位置的节点之间的差异
-function compareNode(oldNode, newNode, index, patches) {
+function compareNode(oldNode, newNode, index, patches, config) {
     var currentPatch = [];
     if (newNode) {
         diffProps(oldNode, newNode, currentPatch);
-        compareChildren(oldNode.children || [], newNode.children || [], index, patches, currentPatch);
+        compareChildren(oldNode.children || [], newNode.children || [], index, patches, currentPatch, config);
     }
     if (currentPatch.length) {
         patches[index] = currentPatch;
@@ -127,11 +127,11 @@ function compareNode(oldNode, newNode, index, patches) {
 }
 
 // 得到两棵数据树的差异
-function diff(oldTopNode, newTopNode) {
+function diff(oldTopNode, newTopNode, config) {
     var index = 0;
     var patches = {};
     // 比较新老根元素节点
-    compareNode(oldTopNode, newTopNode, index, patches);
+    compareNode(oldTopNode, newTopNode, index, patches, config);
     return patches;
 }
 
