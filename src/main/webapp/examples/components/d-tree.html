@@ -10,91 +10,92 @@
 <script type="text/javascript">
     var treeData = [
     {
-        id: 'all',
-        value: '所有组件'
+        key: 'all',
+        name: '所有组件'
     },
     {
-        id: 'autocomplete',
-        value: 'autocomplete组件',
-        pid: 'all'
+        key: 'autocomplete',
+        name: 'autocomplete组件',
+        parentId: 'all'
     },
     {
-        id: 'autocomplete1',
-        value: 'autocomplete组件1',
-        pid: 'autocomplete'
+        key: 'autocomplete1',
+        name: 'autocomplete组件1',
+        parentId: 'autocomplete'
     },
     {
-        id: 'autocomplete2',
-        value: 'autocomplete组件2',
-        pid: 'autocomplete'
+        key: 'autocomplete2',
+        name: 'autocomplete组件2',
+        parentId: 'autocomplete'
     },
     {
-        id: 'dropdown',
-        value: 'dropdown组件',
-        pid: 'all'
+        key: 'dropdown',
+        name: 'dropdown组件',
+        parentId: 'all'
     },
     {
-        id: 'fileupload',
-        value: 'fileupload组件',
-        pid: 'all'
+        key: 'fileupload',
+        name: 'fileupload组件',
+        parentId: 'all'
     },
     {
-        id: 'modal',
-        value: 'modal组件',
-        pid: 'all'
+        key: 'modal',
+        name: 'modal组件',
+        parentId: 'all'
     },
     {
-        id: 'pager',
-        value: 'pager组件',
-        pid: 'all'
+        key: 'pager',
+        name: 'pager组件',
+        parentId: 'all'
     },
     {
-        id: 'popover',
-        value: 'popover组件',
-        pid: 'all'
+        key: 'popover',
+        name: 'popover组件',
+        parentId: 'all'
     },
     {
-        id: 'selecter',
-        value: 'selecter组件',
-        pid: 'all'
+        key: 'selecter',
+        name: 'selecter组件',
+        parentId: 'all'
     },
     {
-        id: 'tabs',
-        value: 'tabs组件',
-        pid: 'all'
+        key: 'tabs',
+        name: 'tabs组件',
+        parentId: 'all'
     },
     {
-        id: 'toastr',
-        value: 'toastr组件',
-        pid: 'all'
+        key: 'toastr',
+        name: 'toastr组件',
+        parentId: 'all'
     },
     {
-        id: 'tree',
-        value: 'tree组件',
-        pid: 'all'
+        key: 'tree',
+        name: 'tree组件',
+        parentId: 'all'
     }
     ];
 
-    var newTreeData = [{
+    var newTreeData = [
+    {
         key: '3',
-        value: '3',
-        checked: false
+        name: '3'
     }, {
         key: '4',
-        value: '4',
-        checked: true
+        name: '4'
     }, {
         key: '1',
-        value: '45'
+        name: '45'
     }];
 
     var dmytree = SharkUI.sharkDTree({
         nodes: treeData,
         checked: ['autocomplete', 'autocomplete2'],
         selected: ['tabs', 'toastr', 'tree'],
+        parentActualKey: 'parentId',
+
         // openAll: false,
-        actualKey: 'id',
-        displayKey: 'value',
+        actualKey: 'key',
+        displayKey: 'name',
         selectable: true,
         // disabled: true,
         // disableCheckbox: true,

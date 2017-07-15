@@ -147,7 +147,7 @@ SharkUI.sharkDTree = function (options, targetElement) {
         nodes: [], // 树数据
         actualKey: 'id',
         displayKey: 'name',
-        actualKey: 'pid',
+        parentActualKey: 'pid',
         openAll: true, // 是否全部展开，默认true
         link: true, // 父子级节点是否关联，默认为true
         selectable: false, // 节点是否可选中，默认为false
@@ -159,7 +159,7 @@ SharkUI.sharkDTree = function (options, targetElement) {
         onNodeSelected: function () { } // checkbox选中的回调
     };
     SharkUI.extend(config, options);
-    var treeList = TransTree.transTree(config.nodes);
+    var treeList = TransTree.transTree(config.nodes, config.actualKey, config.parentActualKey);
     // 获取经过一系列处理的数据根节点(加上了count,修改了checked和state)
     var topNode = TreeData.getTopNode(treeList, config);
     // 默认情况下checked的节点

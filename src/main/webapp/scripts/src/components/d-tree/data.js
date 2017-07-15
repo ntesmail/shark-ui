@@ -33,7 +33,7 @@ function checkParent(topNode, id, config) {
     var node = getNodeById(topNode, id, config);
     if (node) {
         setCheckState(node, true);
-        node.pid && checkParent(topNode, node.pid, config);
+        node[config.parentActualKey] && checkParent(topNode, node[config.parentActualKey], config);
     }
 }
 
@@ -122,8 +122,8 @@ function openAll(node) {
 // 展开某个节点
 function openNode(topNode, id, autoOpenParent, config) {
     var node = changeNodeAttrByKey(topNode, id, 'open', true, config);
-    if (autoOpenParent && node.pid) {
-        openNode(topNode, node.pid, autoOpenParent, config);
+    if (autoOpenParent && node[config.parentActualKey]) {
+        openNode(topNode, node[config.parentActualKey], autoOpenParent, config);
     }
 }
 
@@ -252,7 +252,7 @@ function toggleCheck(topNode, id, config) {
         // 修改其父子节点选中的状态
         if (config.link) {
             checkChildren(node);
-            checkParent(topNode, node.pid, config);
+            checkParent(topNode, node[[config.parentActualKey]], config);
         }
     }
     return node;
