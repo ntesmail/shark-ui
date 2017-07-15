@@ -3,31 +3,42 @@ import { Templates } from '../../common/templates';
 import { DomHelper } from '../../common/domhelper';
 import { DTree } from '../d-tree/d-tree.ui';
 
-// selecter模板
-var templateSelecter = Templates.selecter;
-var templateSelecterFun = Templates.templateAoT(templateSelecter);
-
-
 // 初始化selecter的dom
-function initDom(checkedItems, config) {
-    var component = $(templateSelecterFun.apply(config));
-    component.addClass('shark-selecter');
+function initDom(checkedList, config) {
+    var selecter = $(`<div class="shark-selecter position-relative">
+                        <a class="selecter">
+                            <span class="value"></span>
+                            <span class="caret"></span>
+                        </a>
+                    </div>`);
     // 多选
     if (config.multiple) {
-        component.addClass('selecter-multiple');
-        var selecterItems = $('<ul class="selecter-items"></ul>');
-        for (var i = 0; i < checkedItems.length; i++) {
-            var selecterItem = $(`<li class="selecter-item">${checkedItems[i][config.displayKey]}</li>`);
-            selecterItems.append(selecterItem);
-        }
+        selecter.addClass('selecter-multiple');
+        // 存放选中项的容器
+        var selectedConent = $('<ul class="selecter-items"></ul>');
+        setSelected(selectedConent, checkedList, config);
     }
-    component.append(selecterItems);
-    return component;
+    selecter.append(selectedConent);
+    return selecter;
+}
+
+// 设置选中项
+function setSelected(selectedConent, checkedList, config) {
+    selectedConent.empty();
+    for (var i = 0; i < checkedList.length; i++) {
+        var selecterItem = $(`<li class="selecter-item">${checkedList[i][config.displayKey]}</li>`);
+        selectedConent.append(selecterItem);
+    }
+}
+
+function allSelectedSpanDom(sharkComponent, config) {
+    var checkedList = sharkComponent.checkedList;
+    var selectedConent = sharkComponent.component.children('.selecter-items');
+    setSelected(selectedConent, checkedList, config);
 }
 
 function changeSelectDom1(sharkComponent, node, isChecked, config) {
     var checkedList = sharkComponent.checkedList;
-    console.log(checkedList);
     var index = -1;
     for (var i = 0; i < checkedList.length; i++) {
         if (node.id === checkedList[i].id) {
@@ -102,16 +113,6 @@ function toggleAllState(sharkComponent) {
         '2': 'tree-icon-check'
     };
     checkbox.addClass(classObj[sharkComponent.allState]);
-}
-
-function allSelectedSpanDom(sharkComponent, config) {
-    var checkedList = sharkComponent.checkedList;
-    var selecterItems = sharkComponent.component.children('.selecter-items');
-    selecterItems.empty();
-    for (var i = 0; i < checkedList.length; i++) {
-        var selecterItem = $(`<li class="selecter-item">${checkedList[i][config.displayKey]}</li>`);
-        selecterItems.append(selecterItem);
-    }
 }
 
 function toggleSelections(sharkComponent) {

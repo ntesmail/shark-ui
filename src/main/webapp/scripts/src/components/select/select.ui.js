@@ -77,7 +77,6 @@ SharkUI.sharkSelect = function (options, targetElement) {
     sharkComponent.allState = topNode.__state;
     sharkComponent.topNode = topNode;
     sharkComponent.component = SelectDom.initDom(sharkComponent.checkedList, config);
-
     initEvents(sharkComponent, config, treeConfig);
     return sharkComponent;
 }
