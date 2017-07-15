@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { Templates } from '../../common/templates';
-
+import { DomHelper } from '../../common/domhelper';
 // selecter模板
 var templateSelecter = Templates.selecter;
 var templateSelecterFun = Templates.templateAoT(templateSelecter);
@@ -109,12 +109,45 @@ function allSelectedSpanDom(sharkComponent) {
     }
 }
 
+function toggleSelections(sharkComponent) {
+    var selecter = sharkComponent.component;
+    var selections = sharkComponent.selections;
+    if (selections.is(':hidden')) {
+        var postion = DomHelper.calcOffset(selecter, selections, 'bottom');
+        selections.css(postion);
+        //显示待选列表
+        selecter.addClass('open');
+        selections.show();
+        //设置待选列表样式
+        selections.css({
+            width: selecter.outerWidth()
+        });
+    } else {
+        //隐藏待选列表
+        selecter.removeClass('open');
+        selections.hide();
+        selecter.trigger('focusout');
+    }
+}
+
+function closeSelections(sharkComponent) {
+    var selecter = sharkComponent.component;
+    var selections = sharkComponent.selections;
+    if (!selections.is(':hidden')) {
+        selecter.removeClass('open');
+        selections.hide();
+        selecter.trigger('focusout');
+    }
+}
+
 var SelectDom = {
     changeSelectDom1: changeSelectDom1,
     changeSelectDom2: changeSelectDom2,
     initDom: initDom,
     initSelectionsDom: initSelectionsDom,
     toggleAllState: toggleAllState,
-    allSelectedSpanDom: allSelectedSpanDom
+    allSelectedSpanDom: allSelectedSpanDom,
+    toggleSelections: toggleSelections,
+    closeSelections: closeSelections
 };
 export { SelectDom };
