@@ -1,5 +1,0 @@
-@for $i from 1 through $emsizes {
-  .w#{$i}em {
-    width: #{$i}em;
-  }
-}

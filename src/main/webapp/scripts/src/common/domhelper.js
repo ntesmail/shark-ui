@@ -133,9 +133,11 @@ function scrollTo(nativeElement, value) {
 var DomHelper = {
     calcOffset: calcOffset,
     parseToHTML: parseToHTML,
+    getClassList: getClassList,
     addClass: addClass,
     removeClass: removeClass,
     hasClass: hasClass,
+    remove: remove,
     scrollTo: scrollTo
 };
 export { DomHelper };
