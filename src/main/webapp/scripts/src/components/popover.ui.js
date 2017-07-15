@@ -19,6 +19,9 @@ function initComponent(sharkComponent, config) {
     sharkComponent.component = $(templateFun.apply(templateData));
     sharkComponent.component.attr('id', SharkUI.createUUID());
     sharkComponent.component.addClass('shark-' + config.type);
+    if (config.type === 'tooltip') {
+        sharkComponent.component.addClass('popover-tooltip');
+    }
     $(document.body).append(sharkComponent.component);
     sharkComponent.component.hide();
     sharkComponent.isOpen = false;

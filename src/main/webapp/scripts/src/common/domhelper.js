@@ -101,6 +101,7 @@ function scrollTo(nativeElement, value) {
         cancelAnimationFrame(nativeElement.requestID);
         delete nativeElement.requestID;
     }
+    nativeElement.scrollCount = 0;
     var diff = nativeElement.scrollTop - value;
     var tmp = nativeElement.scrollTop;
     if (diff === 0 || value >= nativeElement.scrollHeight) {
@@ -109,6 +110,7 @@ function scrollTo(nativeElement, value) {
     scroll();
     function scroll() {
         nativeElement.scrollTop = tmp;
+        nativeElement.scrollCount = ++nativeElement.scrollCount;
         if (diff > 0) {
             tmp = nativeElement.scrollTop - Math.abs(diff) / 10;
             if (tmp < value) {
@@ -121,7 +123,7 @@ function scrollTo(nativeElement, value) {
                 tmp = value;
             }
         }
-        if (nativeElement.scrollTop !== value) {
+        if (nativeElement.scrollCount < 15 && nativeElement.scrollTop !== value) {
             nativeElement.requestID = requestAnimationFrame(scroll);
         }
     }
