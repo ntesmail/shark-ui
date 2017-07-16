@@ -83,7 +83,7 @@ function getChildTree(nodesData, open, config) {
 
 // 根据根数据根节点，初始化树组件的dom结构
 function initDom(topNode, config) {
-    var container = $('<div class="shark-d-tree shark-tree"></div>');
+    var container = $('<div class="shark-d-tree shark-tree tree"></div>');
     var tree = getChildTree(topNode.children, topNode.open, config);
     container.append(tree);
     return container;
