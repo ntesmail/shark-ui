@@ -125,7 +125,12 @@ function initTimepanel(sharkComponent, config) {
         <div class="timewrap">
             <a class="nowtime">当前</a>
             <div class="input-time-wrap">
-                <input class="input-time" readonly="readonly" />
+                <div class="input-time input-affix-wrapper">
+                    <input type="text" class="input" readonly="readonly" />
+                    <span class="input-suffix">
+                        <i class="icon-clockcircleo"></i>
+                    </span>
+                </div>
             </div>
         </div>
     `);

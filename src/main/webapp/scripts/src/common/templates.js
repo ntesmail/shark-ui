@@ -150,12 +150,12 @@ var notify = `
 var calendar = `
     <div class="shark-calendar calendar">
         <div class="calendar-montharea">
-            <a class="calendar-prev-year"></a>
-            <a class="calendar-prev-month"></a>
+            <i class="calendar-prev-year"></i>
+            <i class="calendar-prev-month"></i>
             <input class="calendar-current-month" readonly="readonly" type="text" />
             <input class="calendar-current-year" readonly="readonly" type="text" />
-            <a class="calendar-next-year"></a>
-            <a class="calendar-next-month"></a>
+            <i class="calendar-next-year"></i>
+            <i class="calendar-next-month"></i>
         </div>
         <div class="calendar-dayarea">
             <div class="calendar-weekday-wrap">
@@ -182,9 +182,14 @@ var timepanel = `
 `;
 
 var datetimepicker = `
-    <div class="shark-datetimepicker datetimepicker">
-        <input type="text" />
-        <a class="clear">X</a>
+    <div class="shark-datetimepicker datetimepicker input-group">
+        <div class="input-affix-wrapper">
+            <input type="text" class="input" />
+            <span class="input-suffix input-suffix-focus clear">
+                <i class="icon-closecircle"></i>
+            </span>
+        </div>
+        <span class="input-group-addon"><i class="icon-calendar"></i></span>
     </div>
 `;
 
