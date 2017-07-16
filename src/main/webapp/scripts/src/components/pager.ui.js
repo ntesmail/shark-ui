@@ -40,7 +40,7 @@ function initDom(sharkComponent, config, targetElement) {
             name: item + '条/页'
         });
     });
-    ListGroup.update(selections, datas, 'value', 'name');
+    ListGroup.update(selections, datas, 'value', 'name', config.pageSize);
     sharkComponent.selections = selections;
     $(document.body).append(selections);
     return sharkComponent;
@@ -68,7 +68,7 @@ function initEvents(sharkComponent, config) {
         var curEle = $(this);
         var newPage;
         if (curEle.hasClass('sizechanger')) {
-            var postion = DomHelper.calcOffset(pager, selections, 'bottom');
+            var postion = DomHelper.calcOffset(curEle, selections, 'bottom');
             selections.css(postion);
             selections.show();
             return;
