@@ -177,11 +177,11 @@ function renderPages(sharkComponent, config) {
     pager.empty();
     /*********首页、上一页*********/
     if (page > 1) {
-        pager.append('<li class="pagination-fisrt firstpage"><a>' + config.hl['firstpage'] + '</a></li>');
-        pager.append('<li class="pagination-prev prevpage"><a>' + config.hl['prevpage'] + '</a></li>');
+        pager.append('<li class="pagination-fisrt firstpage"><a></a></li>');
+        pager.append('<li class="pagination-prev prevpage"><a></a></li>');
     } else {
-        pager.append('<li class="pagination-fisrt pagination-disabled disabled"><a>' + config.hl['firstpage'] + '</a></li>');
-        pager.append('<li class="pagination-prev pagination-disabled disabled"><a>' + config.hl['prevpage'] + '</a></li>');
+        pager.append('<li class="pagination-fisrt pagination-disabled disabled"><a></a></li>');
+        pager.append('<li class="pagination-prev pagination-disabled disabled"><a></a></li>');
     }
     /*********中间页码*********/
     //如果当前最页大于一段的页数，生成前边的...
@@ -221,13 +221,15 @@ function renderPages(sharkComponent, config) {
     }
     /*********尾页、下一页*********/
     if (page < totalPages) {
-        pager.append('<li class="pagination-next nextpage"><a>' + config.hl['nextpage'] + '</a></li>');
-        pager.append('<li class="pagination-last lastpage"><a>' + config.hl['lastpage'] + '</a></li>');
+        pager.append('<li class="pagination-next nextpage"><a></a></li>');
+        pager.append('<li class="pagination-last lastpage"><a></a></li>');
     } else {
-        pager.append('<li class="pagination-next pagination-disabled disabled"><a>' + config.hl['nextpage'] + '</a></li>');
-        pager.append('<li class="pagination-last pagination-disabled disabled"><a>' + config.hl['lastpage'] + '</a></li>');
+        pager.append('<li class="pagination-next pagination-disabled disabled"><a></a></li>');
+        pager.append('<li class="pagination-last pagination-disabled disabled"><a></a></li>');
     }
-    pager.append('<li class="pagination-size-changer sizechanger"><div class="selecter selecter-single"><span class="selected">' + config.pageSize + '条/页</span></div></li>');
+    if (config.changer) {
+        pager.append('<li class="pagination-size-changer sizechanger"><div class="selecter selecter-single"><span class="selected">' + config.pageSize + '条/页</span></div></li>');
+    }
     if (config.gopage) {
         pager.append($('<li class="pagination-quick-jumper gopage">跳至<input class="input-page" type="text"/>页<a class="btn" style="display:none;"></a></li>'));
     }
@@ -237,20 +239,14 @@ SharkUI.sharkPager = function (options, targetElement) {
     var config = {
         totalPages: 1,
         page: 1,
-        hl: {
-            firstpage: '首页',
-            prevpage: '上一页',
-            nextpage: '下一页',
-            lastpage: '尾页',
-            gopage: '跳转'
-        },
-        segmentSize: 5,
-        startFrom: 1,
-        gopage: false,
-        dom: '',
-        mini: false,
         pageSize: 10,
         pageSizeArr: [10, 20, 50],
+        segmentSize: 5,
+        startFrom: 1,
+        dom: '',
+        mini: false,
+        changer: true,
+        gopage: true,
         onPageWillChange: function () { },
         onPageChanged: function () { },
         onSizeWillChange: function () { },
