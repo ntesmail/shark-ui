@@ -21,7 +21,6 @@ function initEvents(sharkComponent, treeConfig, config) {
         }
         SelectDom.toggleSelections(sharkComponent);
     }));
-
     selecter.on('click.selecter', '.selecter-item', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
         evt.stopPropagation();
     }));
@@ -33,6 +32,7 @@ function initEvents(sharkComponent, treeConfig, config) {
         SelectData.changeCheckedListAndAllState(sharkComponent, node, false, config);
         SelectDom.changeSelectedMultiple(sharkComponent, node, false, config);
         TreeData.setChecked(sharkComponent.topNode, [node], false, true, treeConfig);
+        config.onRemove.call(sharkComponent, node);
     }));
 }
 
@@ -74,7 +74,8 @@ SharkUI.sharkSelect = function (options, targetElement) {
         selected: null, // 单选时使用
         multiple: false,
         onSelected: function () { },
-        onChecked: function () { }
+        onChecked: function () { },
+        onRemove: function () { }
     };
     SharkUI.extend(config, options);
     BaseComponent.addComponentBaseFn(sharkComponent, config);
