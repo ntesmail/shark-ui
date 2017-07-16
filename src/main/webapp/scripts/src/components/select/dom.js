@@ -58,7 +58,9 @@ function initSelectionsDom(sharkComponent, topNode, treeConfig, config) {
         checkAllItem.prepend(checkAllBtn);
         selections.append(checkAllItem);
         sharkComponent.checkAllBtn = checkAllBtn;
-        toggleAllState(sharkComponent);
+        if (sharkComponent.selections) {
+            toggleAllState(sharkComponent);
+        }
     }
     selections.tree = DTree.internalDTree(topNode, treeConfig);
     selections.tree.appendTo(selections);
@@ -83,13 +85,15 @@ function changeSelectSingle(sharkComponent, node, config) {
 
 // 修改全选按钮的状态
 function toggleAllState(sharkComponent) {
-    sharkComponent.checkAllBtn.removeClass('tree-icon-check-empty tree-icon-check-minus tree-icon-check');
-    var classObj = {
-        '0': 'tree-icon-check-empty',
-        '1': 'tree-icon-check-minus',
-        '2': 'tree-icon-check'
-    };
-    sharkComponent.checkAllBtn.addClass(classObj[sharkComponent.allState]);
+    if (sharkComponent.checkAllBtn) {
+        sharkComponent.checkAllBtn.removeClass('tree-icon-check-empty tree-icon-check-minus tree-icon-check');
+        var classObj = {
+            '0': 'tree-icon-check-empty',
+            '1': 'tree-icon-check-minus',
+            '2': 'tree-icon-check'
+        };
+        sharkComponent.checkAllBtn.addClass(classObj[sharkComponent.allState]);
+    }
 }
 
 // 下拉菜单的展开和收起
@@ -129,6 +133,7 @@ var SelectDom = {
     initSelectionsDom: initSelectionsDom,
     toggleAllState: toggleAllState,
     setSelectedMultiple: setSelectedMultiple,
+    setSelectedSingle: setSelectedSingle,
     toggleSelections: toggleSelections,
     closeSelections: closeSelections
 };

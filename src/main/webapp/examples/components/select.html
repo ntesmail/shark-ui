@@ -5,8 +5,8 @@ var myselecter = SharkUI.sharkSelect({
      actualKey: 'id', //对应data中的value
      displayKey: 'name', //对应data中的name
      multiple: true,
-     checked: [1001],
-     selected: 1002,
+     // checked: [1001],
+     // selected: 1002,
      data: [{
          id: '',
          name: '请选择'
@@ -24,5 +24,9 @@ var myselecter = SharkUI.sharkSelect({
          console.log(node, isChecked, 1111);
      }
  });
+
+ myselecter.setChecked([1001]);
+
+myselecter.setSelected(1001);
 myselecter.appendTo('#selectContainer');
 </script>

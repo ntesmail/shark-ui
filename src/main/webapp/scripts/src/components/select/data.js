@@ -46,7 +46,6 @@ function changeAllState(sharkComponent, len, checkedLen) {
 }
 
 var SelectData = {
-    changeCheckedListAndAllState: changeCheckedListAndAllState,
-    changeCheckedList: changeCheckedList
+    changeCheckedListAndAllState: changeCheckedListAndAllState
 };
 export { SelectData };

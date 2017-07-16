@@ -61,6 +61,7 @@ function initSelectionsEvents(sharkComponent, config) {
 
 SharkUI.sharkSelect = function (options, targetElement) {
     var sharkComponent = {};
+    sharkComponent.checkedList = [];
     var config = {
         data: null,
         actualKey: 'value',
@@ -111,6 +112,37 @@ SharkUI.sharkSelect = function (options, targetElement) {
     // 初始化事件
     initEvents(sharkComponent, treeConfig, config);
 
+    // 设置选中项（单选）
+    sharkComponent.setSelected = function (selected) {
+        if (!config.multiple) {
+            TreeData.setSelected(sharkComponent.topNode, [selected], true, treeConfig);
+            sharkComponent.selectedItem = TreeData.getNodeList(sharkComponent.topNode, '__selected', [], treeConfig).length && TreeData.getNodeList(sharkComponent.topNode, '__selected', [], treeConfig)[0];
+            SelectDom.setSelectedSingle(sharkComponent, config);
+            SelectDom.toggleAllState(sharkComponent);
+        }
+    };
+
+
+    // 设置选中项（多选）
+    sharkComponent.setChecked = function (checked) {
+        if (config.multiple) {
+            TreeData.setChecked(sharkComponent.topNode, checked, true, false, treeConfig);
+            sharkComponent.checkedList = TreeData.getNodeList(sharkComponent.topNode, '__checked', [], treeConfig);
+            // 全选按钮的状态
+            sharkComponent.allState = topNode.__state;
+            SelectDom.setSelectedMultiple(sharkComponent, config);
+            SelectDom.toggleAllState(sharkComponent);
+        }
+    };
+
+    // 获取选中项（多选）
+    sharkComponent.getChecked = function () {
+        return sharkComponent.checkedList;
+    };
+    // 获取选中项（单选）
+    sharkComponent.getSelected = function () {
+        return sharkComponent.selectedItem;
+    };
     // 销毁组件
     sharkComponent.destroy = function () {
         sharkComponent.component.remove();
