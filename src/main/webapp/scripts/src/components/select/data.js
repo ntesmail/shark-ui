@@ -1,7 +1,13 @@
 // 修改选中列表和全选按钮状态
 function changeCheckedListAndAllState(sharkComponent, node, isChecked, config) {
     var checkedList = changeCheckedList(sharkComponent, node, isChecked, config);
-    var len = sharkComponent.selections.tree.topNode.children.length;
+    var len = null;
+    if (sharkComponent.selections) {
+        len = sharkComponent.selections.tree.topNode.children.length;
+
+    } else {
+        len = sharkComponent.topNode.children.length;
+    }
     changeAllState(sharkComponent, len, checkedList.length);
 }
 
@@ -40,6 +46,7 @@ function changeAllState(sharkComponent, len, checkedLen) {
 }
 
 var SelectData = {
-    changeCheckedListAndAllState: changeCheckedListAndAllState
+    changeCheckedListAndAllState: changeCheckedListAndAllState,
+    changeCheckedList: changeCheckedList
 };
 export { SelectData };

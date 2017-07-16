@@ -11,21 +11,24 @@ import { SelectData } from './data';
 import { SelectDom } from './dom';
 
 // 初始化事件
-function initEvents(sharkComponent, topNode, treeConfig, config) {
+function initEvents(sharkComponent, treeConfig, config) {
     var selecter = sharkComponent.component;
     selecter.on('click.selecter', '.selecter', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
         if (!sharkComponent.selections) {
             // 如果还没有初始化过selections，在这里先初始化
-            SelectDom.initSelectionsDom(sharkComponent, topNode, treeConfig, config);
+            SelectDom.initSelectionsDom(sharkComponent, sharkComponent.topNode, treeConfig, config);
             initSelectionsEvents(sharkComponent, config);
         }
         SelectDom.toggleSelections(sharkComponent);
     }));
     selecter.on('click.selecter', '.remove', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
         var node = $(evt.currentTarget).parent('li').data('node');
-        sharkComponent.selections.tree.setUnChecked([node[config.actualKey]]);
+        if (sharkComponent.selections) {
+            sharkComponent.selections.tree.setUnChecked([node[config.actualKey]]);
+        }
         SelectData.changeCheckedListAndAllState(sharkComponent, node, false, config);
-        SelectDom.changeSelectedMultiple(sharkComponent, node, false);
+        SelectDom.changeSelectedMultiple(sharkComponent, node, false, config);
+        TreeData.setChecked(sharkComponent.topNode, [node], false, true, treeConfig);
     }))
 }
 
@@ -102,10 +105,11 @@ SharkUI.sharkSelect = function (options, targetElement) {
         // 全选按钮的状态
         sharkComponent.allState = topNode.__state;
     }
+    sharkComponent.topNode = topNode;
     // 初始化dom
     sharkComponent.component = SelectDom.initDom(sharkComponent, config);
     // 初始化事件
-    initEvents(sharkComponent, topNode, treeConfig, config);
+    initEvents(sharkComponent, treeConfig, config);
 
     // 销毁组件
     sharkComponent.destroy = function () {

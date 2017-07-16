@@ -41,7 +41,8 @@ function setSelectedSingle(sharkComponent, config) {
 function setSelectedMultiple(sharkComponent, config) {
     sharkComponent.selectedConent.empty();
     for (var i = 0; i < sharkComponent.checkedList.length; i++) {
-        var selecterItem = $(`<li class="selecter-item">${sharkComponent.checkedList[i][config.displayKey]}</li>`);
+        var selecterItem = $(`<li class="selecter-item">${sharkComponent.checkedList[i][config.displayKey]}<span class="remove">X</span></li>`);
+        selecterItem.data('node', sharkComponent.checkedList[i]);
         sharkComponent.selectedConent.append(selecterItem);
     }
 }
@@ -68,7 +69,9 @@ function initSelectionsDom(sharkComponent, topNode, treeConfig, config) {
 // checked值发生变化时，下拉菜单发生的变化（多选）
 function changeSelectedMultiple(sharkComponent, node, isChecked, config) {
     setSelectedMultiple(sharkComponent, config);
-    toggleAllState(sharkComponent);
+    if (sharkComponent.selections) {
+        toggleAllState(sharkComponent);
+    }
 }
 
 // selected值发生变化时，下拉菜单发生的变化(单选)
