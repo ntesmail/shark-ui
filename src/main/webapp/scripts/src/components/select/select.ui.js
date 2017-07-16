@@ -13,13 +13,17 @@ import { SelectDom } from './dom';
 // 初始化事件
 function initEvents(sharkComponent, treeConfig, config) {
     var selecter = sharkComponent.component;
-    selecter.on('click.selecter', '.selecter', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
+    selecter.on('click.selecter', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
         if (!sharkComponent.selections) {
             // 如果还没有初始化过selections，在这里先初始化
             SelectDom.initSelectionsDom(sharkComponent, sharkComponent.topNode, treeConfig, config);
             initSelectionsEvents(sharkComponent, config);
         }
         SelectDom.toggleSelections(sharkComponent);
+    }));
+
+    selecter.on('click.selecter', '.selecter-item', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
+        evt.stopPropagation();
     }));
     selecter.on('click.selecter', '.remove', BaseComponent.filterComponentAction(sharkComponent, function (evt) {
         var node = $(evt.currentTarget).parent('li').data('node');
@@ -29,7 +33,7 @@ function initEvents(sharkComponent, treeConfig, config) {
         SelectData.changeCheckedListAndAllState(sharkComponent, node, false, config);
         SelectDom.changeSelectedMultiple(sharkComponent, node, false, config);
         TreeData.setChecked(sharkComponent.topNode, [node], false, true, treeConfig);
-    }))
+    }));
 }
 
 // 初始化下拉列表事件
@@ -124,9 +128,9 @@ SharkUI.sharkSelect = function (options, targetElement) {
 
 
     // 设置选中项（多选）
-    sharkComponent.setChecked = function (checked) {
+    sharkComponent.setChecked = function (checked, replace) {
         if (config.multiple) {
-            TreeData.setChecked(sharkComponent.topNode, checked, true, false, treeConfig);
+            TreeData.setChecked(sharkComponent.topNode, checked, true, replace, treeConfig);
             sharkComponent.checkedList = TreeData.getNodeList(sharkComponent.topNode, '__checked', [], treeConfig);
             // 全选按钮的状态
             sharkComponent.allState = topNode.__state;

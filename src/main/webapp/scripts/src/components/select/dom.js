@@ -5,12 +5,7 @@ import { DTree } from '../d-tree/d-tree.ui';
 
 // 初始化selecter的dom
 function initDom(sharkComponent, config) {
-    var selecter = $(`<div class="shark-selecter position-relative">
-                        <a class="selecter">
-                            <span class="value"></span>
-                            <span class="caret"></span>
-                        </a>
-                    </div>`);
+    var selecter = $(`<div class="selecter position-relative"></div>`);
     // 多选
     if (config.multiple) {
         selecter.addClass('selecter-multiple');
