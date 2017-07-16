@@ -99,15 +99,15 @@ function internalDTree(topNode, config, targetElement) {
         compareAndRender(sharkComponent, newTopNode, config);
     };
     // 展开全部
-    sharkComponent.openAll = function () {
+    sharkComponent.expandAll = function () {
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
-        TreeData.openAll(newTopNode);
+        TreeData.expandAll(newTopNode);
         compareAndRender(sharkComponent, newTopNode, config);
     };
     // 展开某几个节点(autoOpenParent:打开子节点后是否自动打开父节点)
-    sharkComponent.openTo = function (idList, autoOpenParent) {
+    sharkComponent.expendTo = function (idList, autoOpenParent) {
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
-        TreeData.openTo(newTopNode, idList, autoOpenParent);
+        TreeData.expendTo(newTopNode, idList, autoOpenParent);
         compareAndRender(sharkComponent, newTopNode, config);
     };
     // 设置某几个节点为禁用的
@@ -116,13 +116,41 @@ function internalDTree(topNode, config, targetElement) {
         TreeData.setDisabled(newTopNode, idList, config);
         compareAndRender(sharkComponent, newTopNode, config);
     };
+    // 设置整棵树为禁用的
+    sharkComponent.disable = function () {
+        var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
+        TreeData.disabledAll(newTopNode, true);
+        compareAndRender(sharkComponent, newTopNode, config);
+    };
+    // 设置整棵树为可用的
+    sharkComponent.enable = function (idList) {
+        var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
+        TreeData.disabledAll(newTopNode, false);
+        compareAndRender(sharkComponent, newTopNode, config);
+    };
+
+     // 设置整棵树的checkbox为禁用的
+    sharkComponent.disableCheckbox = function () {
+        var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
+        TreeData.disableCheckboxAll(newTopNode, true);
+        compareAndRender(sharkComponent, newTopNode, config);
+    };
+    // 设置整棵树的checkbox为可用的
+    sharkComponent.enableCheckbox = function (idList) {
+        var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
+        TreeData.disableCheckboxAll(newTopNode, false);
+        compareAndRender(sharkComponent, newTopNode, config);
+    };
+
+
     // 设置某几个checkbox为禁用的
     sharkComponent.setDisabledCheckBox = function (idList) {
         var newTopNode = SharkUI.extend({}, sharkComponent.topNode);
         TreeData.setDisabledCheckBox(newTopNode, idList, config);
         compareAndRender(sharkComponent, newTopNode, config);
     };
-    // 获取选中的id列表
+
+    // 获取选中的列表
     sharkComponent.getChecked = function () {
         if (config.checkable) {
             return TreeData.getNodeList(sharkComponent.topNode, '__checked', [], config);
@@ -144,12 +172,11 @@ function internalDTree(topNode, config, targetElement) {
 
 SharkUI.sharkDTree = function (options, targetElement) {
     var config = {
-        nodes: [], // 树数据
+        data: [], // 树数据
         actualKey: 'id',
         displayKey: 'name',
         parentActualKey: 'pid',
-        openAll: true, // 是否全部展开，默认true
-        link: true, // 父子级节点是否关联，默认为true
+        autolink: true, // 父子级节点是否关联，默认为true
         checkable: true, // 是否有checkbox，默认为true
         selectable: false, // 节点是否可选中，默认为false
         disabled: false, // 节点是否禁用，默认为false
@@ -159,29 +186,9 @@ SharkUI.sharkDTree = function (options, targetElement) {
         onNodeSelected: function () { } // checkbox选中的回调
     };
     SharkUI.extend(config, options);
-    var treeList = TransTree.transTree(config.nodes, config.actualKey, config.parentActualKey);
+    var treeList = TransTree.transTree(config.data, config.actualKey, config.parentActualKey);
     // 获取经过一系列处理的数据根节点(加上了count,修改了checked和state)
     var topNode = TreeData.getTopNode(treeList, config);
-    // 默认情况下checked的节点
-    if (config.checkable && config.checked) {
-        TreeData.setChecked(topNode, config.checked, true, false, config);
-    }
-    // 默认情况下selected的节点
-    if (config.selectable && config.selected) {
-        TreeData.setSelected(topNode, config.selected, false, config);
-    }
-    // 是否全部展开，如果是，重新处理数据树
-    if (config.openAll) {
-        TreeData.openAll(topNode);
-    }
-    // 节点全部不能选
-    if (config.disabled) {
-        TreeData.disabledAll(topNode);
-    }
-    // checkbox全部不能选
-    if (config.disableCheckbox) {
-        TreeData.disableCheckboxAll(topNode);
-    }
     return internalDTree(topNode, config, targetElement);
 };
 

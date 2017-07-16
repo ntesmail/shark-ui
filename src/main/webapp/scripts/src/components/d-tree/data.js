@@ -38,23 +38,23 @@ function checkParent(topNode, id, config) {
 }
 
 // 不能选中（节点本身）
-function disabledAll(node) {
+function disabledAll(node, flag) {
     var children = node.children;
-    node.disabled = true;
+    node.disabled = flag;
     if (children) {
         children.forEach(function (child) {
-            disabledAll(child);
+            disabledAll(child, flag);
         });
     }
 }
 
 // checbox不能点
-function disableCheckboxAll(node) {
+function disableCheckboxAll(node, flag) {
     var children = node.children;
-    node.disabledCheckbox = true;
+    node.disabledCheckbox = flag;
     if (children) {
         children.forEach(function (child) {
-            disableCheckboxAll(child);
+            disableCheckboxAll(child, flag);
         });
     }
 }
@@ -105,16 +105,16 @@ function handleNode(node, config) {
         node.__count += child.__count + 1;
     });
     // 设置node的选中状态(选中/未选中/半选中)
-    setCheckState(node, config.link);
+    setCheckState(node, config.autolink);
 }
 
 // 全部展开（递归展开）
-function openAll(node) {
+function expandAll(node) {
     var children = node.children;
     if (children) {
         node.open = true;
         children.forEach(function (child) {
-            openAll(child);
+            expandAll(child);
         });
     }
 }
@@ -128,7 +128,7 @@ function openNode(topNode, id, autoOpenParent, config) {
 }
 
 // 展开某几个节点
-function openTo(topNode, idList, autoOpenParent) {
+function expendTo(topNode, idList, autoOpenParent) {
     idList.forEach(function (id) {
         openNode(topNode, id, autoOpenParent);
     });
@@ -173,7 +173,12 @@ function setChecked(topNode, idList, flag, replace, config) {
         checkAll(topNode, false);
     }
     idList.forEach(function (id) {
-        changeNodeAttrByKey(topNode, id, '__checked', flag, config);
+        var node = changeNodeAttrByKey(topNode, id, '__checked', flag, config);
+         // 修改其父子节点选中的状态
+        if (config.autolink) {
+            checkChildren(node);
+            checkParent(topNode, node[[config.parentActualKey]], config);
+        }
     });
     handleNode(topNode, config);
 }
@@ -250,7 +255,7 @@ function toggleCheck(topNode, id, config) {
     if (node) {
         setCheckState(node, false);
         // 修改其父子节点选中的状态
-        if (config.link) {
+        if (config.autolink) {
             checkChildren(node);
             checkParent(topNode, node[[config.parentActualKey]], config);
         }
@@ -276,8 +281,8 @@ var TreeData = {
     disableCheckboxAll: disableCheckboxAll,
     getNodeList: getNodeList,
     getTopNode: getTopNode,
-    openAll: openAll,
-    openTo: openTo,
+    expandAll: expandAll,
+    expendTo: expendTo,
     reverseCheck: reverseCheck,
     selectNode: selectNode,
     setChecked: setChecked,
